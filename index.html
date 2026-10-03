@@ -1,0 +1,815 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Search History | Suhani Tiwari</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;1,6..96,400&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FBF7F3;
+    --card: #FFFFFF;
+    --ink: #1F1A24;
+    --soft: #4D4555;
+    --dim: #857B8E;
+    --line: #E9E1E8;
+    --accent: #B4436C;
+    --fashion: #C2577A;
+    --beauty: #7C5CC4;
+    --places: #2A7FA8;
+    --food: #C98A00;
+    --career: #2F8F5F;
+    --serif: "Bodoni Moda", Georgia, serif;
+    --sans: "Instrument Sans", system-ui, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, monospace;
+    --gut: clamp(16px, 4vw, 48px);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #17131C; --card: #211B28; --ink: #F5EEF4; --soft: #D3C8DA; --dim: #9C90A8;
+      --line: #3A3142; --accent: #E58AAE; --fashion: #E58AAE; --beauty: #B49BF0;
+      --places: #6CB8DE; --food: #E8B64A; --career: #6FCB98;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #17131C; --card: #211B28; --ink: #F5EEF4; --soft: #D3C8DA; --dim: #9C90A8;
+    --line: #3A3142; --accent: #E58AAE; --fashion: #E58AAE; --beauty: #B49BF0;
+    --places: #6CB8DE; --food: #E8B64A; --career: #6FCB98;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg); color: var(--ink); font: 16px/1.55 var(--sans);
+    min-height: 100vh; overflow-x: hidden;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 var(--gut); }
+
+  /* ---------- hero ---------- */
+  header { padding: clamp(56px, 14vh, 140px) 0 24px; text-align: center; transition: padding .5s ease; }
+  body.has-result header { padding-top: 32px; }
+  .kicker { font: 500 11px/1 var(--mono); letter-spacing: .18em; text-transform: uppercase; color: var(--dim); }
+  h1 { font: 400 clamp(40px, 8vw, 76px)/1.02 var(--serif); margin: 16px 0 10px; letter-spacing: -.01em; }
+  h1 em { color: var(--accent); }
+  .lede { color: var(--soft); max-width: 520px; margin: 0 auto; }
+  body.has-result .lede { display: none; }
+
+  /* ---------- search ---------- */
+  .search { position: relative; max-width: 620px; margin: 32px auto 0; text-align: left; }
+  .bar {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--card); border: 1px solid var(--line); border-radius: 999px;
+    padding: 14px 22px; box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 8px 28px rgba(60,30,60,.07);
+  }
+  .search.open .bar { border-radius: 26px 26px 0 0; border-bottom-color: transparent; }
+  .bar svg { flex: none; color: var(--dim); }
+  #q {
+    flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; color: var(--ink);
+    font: 18px var(--sans);
+  }
+  .bar:focus-within { border-color: var(--accent); }
+  .search.open .bar:focus-within { border-color: var(--accent); border-bottom-color: transparent; }
+
+  #list {
+    list-style: none; margin: 0; padding: 6px 0 10px; position: absolute; left: 0; right: 0; z-index: 5;
+    background: var(--card); border: 1px solid var(--accent); border-top: 1px solid var(--line);
+    border-radius: 0 0 26px 26px; box-shadow: 0 16px 34px rgba(60,30,60,.12); display: none;
+  }
+  .search.open #list { display: block; }
+  #list li {
+    display: flex; align-items: baseline; gap: 12px; padding: 10px 22px; cursor: pointer;
+  }
+  #list li[aria-selected="true"], #list li:hover { background: color-mix(in srgb, var(--accent) 9%, transparent); }
+  #list .s { flex: 1; color: var(--soft); }
+  #list .s b { color: var(--ink); font-weight: 600; }
+  #list .n { font: 12px var(--mono); color: var(--dim); white-space: nowrap; }
+  #list .dym { color: var(--dim); font-style: italic; }
+  #list .dym b { color: var(--accent); font-style: normal; }
+
+  /* ---------- result ---------- */
+  #result { padding: 28px 0 72px; }
+  .meta { font: 12px var(--mono); color: var(--dim); margin: 0 0 14px; }
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 18px;
+    padding: clamp(20px, 4vw, 34px); animation: rise .45s ease both;
+  }
+  @keyframes rise { from { opacity: 0; transform: translateY(10px); } }
+  .card h2 { font: 400 clamp(28px, 5vw, 40px)/1.1 var(--serif); margin: 0 0 8px; }
+  .card h2 em { color: var(--accent); }
+  .card .sub { color: var(--soft); margin: 0 0 24px; max-width: 620px; }
+  .stats { display: flex; flex-wrap: wrap; gap: 14px 34px; margin: 0 0 26px; }
+  .stat b { display: block; font: 400 30px/1.1 var(--serif); }
+  .stat span { font: 11px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
+  .note { font-size: 13px; color: var(--dim); margin: 22px 0 0; }
+  .more { margin-top: 26px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .more button {
+    font: 13px var(--sans); color: var(--soft); background: transparent; border: 1px solid var(--line);
+    border-radius: 999px; padding: 7px 14px; cursor: pointer;
+  }
+  .more button:hover { border-color: var(--accent); color: var(--ink); }
+
+  /* builder timeline */
+  .tl { list-style: none; padding: 0; margin: 0; position: relative; }
+  .tl::before { content: ""; position: absolute; left: 108px; top: 6px; bottom: 6px; width: 2px; background: var(--line); }
+  .tl li { display: grid; grid-template-columns: 96px 24px 1fr; gap: 0 0; padding: 7px 0; align-items: start; }
+  .tl time { font: 12px/1.6 var(--mono); color: var(--dim); text-align: right; padding-right: 10px; white-space: nowrap; }
+  .tl .dot { width: 12px; height: 12px; border-radius: 50%; margin: 5px 0 0 7px; background: var(--card); border: 2px solid var(--c, var(--accent)); position: relative; z-index: 1; }
+  .tl .big .dot { background: var(--c, var(--accent)); }
+  .tl p { margin: 0; color: var(--soft); }
+  .tl .big p { color: var(--ink); font-weight: 600; }
+  .tl small { display: block; color: var(--dim); font-size: 13px; font-weight: 400; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--soft); margin: 0 0 16px; }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
+
+  .qbars { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; align-items: end; height: 170px; margin-top: 30px; }
+  .qbars div { display: flex; flex-direction: column; justify-content: flex-end; height: 100%; text-align: center; }
+  .qbars .b { background: var(--accent); border-radius: 6px 6px 2px 2px; min-height: 2px; }
+  .qbars b { font: 400 22px var(--serif); margin-bottom: 6px; }
+  .qbars span { font: 11px var(--mono); color: var(--dim); margin-top: 8px; }
+
+  /* sleep bars */
+  .sleep { display: grid; grid-template-columns: 44px 1fr; gap: 10px 12px; align-items: center; }
+  .sleep .d { font: 12px var(--mono); color: var(--dim); }
+  .track { position: relative; height: 26px; border-radius: 6px; background: color-mix(in srgb, var(--line) 45%, transparent); }
+  .track .off { position: absolute; top: 0; bottom: 0; border-radius: 6px; background: color-mix(in srgb, var(--beauty) 70%, transparent); }
+  .track .off.hi { background: var(--beauty); }
+  .track .lab { position: absolute; top: 50%; transform: translateY(-50%); font: 11px var(--mono); color: var(--ink); white-space: nowrap; }
+  .axis { grid-column: 2; position: relative; height: 16px; font: 11px var(--mono); color: var(--dim); }
+  .axis span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
+  .axis span:first-child { transform: none; }
+  .axis span:last-child { transform: translateX(-100%); }
+
+  /* week */
+  .week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; align-items: end; }
+  .week .col { display: flex; flex-direction: column; justify-content: flex-end; height: 200px; text-align: center; cursor: pointer; border-radius: 10px; padding: 4px; }
+  .week .col:focus-visible { outline: 2px solid var(--accent); }
+  .week .b { background: color-mix(in srgb, var(--career) 45%, transparent); border-radius: 6px 6px 2px 2px; }
+  .week .col.top .b, .week .col.sel .b { background: var(--career); }
+  .week b { font: 400 18px var(--serif); margin-bottom: 4px; }
+  .week span { font: 11px var(--mono); color: var(--dim); margin-top: 8px; }
+  .dayline { min-height: 52px; margin: 18px 0 0; padding: 14px 16px; border-radius: 12px; background: color-mix(in srgb, var(--career) 10%, transparent); color: var(--soft); }
+  .dayline b { color: var(--ink); }
+
+  /* hours */
+  .hours { display: grid; grid-template-columns: repeat(24, 1fr); gap: 3px; align-items: end; height: 190px; }
+  .hours .h { border-radius: 3px 3px 1px 1px; cursor: pointer; min-height: 3px; }
+  .hours .h:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
+  .hours .h.sel { outline: 2px solid var(--ink); outline-offset: 1px; }
+  .hx { display: grid; grid-template-columns: repeat(24, 1fr); gap: 3px; font: 10px var(--mono); color: var(--dim); text-align: left; margin-top: 6px; }
+  .hx span { white-space: nowrap; overflow: visible; }
+  .hourline { min-height: 52px; margin: 18px 0 0; padding: 14px 16px; border-radius: 12px; background: color-mix(in srgb, var(--accent) 8%, transparent); color: var(--soft); }
+  .hourline b { color: var(--ink); }
+  .parts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 20px; }
+  .parts div { border-top: 3px solid var(--c); padding-top: 8px; font-size: 14px; color: var(--soft); }
+  .parts b { display: block; color: var(--ink); font-weight: 600; }
+
+  /* explorer */
+  .mbars { display: grid; grid-template-columns: repeat(9, 1fr); gap: 8px; align-items: end; height: 160px; }
+  .mbars div { display: flex; flex-direction: column; justify-content: flex-end; height: 100%; text-align: center; }
+  .mbars .b { background: var(--places); border-radius: 5px 5px 2px 2px; }
+  .mbars b { font: 12px var(--mono); margin-bottom: 4px; color: var(--soft); }
+  .mbars span { font: 11px var(--mono); color: var(--dim); margin-top: 6px; }
+
+  /* horizontal bars */
+  .hb { display: grid; grid-template-columns: minmax(90px, 150px) 1fr auto; gap: 10px 12px; align-items: center; }
+  .hb .l { font-size: 14px; color: var(--soft); }
+  .hb .t { height: 16px; border-radius: 4px; background: color-mix(in srgb, var(--line) 45%, transparent); overflow: hidden; }
+  .hb .t i { display: block; height: 100%; border-radius: 4px; background: var(--c, var(--accent)); }
+  .hb .v { font: 12px var(--mono); color: var(--dim); text-align: right; }
+  .hb .top { color: var(--ink); font-weight: 600; }
+  .cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 24px; }
+  .cols div { border-top: 3px solid var(--places); padding-top: 10px; font-size: 14px; color: var(--soft); }
+  .cols b { display: block; color: var(--ink); }
+  .cols q { display: block; margin-top: 8px; font: 12px var(--mono); color: var(--dim); }
+  .nights { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+  .nights li { display: grid; grid-template-columns: 70px 1fr; gap: 12px; padding: 12px 14px; border-radius: 12px; background: color-mix(in srgb, var(--beauty) 8%, transparent); }
+  .nights time { font: 12px/1.6 var(--mono); color: var(--dim); }
+  .nights b { display: block; }
+  .nights span { font-size: 13px; color: var(--dim); }
+  .nights .fin { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+  .book { display: grid; grid-template-columns: 130px 1fr; gap: 24px; align-items: center; }
+  .cover { aspect-ratio: 2 / 3; border-radius: 4px 10px 10px 4px; background: linear-gradient(160deg, var(--accent), var(--beauty)); color: #fff;
+    display: flex; flex-direction: column; justify-content: space-between; padding: 12px 10px; box-shadow: 0 10px 24px rgba(60,30,60,.18); }
+  .cover b { font: 400 17px/1.1 var(--serif); }
+  .cover span { font: 9px var(--mono); letter-spacing: .1em; text-transform: uppercase; opacity: .85; }
+  .typo { display: grid; gap: 8px; }
+  .typo div { display: flex; align-items: baseline; gap: 10px; font: 14px var(--mono); }
+  .typo s { color: var(--accent); text-decoration-thickness: 2px; }
+  .typo em { color: var(--soft); font-style: normal; }
+  .typo small { margin-left: auto; color: var(--dim); }
+  #list { max-height: min(62vh, 520px); overflow-y: auto; }
+  @media (max-width: 560px) {
+    .cols { grid-template-columns: 1fr; }
+    .book { grid-template-columns: 100px 1fr; gap: 16px; }
+    .hb { grid-template-columns: 96px 1fr auto; }
+  }
+
+  /* ---------- motion ---------- */
+  .card .qbars .b, .card .week .b, .card .mbars .b, .card .hours .h {
+    transform-origin: bottom; transition: transform .9s cubic-bezier(.2,.8,.2,1) var(--d, 0s);
+  }
+  .card .hb .t i, .card .track .off { transform-origin: left; transition: transform .9s cubic-bezier(.2,.8,.2,1) var(--d, 0s); }
+  .card .tl li, .card .nights li, .card .reveal { transition: opacity .5s ease var(--d, 0s), transform .5s ease var(--d, 0s); }
+  .card.pre .qbars .b, .card.pre .week .b, .card.pre .mbars .b, .card.pre .hours .h { transform: scaleY(0); }
+  .card.pre .hb .t i, .card.pre .track .off { transform: scaleX(0); }
+  .card.pre .tl li, .card.pre .nights li, .card.pre .reveal { opacity: 0; transform: translateY(8px); }
+  .card .track .lab { transition: opacity .4s ease calc(var(--d, 0s) + .6s); }
+  .card.pre .track .lab { opacity: 0; }
+
+  /* ---------- photo ---------- */
+  .hero { margin: calc(-1 * clamp(20px, 4vw, 34px)) calc(-1 * clamp(20px, 4vw, 34px)) 26px; }
+  .hero .frame { overflow: hidden; border-radius: 18px 18px 0 0; aspect-ratio: 2.4 / 1; background: var(--line); }
+  .hero img { width: 100%; height: 100%; object-fit: cover; display: block; transform: scale(1.12); animation: drift 14s ease-out forwards; transition: opacity .8s ease; }
+  .card.pre .hero img { opacity: 0; }
+  @keyframes drift { from { transform: scale(1.14) translate(1.5%, 1%); } to { transform: scale(1.02) translate(0, 0); } }
+  .hero figcaption { font-size: 11px; color: var(--dim); padding: 6px clamp(20px, 4vw, 34px) 0; }
+  .hero figcaption a { color: inherit; }
+  .art p { margin: 0; font: italic 400 18px/1.3 var(--serif); color: var(--soft); padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .art { grid-template-columns: repeat(2, 1fr) !important; column-gap: 24px; }
+  .cover { animation: float 5s ease-in-out infinite; }
+  @keyframes float { 50% { transform: translateY(-6px) rotate(-1.5deg); } }
+
+  /* ---------- media ---------- */
+  .vids { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px; margin-top: 18px; }
+  .vids figure { margin: 0; }
+  .vids video, .vids img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 12px; display: block; background: var(--line); }
+  .vids figcaption { font-size: 13px; color: var(--soft); margin-top: 6px; }
+  .vids figcaption b { color: var(--ink); font-weight: 600; }
+  h3 { font: 500 11px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--dim); margin: 34px 0 0; }
+  .pitch { display: grid; grid-template-columns: 220px 1fr; gap: 18px; align-items: center; margin: 0 0 26px; padding: 14px; border-radius: 14px; background: color-mix(in srgb, var(--places) 9%, transparent); }
+  .yt { position: relative; aspect-ratio: 16 / 9; border-radius: 10px; overflow: hidden; background: #000; border: 0; padding: 0; cursor: pointer; display: block; width: 100%; }
+  .yt img { width: 100%; height: 100%; object-fit: cover; opacity: .85; display: block; }
+  .yt span { position: absolute; inset: 0; display: grid; place-items: center; color: #fff; font-size: 34px; text-shadow: 0 2px 12px rgba(0,0,0,.5); }
+  .yt iframe { width: 100%; height: 100%; border: 0; display: block; }
+  .pitch p { margin: 0; color: var(--soft); font-size: 14px; }
+  .pitch b { display: block; color: var(--ink); font-size: 16px; }
+  .photos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 24px; }
+  .photos figure { margin: 0; }
+  .photos img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 12px; display: block; }
+  .photos figcaption { font-size: 12px; color: var(--dim); margin-top: 6px; }
+  .art { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .art figure { margin: 0; }
+  .art img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 10px; display: block; }
+  .art figcaption { font: italic 400 15px/1.3 var(--serif); color: var(--soft); margin-top: 6px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .chips span { font: 12px var(--mono); color: var(--soft); border: 1px solid var(--line); border-radius: 999px; padding: 5px 11px; }
+  .bookvid { width: 100%; border-radius: 12px; display: block; background: var(--line); }
+  .play {
+    font: 500 13px var(--sans); color: var(--ink); background: transparent; border: 1px solid var(--accent);
+    border-radius: 999px; padding: 7px 16px; cursor: pointer; margin: 0 0 16px;
+  }
+  .play:hover { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+  .clock { font: 400 40px/1 var(--serif); color: var(--accent); min-width: 4.5ch; display: inline-block; }
+
+  @media (max-width: 560px) {
+    .pitch { grid-template-columns: 1fr; }
+    .photos { grid-template-columns: repeat(2, 1fr); }
+    .art { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero img, .cover { animation: none !important; }
+    .card *, .card.pre * { transition: none !important; transform: none !important; opacity: 1 !important; }
+  }
+
+  footer { text-align: center; font: 11px var(--mono); letter-spacing: .08em; color: var(--dim); padding: 0 var(--gut) 40px; }
+  body:not(.has-result) footer { position: fixed; bottom: 0; left: 0; right: 0; }
+
+  @media (max-width: 560px) {
+    .tl::before { left: 87px; }
+    .tl li { grid-template-columns: 76px 22px 1fr; }
+    .tl time { font-size: 11px; }
+    .parts { grid-template-columns: repeat(2, 1fr); }
+    .week { gap: 4px; }
+    .week b { font-size: 15px; }
+    .hours { gap: 1px; }
+    .hx { gap: 1px; }
+    .mbars { gap: 4px; }
+    .mbars b { font-size: 10px; }
+    #q { font-size: 16px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .card { animation: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="kicker">Search History · a year of me · Oct 2025 – Sep 2026</div>
+    <h1>What does a year of <em>searching</em> say about me?</h1>
+    <p class="lede">105,092 pages, 19,626 searches, 1,974 videos and 297 files from two Google accounts, cleaned and modeled into answers.</p>
+
+    <div class="search" id="search">
+      <div class="bar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="q" type="text" autocomplete="off" spellcheck="false"
+               role="combobox" aria-expanded="false" aria-controls="list" aria-autocomplete="list"
+               aria-label="Search what my data says about me">
+      </div>
+      <ul id="list" role="listbox" aria-label="Suggestions"></ul>
+    </div>
+  </header>
+
+  <main id="result" aria-live="polite"></main>
+</div>
+<footer>Prototype · numbers from my Google Takeout · not affiliated with Google</footer>
+
+<script>
+const PREFIX = "suhani is ";
+
+// ---------- data (computed by the pipeline; hard-coded for the prototype) ----------
+const BUILDER = [
+  { d: "Aug 11 '25", t: "Pitched ClipCurator", s: "a 9-minute pitch video, before any code", c: "--places", big: true },
+  { d: "Sep 3",      t: "First Python notebook", s: "numbers and strings", c: "--career", big: true },
+  { d: "Sep 15–24",  t: "Conditionals → loops", c: "--career" },
+  { d: "Oct 6–27",   t: "Functions → dictionaries → sets → files", c: "--career" },
+  { d: "Nov 17",     t: "Lambdas, map and filter", c: "--career" },
+  { d: "Dec 3",      t: "Pandas", c: "--career" },
+  { d: "Dec 17",     t: "Python final exam", s: "46 notebooks in one semester", c: "--career", big: true },
+  { d: "Jan 21 '26", t: "10 Days of JavaScript", c: "--beauty", big: true },
+  { d: "Feb 4",      t: "First product brief", c: "--food" },
+  { d: "Feb 23–25",  t: "DOM → React", c: "--beauty" },
+  { d: "Mar 2",      t: "First GitHub link", c: "--beauty" },
+  { d: "Mar 19–21",  t: "Product requirements → feature prioritization", c: "--food" },
+  { d: "Mar 26–27",  t: "Backend routes, server.js, SQL", c: "--beauty" },
+  { d: "Apr 5",      t: "TypeScript and a design doc", c: "--beauty" },
+  { d: "Apr 8–22",   t: "Prototype → north star metric → MVP", c: "--food", big: true },
+  { d: "Sep 28–30",  t: "The build sprint", s: "my three most productive days of the year", c: "--accent", big: true },
+];
+const BUILD_Q = [["Oct–Dec", 0], ["Jan–Mar", 8], ["Apr–Jun", 129], ["Jul–Sep", 3755]];
+
+// bedtime / first activity, in hours after midnight of the night (wake is next day)
+const SLEEP = [
+  ["Mon", 2.00, 12.77], ["Tue", 1.62, 12.55], ["Wed", 1.67, 12.53], ["Thu", 0.93, 12.17],
+  ["Fri", 1.83, 13.08], ["Sat", 2.63, 13.62], ["Sun", 2.28, 11.10],
+];
+
+// median productive actions per day (school, career, building, planning, files)
+const WEEK = [
+  ["Mon", 28, "<b>Finishing files.</b> I save more school files on Mondays than any other day, and work peaks at 11 PM."],
+  ["Tue", 45, "<b>Career + building.</b> Job hunting most of the day, work peaks at 8 PM."],
+  ["Wed", 35, "<b>Build day.</b> 2.3× my usual building, coding peaks at 5 PM."],
+  ["Thu", 59, "<b>My most productive day.</b> The most career work and calendar checks of the week, and my earliest bedtime after it."],
+  ["Fri", 16, "<b>Catch-up, then out.</b> School at 4 PM, then the quietest evening of the week."],
+  ["Sat", 12, "<b>Off the clock.</b> School nearly disappears and it's my latest night (2:38 AM)."],
+  ["Sun", 27, "<b>Reset day.</b> School and career prep for the week, work peaks at 7 PM."],
+];
+
+// searches per hour and the top topic in that hour
+const HOURS = [
+  [1299,"fashion","Fashion 30%, beauty 23%"],[1050,"fashion","Fashion 36%, beauty 24%"],[754,"fashion","Fashion 31%, beauty 26%"],
+  [394,"beauty","Beauty 33%, overtaking fashion"],[152,"fashion","Fashion 53%"],[104,"fashion","Fashion 55%"],
+  [39,"fashion","Fashion 31%, career 25%"],[61,"food","Food 57%: brunch plans"],[51,"career","Career 22%, beauty 22%"],
+  [92,"food","Food 35%"],[253,"beauty","Beauty 23%, places 16%"],[421,"food","Food 32%, places 26%"],
+  [757,"places","Places 33%: NYC restaurants and neighborhoods"],[851,"places","Places 32%, food 19%"],[980,"fashion","Fashion 29%, places 23%"],
+  [1218,"places","Places 23%, fashion 22%"],[1260,"fashion","Fashion 24%, places 23%"],[1247,"places","Places 28%, fashion 27%"],
+  [1256,"places","Places 23%, beauty 20%"],[1394,"fashion","Fashion 28%, places 19%"],[1377,"fashion","Fashion 29%, places 20%"],
+  [1519,"fashion","Fashion 36%: the evening peak"],[1502,"fashion","Fashion 28%, places 23%"],[1595,"fashion","Fashion 32%, food 16%: my busiest hour"],
+];
+
+const CITIES = [["Austin", 722], ["New York", 193], ["Chicago", 51], ["Dallas", 42], ["London", 23], ["Paris", 10]];
+const NYC = [
+  ["Living", "studio apartments in the West Village, East Village and Brooklyn", "which nyc neighborhood has 22 year olds"],
+  ["Working", "the Spotify, Pinterest and Netflix NYC offices", "new grad marketing jobs in nyc"],
+  ["Eating", "brunch, coffee shops and restaurants", "which nyc coffee shop just opened here in austin"],
+];
+
+// nights I stayed up, labeled from what the data shows that day
+const LATE = [
+  ["Nov 16", "all-nighter", "Recruiting marathon, between two of my biggest career days"],
+  ["Nov 21", "all-nighter", "Recruiting marathon"],
+  ["Dec 9",  "online until 8:00 AM", "Finals"],
+  ["Dec 12", "online until 6:13 AM", "Finals"],
+  ["Dec 15", "online until 6:51 AM", "Finals"],
+  ["Feb 2",  "all-nighter", "A long night"],
+  ["Aug 29", "all-nighter", "Writing my study-abroad scholarship application"],
+  ["Sep 27", "all-nighter", "The night before the build sprint"],
+];
+
+const BAKES = [["Chocolate chip cookies", 43, 83], ["Banana bread", 22, 38], ["Brownies", 18, 35], ["Muffins", 15, 30], ["Tres leches", 7, 11]];
+
+const TYPOS = [["ausitn", "austin", 21], ["choclate", "chocolate", 7], ["abraod", "abroad", 5], ["chcolate", "chocolate", 4], ["mccoms", "mccombs", 4], ["frwncg toast", "french toast", 3], ["resturant", "restaurant", 3]];
+
+const ROLES = [["Marketing", 83], ["Business & ops", 56], ["Product management", 39], ["Tech", 30], ["Consulting", 20]];
+
+const MARKETING = [["", "Starbucks"], ["", "Owala"], ["", "Liquid Death"], ["", "Athletic Brewing"], ["", "Wendy's"]];
+const ART = [
+  ["coexistence-of-both-my-worlds", "Coexistence of Both My Worlds"],
+  ["navigating-indian-american-identity", "Navigating Indian-American Identity"],
+  ["embracing-cultural-identity", "Embracing Cultural Identity"],
+  ["traditionalism-versus-modernism", "Traditionalism Versus Modernism"],
+  ["packing-home", "Packing Home"],
+  ["diya-thali", "Diya Thali"],
+];
+const ART_SEARCHES = ["lips drawing tutorial", "easy eye drawing", "barbie doll dress drawing", "sunflower painting van gogh", "watercolor pencils tutorial", "easy flower painting", "studio art minor ut austin"];
+
+// free photos from Unsplash (unsplash.com/license), credited on each card
+const PHOTOS = {
+  "a builder": ["1555066931-4365d14bab8c", "Arnold Francisca", "clark_fransa", "Code on a laptop screen"],
+  "a night owl": ["1657731641319-f93235c6a47f", "Birti", "birtiishar", "City lights through a window at night"],
+  "most productive on thursdays": ["1558478551-be297c7bb253", "Alexa Williams", "glamorousplanning", "Writing in a planner"],
+  "in beauty mode at 3 am": ["1596462502278-27bfdc403348", "Shamblen Studios", "shamblenstudios", "Pink makeup brushes"],
+  "dreaming of nyc": ["1496588152823-86ff7695e68f", "Luca Bravo", "lucabravo", "The Brooklyn Bridge and Manhattan"],
+  "a marketer": ["1690733546551-1007bc0a3414", "Fiona Murray-deGraaff", "fionamurrayphoto", "A mood board of photos"],
+  "a networker": ["1604881988758-f76ad2f7aac1", "Priscilla Du Preez", "priscilladupreez", "Two people talking over coffee"],
+  "up all night for what matters": ["1623599008581-79de6f90594e", "Anis Rahman", "ar_graphics_", "A desk lamp on at night"],
+  "an artist": ["1510832842230-87253f48d74f", "Rifqi Ali Ridho", "rifqialiridho", "A paintbrush dipping into paint"],
+  "a baker": ["1499636136210-6f4ee915583e", "Jennifer Pallian", "foodess", "Chocolate chip cookies"],
+  "a published author": ["1457369804613-52c61a468e7d", "Patrick Tomasso", "impatrickt", "Open books"],
+  "an explorer": ["1528109966604-5a6a4a964e8d", "Matthew Kwong", "mattykwong1", "Someone browsing on a laptop"],
+  "always misspelling austin": ["1521225753516-46438a76f25a", "Andrew Seaman", "amseaman", "A typewriter"],
+};
+const photo = key => {
+  const ph = PHOTOS[key];
+  if (!ph) return "";
+  const [id, by, user, alt] = ph;
+  const src = w => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&h=${Math.round(w * .42)}&q=70`;
+  const ref = "?utm_source=search_history&utm_medium=referral";
+  return `<figure class="hero">
+      <div class="frame"><img src="${src(1200)}" srcset="${src(700)} 700w, ${src(1200)} 1200w, ${src(1800)} 1800w" sizes="(max-width: 900px) 100vw, 860px" alt="${alt}"></div>
+      <figcaption>Photo by <a href="https://unsplash.com/@${user}${ref}" target="_blank" rel="noopener">${by}</a> on <a href="https://unsplash.com/${ref}" target="_blank" rel="noopener">Unsplash</a></figcaption>
+    </figure>`;
+};
+
+const EXPLORE = [["Jan",147],["Feb",126],["Mar",112],["Apr",81],["May",64],["Jun",65],["Jul",62],["Aug",31],["Sep",56]];
+
+const ANSWERS = [
+  { key: "a builder", n: "0 → 3,755", render: renderBuilder },
+  { key: "a night owl", n: "1:54 AM", render: renderSleep },
+  { key: "most productive on thursdays", n: "59 / day", render: renderWeek },
+  { key: "in beauty mode at 3 am", n: "24 hours", render: renderHours },
+  { key: "dreaming of nyc", n: "193 searches", render: renderNYC },
+  { key: "a marketer", n: "#1 role", render: renderMarketer },
+  { key: "a networker", n: "8,920 profiles", render: renderNetworker },
+  { key: "up all night for what matters", n: "8 nights", render: renderLate },
+  { key: "an artist", n: "6 pieces", render: renderArtist },
+  { key: "a published author", n: "1 book", render: renderAuthor },
+  { key: "a baker", n: "43 ways", render: renderBaker },
+  { key: "an explorer", n: "752 channels", render: renderExplorer },
+  { key: "always misspelling austin", n: "21 times", render: renderTypos },
+];
+
+// ---------- search box ----------
+const q = document.getElementById("q");
+const list = document.getElementById("list");
+const search = document.getElementById("search");
+const result = document.getElementById("result");
+let shown = [], active = -1, typing = null;
+
+function lev(a, b) {
+  const m = Array.from({ length: a.length + 1 }, (_, i) => [i]);
+  for (let j = 1; j <= b.length; j++) m[0][j] = j;
+  for (let i = 1; i <= a.length; i++)
+    for (let j = 1; j <= b.length; j++)
+      m[i][j] = Math.min(m[i-1][j] + 1, m[i][j-1] + 1, m[i-1][j-1] + (a[i-1] === b[j-1] ? 0 : 1));
+  return m[a.length][b.length];
+}
+
+function rest() {
+  const v = q.value.toLowerCase().replace(/\s+/g, " ").trimStart();
+  return v.startsWith(PREFIX) ? v.slice(PREFIX.length) : v.startsWith("suhani is") ? "" : v;
+}
+
+function suggest(force = false) {
+  const r = rest().trim();
+  let items = ANSWERS.filter(a => a.key.startsWith(r) || (r && a.key.includes(r)));
+  let dym = null;
+  if (!items.length && r.length > 2) {
+    const best = ANSWERS.map(a => [lev(r, a.key.slice(0, Math.max(r.length, 4))), a]).sort((x, y) => x[0] - y[0])[0];
+    if (best[0] <= Math.max(2, Math.floor(r.length / 3))) { dym = best[1]; items = [best[1]]; }
+  }
+  shown = items; active = items.length ? 0 : -1;
+  list.innerHTML = items.map((a, i) => {
+    const typed = a.key.startsWith(r) ? r.length : 0;
+    const label = dym
+      ? `<span class="s dym">Did you mean: <b>${a.key}</b>?</span>`
+      : `<span class="s">suhani is ${a.key.slice(0, typed)}<b>${a.key.slice(typed)}</b></span>`;
+    return `<li role="option" id="opt${i}" aria-selected="${i === active}" data-i="${i}">${label}<span class="n">${a.n}</span></li>`;
+  }).join("");
+  const open = items.length > 0 && (force || document.activeElement === q);
+  search.classList.toggle("open", open);
+  q.setAttribute("aria-expanded", open);
+  q.setAttribute("aria-activedescendant", active >= 0 ? `opt${active}` : "");
+}
+
+function highlight(i) {
+  active = i;
+  [...list.children].forEach((li, k) => li.setAttribute("aria-selected", k === i));
+  q.setAttribute("aria-activedescendant", `opt${i}`);
+}
+
+function choose(a) {
+  stopTyping();
+  q.value = PREFIX + a.key;
+  search.classList.remove("open");
+  q.setAttribute("aria-expanded", "false");
+  q.blur();
+  document.body.classList.add("has-result");
+  const others = ANSWERS.filter(o => o !== a)
+    .map(o => `<button type="button" data-k="${o.key}">suhani is ${o.key}</button>`).join("");
+  result.innerHTML = `<p class="meta">Results for “suhani is ${a.key}”</p><article class="card pre">${photo(a.key)}${a.render()}<div class="more">${others}</div></article>`;
+  result.querySelectorAll(".more button").forEach(b =>
+    b.addEventListener("click", () => choose(ANSWERS.find(o => o.key === b.dataset.k))));
+  if (dayTimer) { clearInterval(dayTimer); dayTimer = null; }
+  wire();
+  animate(result.querySelector(".card"));
+  history.replaceState(null, "", "#" + a.key.replace(/ /g, "-"));
+  result.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+q.addEventListener("focus", () => { stopTyping(); if (!q.value) q.value = PREFIX; suggest(); });
+q.addEventListener("input", suggest);
+q.addEventListener("blur", () => setTimeout(() => search.classList.remove("open"), 120));
+q.addEventListener("keydown", e => {
+  if (!shown.length) return;
+  if (e.key === "ArrowDown") { e.preventDefault(); highlight((active + 1) % shown.length); }
+  else if (e.key === "ArrowUp") { e.preventDefault(); highlight((active - 1 + shown.length) % shown.length); }
+  else if (e.key === "Enter" && active >= 0) { e.preventDefault(); choose(shown[active]); }
+  else if (e.key === "Escape") { search.classList.remove("open"); }
+});
+list.addEventListener("mousedown", e => {
+  const li = e.target.closest("li"); if (li) { e.preventDefault(); choose(shown[+li.dataset.i]); }
+});
+
+// type "suhani is " on load, then show every suggestion
+function stopTyping() { if (typing) { clearTimeout(typing); typing = null; } }
+function autoType() {
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) { q.value = PREFIX; return; }
+  let i = 0;
+  const step = () => {
+    q.value = PREFIX.slice(0, ++i);
+    if (i < PREFIX.length) typing = setTimeout(step, 90);
+    else { typing = null; q.focus(); suggest(true); }
+  };
+  typing = setTimeout(step, 700);
+}
+
+// ---------- answers ----------
+const css = v => `var(${v})`;
+
+function renderBuilder() {
+  const max = Math.max(...BUILD_Q.map(x => x[1]));
+  return `
+    <h2>From my first line of Python to <em>shipping my own products</em>, in one year.</h2>
+    <p class="sub">I pitched a product before I could code. Then I taught myself to build one. Every step below is dated from the files I saved.</p>
+    <div class="legend">
+      <span><i style="background:var(--places)"></i>Pitch</span>
+      <span><i style="background:var(--career)"></i>Python</span>
+      <span><i style="background:var(--beauty)"></i>Web dev</span>
+      <span><i style="background:var(--food)"></i>Product</span>
+      <span><i style="background:var(--accent)"></i>My own projects</span>
+    </div>
+    <ol class="tl">${BUILDER.map(s => `
+      <li class="${s.big ? "big" : ""}" style="--c:${css(s.c)}">
+        <time>${s.d}</time><span class="dot"></span>
+        <p>${s.t}${s.s ? `<small>${s.s}</small>` : ""}</p>
+      </li>`).join("")}
+    </ol>
+    <div class="qbars" role="img" aria-label="Visits to my own projects by quarter: 0, 8, 129, then 3,755">
+      ${BUILD_Q.map(([l, v]) => `<div><b>${v.toLocaleString()}</b><div class="b" style="height:${(v / max) * 100}%"></div><span>${l}</span></div>`).join("")}
+    </div>
+    <p class="note">Visits to my own projects (my site, local dev servers, GitHub, Render) by quarter.</p>`;
+}
+
+function renderSleep() {
+  const start = -3, end = 14; // 9 PM to 2 PM
+  const pos = h => ((h - start) / (end - start)) * 100;
+  const fmt = h => { const x = ((h % 24) + 24) % 24; const hh = Math.floor(x), mm = Math.round((x - hh) * 60);
+    return `${hh % 12 || 12}:${String(mm).padStart(2, "0")} ${hh < 12 ? "AM" : "PM"}`; };
+  return `
+    <h2>I go offline at <em>1:54 AM</em>.</h2>
+    <p class="sub">Each bar is my typical night: from the last thing I did online to the first thing the next day, across my laptop and phone.</p>
+    <div class="stats">
+      <div class="stat"><b>1:54 AM</b><span>typical bedtime</span></div>
+      <div class="stat"><b>29%</b><span>of nights past 3 AM</span></div>
+      <div class="stat"><b>6–8 AM</b><span>still online during finals</span></div>
+    </div>
+    <div class="sleep" role="img" aria-label="Typical offline window by night of the week">
+      ${SLEEP.map(([d, b, w]) => `
+        <span class="d">${d}</span>
+        <div class="track"><div class="off ${d === "Thu" || d === "Sat" ? "hi" : ""}" style="left:${pos(b)}%;width:${pos(w) - pos(b)}%"></div>
+          <span class="lab" style="left:calc(${pos(b)}% + 8px)">${fmt(b)} → ${fmt(w)}</span></div>`).join("")}
+      <div class="axis">${[[-3, "9 PM"], [0, "midnight"], [6, "6 AM"], [12, "noon"], [14, "2 PM"]].map(([h, l]) => `<span style="left:${pos(h)}%">${l}</span>`).join("")}</div>
+    </div>
+    <p class="sub" style="margin:22px 0 0">Thursday night is my earliest (after my busiest day). Saturday is my latest. Sunday is my shortest rest, because Monday starts early.</p>
+    <p class="note">“Offline” is the longest gap in activity each night, not measured sleep.</p>`;
+}
+
+function renderWeek() {
+  const max = Math.max(...WEEK.map(x => x[1]));
+  return `
+    <h2>Thursday is when I <em>get things done</em>.</h2>
+    <p class="sub">Productive actions per day (school, career, building, planning and finished files), typical day for each weekday. Tap a day.</p>
+    <div class="week">${WEEK.map(([d, v], i) => `
+      <div class="col ${d === "Thu" ? "top sel" : ""}" tabindex="0" role="button" data-i="${i}" aria-label="${d}: ${v} productive actions">
+        <b>${v}</b><div class="b" style="height:${(v / max) * 100}%"></div><span>${d}</span>
+      </div>`).join("")}
+    </div>
+    <p class="dayline" id="dayline">${WEEK[3][2]}</p>`;
+}
+
+function renderHours() {
+  const max = Math.max(...HOURS.map(x => x[0]));
+  const lab = h => `${h % 12 || 12} ${h < 12 ? "AM" : "PM"}`;
+  return `
+    <h2>At 3 AM, <em>beauty</em> takes over my searches.</h2>
+    <p class="sub">19,626 searches by hour. Height is how much I search, color is what I search most. Tap an hour, or play my day.</p>
+    <button class="play" type="button" id="playday">▶ Play my day</button>
+    <div class="legend">
+      <span><i style="background:var(--fashion)"></i>Fashion</span>
+      <span><i style="background:var(--beauty)"></i>Beauty</span>
+      <span><i style="background:var(--places)"></i>Places</span>
+      <span><i style="background:var(--food)"></i>Food</span>
+      <span><i style="background:var(--career)"></i>Career</span>
+    </div>
+    <div class="hours">${HOURS.map(([v, t], h) => `
+      <div class="h ${h === 3 ? "sel" : ""}" tabindex="0" role="button" data-h="${h}" aria-label="${lab(h)}: ${v} searches, mostly ${t}"
+           style="height:${(v / max) * 100}%;background:var(--${t})"></div>`).join("")}
+    </div>
+    <div class="hx">${HOURS.map((_, h) => `<span>${({0: "12 AM", 6: "6 AM", 12: "noon", 18: "6 PM"})[h] || ""}</span>`).join("")}</div>
+    <p class="hourline" id="hourline"><b>3 AM</b> · 394 searches · ${HOURS[3][2]}</p>
+    <div class="parts">
+      <div style="--c:var(--food)"><b>Morning</b>food and brunch</div>
+      <div style="--c:var(--places)"><b>Afternoon</b>places, and dreaming of NYC</div>
+      <div style="--c:var(--fashion)"><b>Evening</b>fashion, peaking at 9 PM</div>
+      <div style="--c:var(--beauty)"><b>After midnight</b>beauty mode</div>
+    </div>`;
+}
+
+function renderExplorer() {
+  const max = Math.max(...EXPLORE.map(x => x[1]));
+  return `
+    <h2>I watched <em>752 channels</em>, and 567 of them only once.</h2>
+    <p class="sub">I'm an explorer on YouTube: my top 10 channels are only 28% of what I watch. New channels I found each month, which drop as I get pickier.</p>
+    <div class="stats">
+      <div class="stat"><b>1,974</b><span>videos</span></div>
+      <div class="stat"><b>2</b><span>videos in a typical session</span></div>
+      <div class="stat"><b>27%</b><span>of plays are rewatches</span></div>
+    </div>
+    <div class="mbars" role="img" aria-label="New channels found per month, January to September: 147 down to 56">
+      ${EXPLORE.map(([m, v]) => `<div><b>${v}</b><div class="b" style="height:${(v / max) * 100}%"></div><span>${m}</span></div>`).join("")}
+    </div>`;
+}
+
+const hbars = (rows, color, topIdx = 0) => {
+  const max = Math.max(...rows.map(r => r[1]));
+  return `<div class="hb">${rows.map(([l, v], i) => `
+    <span class="l ${i === topIdx ? "top" : ""}">${l}</span>
+    <span class="t"><i style="width:${(v / max) * 100}%;--c:${color}"></i></span>
+    <span class="v">${v.toLocaleString()}</span>`).join("")}</div>`;
+};
+
+function renderNYC() {
+  return `
+    <h2>After Austin, the city I search most is <em>New York</em>.</h2>
+    <p class="sub">193 different NYC searches, more than Chicago, London, Paris or even Dallas, where I grew up. Most of them were in November and December, around 12 PM and 5 PM.</p>
+    ${hbars(CITIES, "var(--places)", 1)}
+    <div class="cols">${NYC.map(([h, d, ex]) => `<div><b>${h}</b>${d}<q>${ex}</q></div>`).join("")}</div>
+    <p class="note">Searches that mention each city by name, Oct 2025 – Sep 2026.</p>`;
+}
+
+function renderNetworker() {
+  return `
+    <h2>I look up <em>people</em> 6× more than I look up jobs.</h2>
+    <p class="sub">On LinkedIn I opened 8,920 profiles and my messages 1,510 times, against 1,339 job searches. The roles I looked at most:</p>
+    <div class="stats">
+      <div class="stat"><b>8,920</b><span>profiles viewed</span></div>
+      <div class="stat"><b>591</b><span>job postings read</span></div>
+      <div class="stat"><b>3</b><span>recruiting waves</span></div>
+    </div>
+    ${hbars(ROLES, "var(--career)")}
+    <p class="sub" style="margin:22px 0 0">I recruit in waves: October–November, January and July, mostly on Wednesdays and Thursdays, and almost never on Saturdays.</p>
+    <p class="note">Roles from the titles of job postings I opened. No company names.</p>`;
+}
+
+function renderLate() {
+  return `
+    <h2>I stay up all night for <em>things that matter</em>.</h2>
+    <p class="sub">My latest nights of the year weren't random. Each one lines up with something I was working toward.</p>
+    <ol class="nights">${LATE.map(([d, k, w]) => `
+      <li class="${w === "Finals" ? "fin" : ""}"><time>${d}</time><div><b>${w}</b><span>${k}</span></div></li>`).join("")}
+    </ol>
+    <p class="note">All-nighter = less than 3 hours offline that night across laptop and phone.</p>`;
+}
+
+function renderAuthor() {
+  return `
+    <div class="book">
+      <div class="cover" aria-hidden="true"><b>Girls Can Be Engineers, Too!</b><span>Suhani Tiwari</span></div>
+      <div>
+        <h2>Before any of this, I <em>wrote a book</em>.</h2>
+        <p class="sub" style="margin:0"><i>Girls Can Be Engineers, Too!</i> is on Amazon as an eBook and a paperback, in the US and the UK. Everything else on this page is what I learned and made next.</p>
+      </div>
+    </div>`;
+}
+
+function renderBaker() {
+  return `
+    <h2>I searched for chocolate chip cookies <em>43 different ways</em>.</h2>
+    <p class="sub">Every search, recipe page and video about the same dish merges into one bake, the same way my Spotify pipeline merged duplicate songs. Different ways I searched for each:</p>
+    ${hbars(BAKES.map(([l, u]) => [l, u]), "var(--food)")}
+    <p class="sub" style="margin:22px 0 0">One of my real questions to Google: <q>does nutmeg go in banana bread</q>.</p>`;
+}
+
+function renderTypos() {
+  return `
+    <h2>I misspelled the city I live in <em>21 times</em>.</h2>
+    <p class="sub">I type faster than I spell. My most common search typos:</p>
+    <div class="typo">${TYPOS.map(([w, r, n]) => `<div><s>${w}</s><em>→ ${r}</em><small>${n}×</small></div>`).join("")}</div>
+    <p class="note">Try it: misspell one of the answers in the search bar, like “suhani is a buildr”.</p>`;
+}
+
+
+function renderMarketer() {
+  return `
+    <h2>Marketing is the job I look at most, and the work I <em>keep making</em>.</h2>
+    <p class="sub">Marketing was my #1 role on job sites (83 postings), ahead of business, product and tech. My Drive is full of it too: HBR cases on Liquid Death, Athletic Brewing and Wendy's, a Starbucks deck and an Owala marketing analysis.</p>
+    <div class="stats">
+      <div class="stat"><b>83</b><span>marketing postings read</span></div>
+      <div class="stat"><b>4</b><span>HBR case write-ups</span></div>
+    </div>
+    <h3>Brands I've made projects about</h3>
+    <div class="chips">${MARKETING.map(([, t]) => `<span>${t}</span>`).join("")}</div>`;
+}
+
+function renderArtist() {
+  return `
+    <h2>My art is about living between <em>two worlds</em>.</h2>
+    <p class="sub">I'm still teaching myself: drawing eyes and lips, watercolor pencils, flowers. And I looked up the studio art minor at UT more than once.</p>
+    <h3>Pieces I've made</h3>
+    <div class="art">${ART.map(([, t]) => `<p class="reveal">${t}</p>`).join("")}</div>
+    <h3>What I searched to learn</h3>
+    <div class="chips">${ART_SEARCHES.map(q => `<span>${q}</span>`).join("")}</div>`;
+}
+
+function countUp(el) {
+  const raw = el.textContent.trim();
+  const m = raw.match(/^([\d,]+)(%?)$/);
+  if (!m) return;
+  const end = +m[1].replace(/,/g, ""), suffix = m[2], t0 = performance.now(), dur = 900;
+  const tick = now => {
+    const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+    el.textContent = Math.round(end * e).toLocaleString() + suffix;
+    if (k < 1) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+
+function animate(card) {
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const groups = [".qbars .b", ".week .b", ".mbars .b", ".hours .h", ".hb .t i", ".track .off", ".track .lab", ".tl li", ".nights li", ".reveal"];
+  groups.forEach(sel => card.querySelectorAll(sel).forEach((el, i) => el.style.setProperty("--d", `${i * (sel.includes("hours") ? 25 : 60)}ms`)));
+  if (!reduce) card.querySelectorAll(".stat b, .qbars b, .week b, .mbars b, .hb .v").forEach(countUp);
+  requestAnimationFrame(() => requestAnimationFrame(() => card.classList.remove("pre")));
+
+}
+
+let dayTimer = null;
+const playBtn = () => document.getElementById("playday");
+function stopDay() { if (dayTimer) { clearInterval(dayTimer); dayTimer = null; if (playBtn()) playBtn().textContent = "▶ Play my day"; } }
+function playDay() {
+  if (dayTimer) return stopDay();
+  const bars = [...result.querySelectorAll(".hours .h")];
+  let h = 0;
+  playBtn().textContent = "❚❚ Pause";
+  const step = () => {
+    bars[h].dispatchEvent(new Event("mouseenter"));
+    bars.forEach((b, k) => b.classList.toggle("sel", k === h));
+    const [v, , t] = HOURS[h];
+    document.getElementById("hourline").innerHTML = `<span class="clock">${h % 12 || 12} ${h < 12 ? "AM" : "PM"}</span><br>${v.toLocaleString()} searches · ${t}`;
+    h++;
+    if (h === 24) stopDay();
+  };
+  step();
+  dayTimer = setInterval(step, 650);
+}
+
+function wire() {
+  const lines = { week: document.getElementById("dayline"), hour: document.getElementById("hourline") };
+  result.querySelectorAll(".week .col").forEach(c => {
+    const pick = () => {
+      result.querySelectorAll(".week .col").forEach(x => x.classList.toggle("sel", x === c));
+      lines.week.innerHTML = WEEK[+c.dataset.i][2];
+    };
+    c.addEventListener("click", pick);
+    c.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(); } });
+  });
+  if (playBtn()) playBtn().addEventListener("click", playDay);
+  result.querySelectorAll(".hours .h").forEach(c => {
+    const pick = () => {
+      const h = +c.dataset.h, [v, , t] = HOURS[h];
+      result.querySelectorAll(".hours .h").forEach(x => x.classList.toggle("sel", x === c));
+      lines.hour.innerHTML = `<b>${h % 12 || 12} ${h < 12 ? "AM" : "PM"}</b> · ${v.toLocaleString()} searches · ${t}`;
+    };
+    c.addEventListener("click", () => { stopDay(); pick(); });
+    c.addEventListener("mouseenter", () => { if (!dayTimer) pick(); });
+    c.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(); } });
+  });
+}
+
+// deep link (#a-builder) or the typing intro
+const hash = decodeURIComponent(location.hash.slice(1)).replace(/-/g, " ");
+const start = ANSWERS.find(a => a.key === hash);
+if (start) choose(start); else autoType();
+</script>
+</body>
+</html>
