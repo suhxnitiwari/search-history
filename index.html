@@ -3,813 +3,965 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Search History | Suhani Tiwari</title>
+<title>8,730 Questions | Suhani Tiwari</title>
+<meta name="description" content="An attempt to reconstruct one person from the questions she asked the internet.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;1,6..96,400&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #FBF7F3;
-    --card: #FFFFFF;
-    --ink: #1F1A24;
-    --soft: #4D4555;
-    --dim: #857B8E;
-    --line: #E9E1E8;
-    --accent: #B4436C;
-    --fashion: #C2577A;
-    --beauty: #7C5CC4;
-    --places: #2A7FA8;
-    --food: #C98A00;
-    --career: #2F8F5F;
-    --serif: "Bodoni Moda", Georgia, serif;
-    --sans: "Instrument Sans", system-ui, sans-serif;
-    --mono: "JetBrains Mono", ui-monospace, monospace;
-    --gut: clamp(16px, 4vw, 48px);
+    --bg: #FBF7F3; --card: #FFFFFF; --ink: #1F1A24; --soft: #4D4555; --dim: #857B8E; --line: #E9E1E8;
+    --accent: #B4436C; --night: #141017; --night-ink: #F4ECE6; --night-dim: #9C8F99;
+    --fashion: #C2577A; --beauty: #7C5CC4; --places: #2A7FA8; --nyc: #1F5F86; --food: #C98A00; --career: #2F8F5F;
+    --code: #D2603A; --school: #5B7A2E; --business: #8A5A2B; --popculture: #B8487F; --art: #4E9C9A; --social: #9C8F99;
+    --planning: #6E7F96; --music: #A0569E; --selfhelp: #3F8F7F; --ideas: #5E62B0; --gossip: #B07A9E; --other: #D8D0D6;
+    --serif: "Bodoni Moda", Georgia, serif; --sans: "Instrument Sans", system-ui, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, monospace; --gut: clamp(16px, 4vw, 48px);
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #17131C; --card: #211B28; --ink: #F5EEF4; --soft: #D3C8DA; --dim: #9C90A8;
-      --line: #3A3142; --accent: #E58AAE; --fashion: #E58AAE; --beauty: #B49BF0;
-      --places: #6CB8DE; --food: #E8B64A; --career: #6FCB98;
+      --bg: #17131C; --card: #211B28; --ink: #F5EEF4; --soft: #D3C8DA; --dim: #9C90A8; --line: #3A3142; --accent: #E58AAE;
+      --fashion: #E58AAE; --beauty: #B49BF0; --places: #6CB8DE; --nyc: #8FC6EA; --food: #E8B64A; --career: #6FCB98;
+      --code: #F08A63; --school: #A5C46A; --business: #D4A373; --popculture: #E38FBC; --art: #7FCFCB; --planning: #A6B4C8;
+      --other: #4A4150;
     }
   }
   :root[data-theme="dark"] {
-    --bg: #17131C; --card: #211B28; --ink: #F5EEF4; --soft: #D3C8DA; --dim: #9C90A8;
-    --line: #3A3142; --accent: #E58AAE; --fashion: #E58AAE; --beauty: #B49BF0;
-    --places: #6CB8DE; --food: #E8B64A; --career: #6FCB98;
+    --bg: #17131C; --card: #211B28; --ink: #F5EEF4; --soft: #D3C8DA; --dim: #9C90A8; --line: #3A3142; --accent: #E58AAE;
+    --fashion: #E58AAE; --beauty: #B49BF0; --places: #6CB8DE; --nyc: #8FC6EA; --food: #E8B64A; --career: #6FCB98;
+    --code: #F08A63; --school: #A5C46A; --business: #D4A373; --popculture: #E38FBC; --art: #7FCFCB; --planning: #A6B4C8;
+    --other: #4A4150;
   }
-
   * { box-sizing: border-box; }
   html, body { margin: 0; }
-  body {
-    background: var(--bg); color: var(--ink); font: 16px/1.55 var(--sans);
-    min-height: 100vh; overflow-x: hidden;
-  }
-  .wrap { max-width: 860px; margin: 0 auto; padding: 0 var(--gut); }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--ink); font: 16px/1.6 var(--sans); overflow-x: hidden; }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 0 var(--gut); }
+  .mono { font-family: var(--mono); }
 
-  /* ---------- hero ---------- */
-  header { padding: clamp(56px, 14vh, 140px) 0 24px; text-align: center; transition: padding .5s ease; }
-  body.has-result header { padding-top: 32px; }
-  .kicker { font: 500 11px/1 var(--mono); letter-spacing: .18em; text-transform: uppercase; color: var(--dim); }
-  h1 { font: 400 clamp(40px, 8vw, 76px)/1.02 var(--serif); margin: 16px 0 10px; letter-spacing: -.01em; }
-  h1 em { color: var(--accent); }
-  .lede { color: var(--soft); max-width: 520px; margin: 0 auto; }
-  body.has-result .lede { display: none; }
+  /* ---------------- nav ---------------- */
+  .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 50; display: flex; align-items: center; gap: 22px;
+    padding: 12px var(--gut); background: linear-gradient(180deg, rgba(20,16,23,.96), rgba(20,16,23,.86)); backdrop-filter: blur(8px);
+    transition: transform .3s ease; }
+  .nav .mark { font: 500 13px var(--mono); letter-spacing: .16em; color: #E58AAE; text-decoration: none; white-space: nowrap; }
+  .nav .links { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; -webkit-mask-image: linear-gradient(90deg, #000 88%, transparent); }
+  .nav .links::-webkit-scrollbar { display: none; }
+  .nav .links a { font: 500 14px var(--sans); color: #B5AAB2; text-decoration: none; padding: 7px 14px; border-radius: 999px; white-space: nowrap; }
+  .nav .links a:hover { color: #fff; }
+  .nav .links a[aria-current="true"] { background: #2E2533; color: #fff; }
 
-  /* ---------- search ---------- */
-  .search { position: relative; max-width: 620px; margin: 32px auto 0; text-align: left; }
-  .bar {
-    display: flex; align-items: center; gap: 12px;
-    background: var(--card); border: 1px solid var(--line); border-radius: 999px;
-    padding: 14px 22px; box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 8px 28px rgba(60,30,60,.07);
-  }
-  .search.open .bar { border-radius: 26px 26px 0 0; border-bottom-color: transparent; }
-  .bar svg { flex: none; color: var(--dim); }
-  #q {
-    flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; color: var(--ink);
-    font: 18px var(--sans);
-  }
-  .bar:focus-within { border-color: var(--accent); }
-  .search.open .bar:focus-within { border-color: var(--accent); border-bottom-color: transparent; }
+  /* ---------------- my browser ---------------- */
+  .chrome { border-radius: 14px; overflow: hidden; box-shadow: 0 20px 60px rgba(60,20,40,.18); border: 1px solid color-mix(in srgb, var(--pink) 60%, #fff); }
+  .chrome .tabs-row { display: flex; align-items: end; gap: 2px; padding: 10px 10px 0; background: color-mix(in srgb, var(--pink) 85%, #fff); overflow: hidden; }
+  .chrome .dots { display: flex; gap: 6px; padding: 0 10px 12px 4px; }
+  .chrome .dots i { width: 11px; height: 11px; border-radius: 50%; background: #FF5F57; } .chrome .dots i:nth-child(2) { background: #FEBC2E; } .chrome .dots i:nth-child(3) { background: #28C840; }
+  .chrome .tab { flex: 0 1 190px; min-width: 70px; padding: 8px 12px; border-radius: 10px 10px 0 0; font: 12px var(--sans); color: #3a2a30; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .chrome .tab.on { background: #fde9ee; }
+  .chrome .tab b { font: 600 10px var(--mono); margin-left: 4px; color: #B4436C; }
+  .chrome .more-tabs { padding: 8px 10px; font: 600 12px var(--mono); color: #7a3b52; white-space: nowrap; }
+  .chrome .omni { background: #fde9ee; padding: 8px 12px; display: flex; gap: 10px; align-items: center; }
+  .chrome .omni div { flex: 1; background: #fff; border-radius: 999px; padding: 7px 14px; font: 13px var(--mono); color: #6b5560; }
+  .chrome .bms { background: #fde9ee; padding: 4px 12px 10px; display: flex; gap: 6px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid color-mix(in srgb, var(--pink) 60%, #fff); }
+  .chrome .bms span { font: 12px var(--sans); color: #3a2a30; padding: 4px 9px; border-radius: 999px; white-space: nowrap; }
+  .chrome .bms span:hover { background: color-mix(in srgb, var(--pink) 40%, #fff); }
+  .chrome .bms .lock { color: #8a6b78; font-family: var(--mono); font-size: 11px; }
+  .chrome .page { background: color-mix(in srgb, var(--pink) 28%, #fff); padding: 34px 20px 38px; text-align: center; color: #3a2a30; }
+  .chrome .page .word { font: 400 clamp(36px, 7vw, 64px)/1 var(--serif); color: #D94F78; }
+  .chrome .page p { margin: 10px auto 0; max-width: 460px; font-size: 14px; color: #6b4a58; }
+  .swatches { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 14px; }
+  .swatch { display: flex; align-items: center; gap: 10px; font: 12px var(--mono); color: var(--soft); }
+  .swatch i { width: 34px; height: 34px; border-radius: 10px; border: 1px solid var(--line); }
+  .bmlist { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+  .bmlist li { display: grid; grid-template-columns: 92px 1fr; gap: 10px; font-size: 14px; }
+  .bmlist time { font: 12px/1.6 var(--mono); color: var(--dim); }
+  .bmlist li.ai { font-weight: 600; }
+  .bmlist li.ai time { color: var(--accent); }
+  .ext { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .ext span { font: 12px var(--sans); padding: 6px 11px; border-radius: 8px; background: color-mix(in srgb, var(--line) 50%, transparent); }
+  .apps { display: grid; grid-template-columns: minmax(80px, 110px) 1fr 70px 30px; gap: 8px 10px; align-items: center; }
+  .apps .tr { height: 14px; border-radius: 7px; background: color-mix(in srgb, var(--line) 50%, transparent); overflow: hidden; }
+  .apps .tr i { display: block; height: 100%; background: #D94F78; border-radius: 7px; }
+  .apps .n { font: 12px var(--mono); color: var(--dim); text-align: right; }
+  .apps .fav { font-size: 13px; text-align: center; }
+  @media (max-width: 640px) { .chrome .tab { flex-basis: 110px; } .chrome .tab:nth-of-type(n+4) { display: none; } }
 
-  #list {
-    list-style: none; margin: 0; padding: 6px 0 10px; position: absolute; left: 0; right: 0; z-index: 5;
-    background: var(--card); border: 1px solid var(--accent); border-top: 1px solid var(--line);
-    border-radius: 0 0 26px 26px; box-shadow: 0 16px 34px rgba(60,30,60,.12); display: none;
-  }
-  .search.open #list { display: block; }
-  #list li {
-    display: flex; align-items: baseline; gap: 12px; padding: 10px 22px; cursor: pointer;
-  }
-  #list li[aria-selected="true"], #list li:hover { background: color-mix(in srgb, var(--accent) 9%, transparent); }
-  #list .s { flex: 1; color: var(--soft); }
-  #list .s b { color: var(--ink); font-weight: 600; }
-  #list .n { font: 12px var(--mono); color: var(--dim); white-space: nowrap; }
-  #list .dym { color: var(--dim); font-style: italic; }
-  #list .dym b { color: var(--accent); font-style: normal; }
+  /* ---------------- trips ---------------- */
+  .tripmap { width: 100%; height: auto; display: block; }
+  .tripmap .grid { fill: color-mix(in srgb, var(--dim) 30%, transparent); }
+  .tripmap path.went { fill: none; stroke: var(--accent); stroke-width: 2.4; }
+  .tripmap path.dream { fill: none; stroke: var(--dim); stroke-width: 1.2; stroke-dasharray: 4 5; opacity: .8; }
+  .tripmap circle.went { fill: var(--accent); } .tripmap circle.dream { fill: var(--bg); stroke: var(--dim); stroke-width: 1.4; }
+  .tripmap circle.home { fill: var(--ink); }
+  .tripmap text { font: 11px var(--sans); fill: var(--soft); } .tripmap text.went { font-weight: 600; fill: var(--ink); }
+  .trips { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 14px; }
+  .trip { border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; background: var(--card); }
+  .trip b { font: 400 24px var(--serif); display: block; } .trip > span { font: 12px var(--mono); color: var(--dim); }
+  .trip ul { list-style: none; padding: 0; margin: 10px 0 0; display: grid; gap: 4px; }
+  .trip li { font: 12px/1.5 var(--mono); } .trip time { color: var(--dim); margin-right: 8px; }
 
-  /* ---------- result ---------- */
-  #result { padding: 28px 0 72px; }
-  .meta { font: 12px var(--mono); color: var(--dim); margin: 0 0 14px; }
-  .card {
-    background: var(--card); border: 1px solid var(--line); border-radius: 18px;
-    padding: clamp(20px, 4vw, 34px); animation: rise .45s ease both;
-  }
-  @keyframes rise { from { opacity: 0; transform: translateY(10px); } }
-  .card h2 { font: 400 clamp(28px, 5vw, 40px)/1.1 var(--serif); margin: 0 0 8px; }
-  .card h2 em { color: var(--accent); }
-  .card .sub { color: var(--soft); margin: 0 0 24px; max-width: 620px; }
-  .stats { display: flex; flex-wrap: wrap; gap: 14px 34px; margin: 0 0 26px; }
-  .stat b { display: block; font: 400 30px/1.1 var(--serif); }
+  /* ---------------- more info ---------------- */
+  .more { display: inline-flex; align-items: center; gap: 8px; margin: 14px 0 0; font: 600 14px var(--sans); color: var(--ink);
+    background: color-mix(in srgb, var(--ink) 8%, transparent); border: 1px solid var(--line); border-radius: 8px; padding: 8px 16px; cursor: pointer; }
+  .more:hover { background: color-mix(in srgb, var(--ink) 14%, transparent); }
+  .more svg { flex: none; }
+  dialog.info { width: min(860px, calc(100vw - 24px)); max-height: calc(100vh - 40px); padding: 0; border: 0; border-radius: 12px;
+    background: #181219; color: #F4ECE6; box-shadow: 0 30px 80px rgba(0,0,0,.6); overflow: auto; }
+  dialog.info::backdrop { background: rgba(10,8,12,.72); }
+  dialog.info[open] { animation: pop .28s ease; }
+  @keyframes pop { from { opacity: 0; transform: scale(.96); } }
+  .info .top { position: relative; padding: clamp(28px, 6vw, 56px) clamp(20px, 5vw, 44px) 26px; background:
+    radial-gradient(120% 140% at 0% 0%, color-mix(in srgb, var(--c, #E58AAE) 45%, transparent), transparent 60%), #120E14; }
+  .info .top .ep { font: 500 11px var(--mono); letter-spacing: .16em; text-transform: uppercase; color: #E58AAE; }
+  .info .top h3 { font: 400 clamp(32px, 6vw, 56px)/1.04 var(--serif); margin: 10px 0 18px; max-width: 14ch; }
+  .info .x { position: absolute; top: 14px; right: 14px; width: 38px; height: 38px; border-radius: 50%; border: 0; background: #181219; color: #fff; font-size: 20px; cursor: pointer; }
+  .info .go { display: inline-flex; align-items: center; gap: 8px; background: #F4ECE6; color: #120E14; border: 0; border-radius: 6px; padding: 9px 18px; font: 600 15px var(--sans); cursor: pointer; }
+  .info .body { padding: 22px clamp(20px, 5vw, 44px) 34px; }
+  .info .grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 26px; }
+  .info .meta { font-size: 14px; color: #CFC4CB; display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
+  .info .tag { border: 1px solid #6F6470; padding: 0 6px; font: 11px var(--mono); border-radius: 3px; color: #E6DCE2; }
+  .info p { color: #E6DCE2; line-height: 1.6; }
+  .info .side { font-size: 14px; color: #E6DCE2; }
+  .info .side span, .info .about dt { color: #8F8390; }
+  .info .side div { margin-bottom: 10px; }
+  .info h4 { font: 600 22px var(--sans); margin: 30px 0 14px; }
+  .info .like { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .info .like button { text-align: left; background: #241C26; border: 0; border-radius: 8px; padding: 0; overflow: hidden; cursor: pointer; color: #F4ECE6; }
+  .info .like .art { height: 74px; display: flex; align-items: flex-end; padding: 10px 12px; font: 400 20px/1.05 var(--serif);
+    background: radial-gradient(120% 140% at 0% 0%, color-mix(in srgb, var(--c) 55%, transparent), transparent 70%), #1C151E; }
+  .info .like small { display: block; padding: 10px 12px; font-size: 12px; color: #B5AAB2; }
+  .info .about { border-top: 1px solid #3A3040; margin-top: 30px; padding-top: 6px; }
+  .info .about h4 b { font-weight: 700; }
+  .info .about dl { display: grid; grid-template-columns: auto 1fr; gap: 8px 10px; margin: 0; font-size: 14px; }
+  .info .about dd { margin: 0; color: #F4ECE6; }
+  .info .rating { display: inline-block; border: 1px solid #8F8390; padding: 0 7px; margin-right: 10px; font: 600 12px var(--mono); }
+  @media (max-width: 640px) { .info .grid, .info .like { grid-template-columns: 1fr; } .nav { gap: 12px; } .nav .mark { font-size: 11px; } }
+
+  /* ---------------- 01 interrogation ---------------- */
+  .hero { background: var(--night); color: var(--night-ink); min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 64px 0; position: relative; }
+  .hero .wrap { width: 100%; }
+  .evidence { font: 500 12px/2 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--night-dim); }
+  .evidence b { color: var(--night-ink); font-weight: 500; display: inline-block; min-width: 6ch; text-align: right; margin-right: 10px; }
+  .hero .lead { color: var(--night-dim); margin: 22px 0 0; max-width: 520px; }
+  .hero h1 { font: 400 clamp(38px, 7.2vw, 84px)/1.03 var(--serif); margin: 28px 0 0; max-width: 16ch; }
+  .hero h1 em { color: #E58AAE; }
+  .cursor { display: inline-block; width: .08em; height: .9em; background: #E58AAE; margin-left: .06em; vertical-align: -0.08em; animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .ask { position: relative; max-width: 620px; margin-top: 40px; }
+  .bar { display: flex; align-items: center; gap: 12px; background: #221C26; border: 1px solid #3A3040; border-radius: 999px; padding: 14px 22px; }
+  .bar:focus-within { border-color: #E58AAE; }
+  .ask.open .bar { border-radius: 26px 26px 0 0; }
+  .bar svg { color: var(--night-dim); flex: none; }
+  #q { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; color: var(--night-ink); font: 17px var(--sans); }
+  #q::placeholder { color: var(--night-dim); }
+  #list { list-style: none; margin: 0; padding: 6px 0 10px; position: absolute; left: 0; right: 0; z-index: 9; display: none;
+    background: #221C26; border: 1px solid #E58AAE; border-top: 1px solid #3A3040; border-radius: 0 0 26px 26px; max-height: 50vh; overflow-y: auto; }
+  .ask.open #list { display: block; }
+  #list li { padding: 9px 22px; cursor: pointer; color: var(--night-dim); display: flex; gap: 12px; }
+  #list li b { color: var(--night-ink); font-weight: 500; }
+  #list li span.n { margin-left: auto; font: 11px var(--mono); }
+  #list li[aria-selected="true"], #list li:hover { background: #2E2533; }
+  .start { display: inline-block; margin-top: 34px; font: 500 12px var(--mono); letter-spacing: .14em; color: var(--night-ink); text-decoration: none; border: 1px solid #3A3040; padding: 12px 18px; border-radius: 999px; }
+  .start:hover { border-color: #E58AAE; }
+
+  /* ---------------- chapters ---------------- */
+  section.ch { padding: clamp(72px, 12vh, 130px) 0 20px; scroll-margin-top: 50px; }
+  .kicker { font: 500 11px var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--accent); }
+  h2 { font: 400 clamp(32px, 5.6vw, 58px)/1.06 var(--serif); margin: 12px 0 14px; max-width: 18ch; }
+  h2 em { color: var(--accent); }
+  .lede { color: var(--soft); max-width: 640px; margin: 0 0 30px; font-size: 17px; }
+  .sub { color: var(--soft); max-width: 640px; }
+  .note { font-size: 13px; color: var(--dim); max-width: 640px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: clamp(18px, 3.5vw, 30px); }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .big { font: 400 clamp(56px, 11vw, 120px)/.95 var(--serif); color: var(--accent); }
+  .big + p { margin-top: 10px; }
+  .stat b { display: block; font: 400 34px/1.1 var(--serif); }
   .stat span { font: 11px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
-  .note { font-size: 13px; color: var(--dim); margin: 22px 0 0; }
-  .more { margin-top: 26px; display: flex; flex-wrap: wrap; gap: 8px; }
-  .more button {
-    font: 13px var(--sans); color: var(--soft); background: transparent; border: 1px solid var(--line);
-    border-radius: 999px; padding: 7px 14px; cursor: pointer;
-  }
-  .more button:hover { border-color: var(--accent); color: var(--ink); }
+  .stats { display: flex; flex-wrap: wrap; gap: 16px 36px; margin: 22px 0; }
+  .bridge { font: italic 400 clamp(22px, 3.4vw, 30px)/1.3 var(--serif); color: var(--soft); max-width: 640px; margin: 54px 0 0; }
 
-  /* builder timeline */
-  .tl { list-style: none; padding: 0; margin: 0; position: relative; }
-  .tl::before { content: ""; position: absolute; left: 108px; top: 6px; bottom: 6px; width: 2px; background: var(--line); }
-  .tl li { display: grid; grid-template-columns: 96px 24px 1fr; gap: 0 0; padding: 7px 0; align-items: start; }
-  .tl time { font: 12px/1.6 var(--mono); color: var(--dim); text-align: right; padding-right: 10px; white-space: nowrap; }
-  .tl .dot { width: 12px; height: 12px; border-radius: 50%; margin: 5px 0 0 7px; background: var(--card); border: 2px solid var(--c, var(--accent)); position: relative; z-index: 1; }
-  .tl .big .dot { background: var(--c, var(--accent)); }
-  .tl p { margin: 0; color: var(--soft); }
-  .tl .big p { color: var(--ink); font-weight: 600; }
-  .tl small { display: block; color: var(--dim); font-size: 13px; font-weight: 400; }
-  .legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--soft); margin: 0 0 16px; }
-  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
+  /* reveal */
+  .rv { opacity: 0; transform: translateY(14px); transition: opacity .7s ease, transform .7s ease; transition-delay: var(--d, 0s); }
+  .rv.in { opacity: 1; transform: none; }
+  .grow { transform-origin: left; transform: scaleX(0); transition: transform 1s cubic-bezier(.2,.8,.2,1) var(--d, 0s); }
+  .in .grow, .grow.in { transform: none; }
+  .growy { transform-origin: bottom; transform: scaleY(0); transition: transform .9s cubic-bezier(.2,.8,.2,1) var(--d, 0s); }
+  .in .growy { transform: none; }
 
-  .qbars { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; align-items: end; height: 170px; margin-top: 30px; }
-  .qbars div { display: flex; flex-direction: column; justify-content: flex-end; height: 100%; text-align: center; }
-  .qbars .b { background: var(--accent); border-radius: 6px 6px 2px 2px; min-height: 2px; }
-  .qbars b { font: 400 22px var(--serif); margin-bottom: 6px; }
-  .qbars span { font: 11px var(--mono); color: var(--dim); margin-top: 8px; }
+  /* 02 leaderboard */
+  .lb { display: grid; gap: 10px; }
+  .lb .row { display: grid; grid-template-columns: 34px minmax(110px, 170px) 1fr 52px; gap: 14px; align-items: center; }
+  .lb .rk { font: 400 22px var(--serif); color: var(--dim); }
+  .lb .t { font-weight: 600; }
+  .lb .t small { display: block; font: 11px var(--mono); color: var(--dim); font-weight: 400; }
+  .lb .track { height: 12px; border-radius: 6px; background: color-mix(in srgb, var(--line) 50%, transparent); overflow: hidden; }
+  .lb .track i { display: block; height: 100%; background: var(--accent); border-radius: 6px; }
+  .lb .v { font: 13px var(--mono); text-align: right; }
+  .formula { font: 12px/1.7 var(--mono); color: var(--dim); background: color-mix(in srgb, var(--line) 35%, transparent); border-radius: 12px; padding: 12px 14px; margin-top: 18px; }
 
-  /* sleep bars */
-  .sleep { display: grid; grid-template-columns: 44px 1fr; gap: 10px 12px; align-items: center; }
-  .sleep .d { font: 12px var(--mono); color: var(--dim); }
-  .track { position: relative; height: 26px; border-radius: 6px; background: color-mix(in srgb, var(--line) 45%, transparent); }
-  .track .off { position: absolute; top: 0; bottom: 0; border-radius: 6px; background: color-mix(in srgb, var(--beauty) 70%, transparent); }
-  .track .off.hi { background: var(--beauty); }
-  .track .lab { position: absolute; top: 50%; transform: translateY(-50%); font: 11px var(--mono); color: var(--ink); white-space: nowrap; }
-  .axis { grid-column: 2; position: relative; height: 16px; font: 11px var(--mono); color: var(--dim); }
+  /* 03 chains */
+  .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .tabs button, .pill { font: 13px var(--sans); color: var(--soft); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 7px 14px; cursor: pointer; }
+  .tabs button[aria-pressed="true"] { border-color: var(--accent); color: var(--ink); background: color-mix(in srgb, var(--accent) 9%, transparent); }
+  .chain { list-style: none; margin: 0; padding: 0; counter-reset: s; }
+  .chain li { font: 14px/1.5 var(--mono); padding: 7px 0 7px 38px; position: relative; opacity: 0; transform: translateX(-6px); transition: opacity .35s ease, transform .35s ease; }
+  .chain li.on { opacity: 1; transform: none; }
+  .chain li::before { counter-increment: s; content: counter(s); position: absolute; left: 0; width: 24px; text-align: right; color: var(--dim); font-size: 11px; top: 9px; }
+  .chain-meta { font: 12px var(--mono); color: var(--dim); margin-top: 12px; }
+
+  /* 04 rabbit hole */
+  .strip { width: 100%; height: 150px; display: block; }
+  .rh-q { list-style: none; padding: 0; margin: 18px 0 0; display: grid; gap: 6px; }
+  .rh-q li { display: grid; grid-template-columns: 64px 1fr; gap: 12px; font: 13px var(--mono); }
+  .rh-q time { color: var(--dim); text-align: right; }
+  .ends { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 20px; }
+  .ends div { border-top: 3px solid var(--accent); padding-top: 8px; }
+  .ends span { font: 11px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
+  .records { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-top: 20px; }
+  .records div { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+  .records b { display: block; font: 400 26px var(--serif); }
+  .records span { font-size: 12px; color: var(--dim); }
+
+  /* 05 time */
+  .guess { display: grid; gap: 12px; }
+  .guess input[type=range] { width: 100%; accent-color: var(--accent); }
+  .guess .val { font: 400 44px var(--serif); }
+  .btn { font: 600 14px var(--sans); color: var(--bg); background: var(--ink); border: 0; border-radius: 999px; padding: 10px 18px; cursor: pointer; justify-self: start; }
+  .btn:disabled { opacity: .4; cursor: default; }
+  .hist { display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px; align-items: end; height: 140px; margin-top: 10px; }
+  .hist div { display: flex; flex-direction: column; justify-content: flex-end; height: 100%; text-align: center; }
+  .hist i { display: block; background: var(--beauty); border-radius: 5px 5px 2px 2px; }
+  .hist .you i { background: var(--accent); }
+  .hist span { font: 10px var(--mono); color: var(--dim); margin-top: 6px; white-space: nowrap; }
+  .hours { display: grid; grid-template-columns: repeat(24, 1fr); gap: 3px; align-items: end; height: 180px; }
+  .hours div { border-radius: 3px 3px 1px 1px; cursor: pointer; }
+  .hours div.sel { outline: 2px solid var(--ink); outline-offset: 1px; }
+  .hx { display: grid; grid-template-columns: repeat(24, 1fr); gap: 3px; font: 10px var(--mono); color: var(--dim); margin-top: 6px; white-space: nowrap; }
+  .readout { margin-top: 14px; padding: 12px 16px; border-radius: 12px; background: color-mix(in srgb, var(--accent) 8%, transparent); min-height: 50px; }
+  .readout b { font: 400 28px var(--serif); color: var(--accent); margin-right: 10px; }
+  .nights { display: grid; grid-template-columns: 40px 1fr; gap: 8px 10px; align-items: center; }
+  .nights .d { font: 12px var(--mono); color: var(--dim); }
+  .nights .tr { position: relative; height: 22px; border-radius: 6px; background: color-mix(in srgb, var(--line) 45%, transparent); }
+  .nights .off { position: absolute; top: 0; bottom: 0; border-radius: 6px; background: var(--beauty); opacity: .75; }
+  .nights .lab { position: absolute; top: 50%; transform: translateY(-50%); font: 10px var(--mono); white-space: nowrap; color: var(--ink); }
+  .axis { grid-column: 2; position: relative; height: 16px; font: 10px var(--mono); color: var(--dim); }
   .axis span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
   .axis span:first-child { transform: none; }
-  .axis span:last-child { transform: translateX(-100%); }
 
-  /* week */
-  .week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; align-items: end; }
-  .week .col { display: flex; flex-direction: column; justify-content: flex-end; height: 200px; text-align: center; cursor: pointer; border-radius: 10px; padding: 4px; }
-  .week .col:focus-visible { outline: 2px solid var(--accent); }
-  .week .b { background: color-mix(in srgb, var(--career) 45%, transparent); border-radius: 6px 6px 2px 2px; }
-  .week .col.top .b, .week .col.sel .b { background: var(--career); }
-  .week b { font: 400 18px var(--serif); margin-bottom: 4px; }
-  .week span { font: 11px var(--mono); color: var(--dim); margin-top: 8px; }
-  .dayline { min-height: 52px; margin: 18px 0 0; padding: 14px 16px; border-radius: 12px; background: color-mix(in srgb, var(--career) 10%, transparent); color: var(--soft); }
-  .dayline b { color: var(--ink); }
+  /* 06 roles */
+  .roles { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 14px; }
+  .role { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 8px; }
+  .role h3 { font: 400 26px/1.1 var(--serif); margin: 0; }
+  .role .ev { font: 12px var(--mono); color: var(--dim); }
+  .spark { display: grid; grid-template-columns: repeat(13, 1fr); gap: 2px; align-items: end; height: 46px; }
+  .spark i { display: block; background: var(--accent); border-radius: 2px 2px 0 0; min-height: 1px; }
+  .conf { font: 12px var(--mono); color: var(--soft); }
+  .votes { display: flex; gap: 6px; margin-top: auto; }
+  .votes button { flex: 1; font: 500 11px var(--mono); letter-spacing: .06em; text-transform: uppercase; padding: 8px 6px; border-radius: 10px; border: 1px solid var(--line); background: transparent; color: var(--soft); cursor: pointer; }
+  .votes button[aria-pressed="true"] { border-color: var(--accent); color: var(--ink); background: color-mix(in srgb, var(--accent) 10%, transparent); }
 
-  /* hours */
-  .hours { display: grid; grid-template-columns: repeat(24, 1fr); gap: 3px; align-items: end; height: 190px; }
-  .hours .h { border-radius: 3px 3px 1px 1px; cursor: pointer; min-height: 3px; }
-  .hours .h:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
-  .hours .h.sel { outline: 2px solid var(--ink); outline-offset: 1px; }
-  .hx { display: grid; grid-template-columns: repeat(24, 1fr); gap: 3px; font: 10px var(--mono); color: var(--dim); text-align: left; margin-top: 6px; }
-  .hx span { white-space: nowrap; overflow: visible; }
-  .hourline { min-height: 52px; margin: 18px 0 0; padding: 14px 16px; border-radius: 12px; background: color-mix(in srgb, var(--accent) 8%, transparent); color: var(--soft); }
-  .hourline b { color: var(--ink); }
-  .parts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 20px; }
-  .parts div { border-top: 3px solid var(--c); padding-top: 8px; font-size: 14px; color: var(--soft); }
-  .parts b { display: block; color: var(--ink); font-weight: 600; }
+  /* 07 wrong */
+  .wrong { display: grid; gap: 12px; }
+  .wr { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--card); }
+  .wr > div { padding: 16px 18px; }
+  .wr .inf { border-right: 1px dashed var(--line); }
+  .wr span { display: block; font: 11px var(--mono); letter-spacing: .12em; text-transform: uppercase; margin-bottom: 6px; }
+  .wr .inf span { color: var(--dim); }
+  .wr .real span { color: var(--accent); }
+  .wr .inf p { margin: 0; text-decoration: line-through; text-decoration-color: color-mix(in srgb, var(--accent) 70%, transparent); text-decoration-thickness: 2px; }
+  .wr small { display: block; color: var(--dim); font-size: 12px; margin-top: 6px; }
+  .wr .real p { margin: 0; font: 400 19px/1.35 var(--serif); }
 
-  /* explorer */
-  .mbars { display: grid; grid-template-columns: repeat(9, 1fr); gap: 8px; align-items: end; height: 160px; }
+  /* 08 vocab */
+  .vocab { display: grid; grid-template-columns: minmax(110px, 160px) 1fr 44px; gap: 8px 12px; align-items: center; }
+  .vocab .w { font: 14px var(--mono); }
+  .vocab .tr { height: 12px; border-radius: 6px; background: color-mix(in srgb, var(--line) 50%, transparent); overflow: hidden; }
+  .vocab .tr i { display: block; height: 100%; border-radius: 6px; background: var(--ideas); }
+  .vocab .tr i.hi { background: var(--accent); }
+  .vocab .n { font: 12px var(--mono); color: var(--dim); text-align: right; }
+  .verdict { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px; }
+  .verdict div { border-top: 3px solid var(--accent); padding-top: 8px; color: var(--soft); font-size: 14px; }
+  .verdict b { display: block; color: var(--ink); font: 400 22px var(--serif); }
+
+  /* 09 learn */
+  .learn { list-style: none; padding: 0; margin: 0; position: relative; }
+  .learn::before { content: ""; position: absolute; left: 102px; top: 6px; bottom: 6px; width: 2px; background: var(--line); }
+  .learn li { display: grid; grid-template-columns: 90px 26px 1fr; padding: 5px 0; align-items: start; }
+  .learn time { font: 12px/1.7 var(--mono); color: var(--dim); text-align: right; padding-right: 10px; white-space: nowrap; }
+  .learn i { width: 12px; height: 12px; border-radius: 50%; margin: 6px 0 0 7px; background: var(--c); position: relative; z-index: 1; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--soft); margin: 0 0 14px; }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
+  .mbars { display: grid; grid-template-columns: repeat(13, 1fr); gap: 5px; align-items: end; height: 150px; margin-top: 24px; }
   .mbars div { display: flex; flex-direction: column; justify-content: flex-end; height: 100%; text-align: center; }
-  .mbars .b { background: var(--places); border-radius: 5px 5px 2px 2px; }
-  .mbars b { font: 12px var(--mono); margin-bottom: 4px; color: var(--soft); }
-  .mbars span { font: 11px var(--mono); color: var(--dim); margin-top: 6px; }
+  .mbars i { display: block; background: var(--code); border-radius: 4px 4px 1px 1px; min-height: 1px; }
+  .mbars b { font: 10px var(--mono); color: var(--soft); margin-bottom: 3px; font-weight: 400; }
+  .mbars span { font: 10px var(--mono); color: var(--dim); margin-top: 5px; }
 
-  /* horizontal bars */
-  .hb { display: grid; grid-template-columns: minmax(90px, 150px) 1fr auto; gap: 10px 12px; align-items: center; }
-  .hb .l { font-size: 14px; color: var(--soft); }
-  .hb .t { height: 16px; border-radius: 4px; background: color-mix(in srgb, var(--line) 45%, transparent); overflow: hidden; }
-  .hb .t i { display: block; height: 100%; border-radius: 4px; background: var(--c, var(--accent)); }
-  .hb .v { font: 12px var(--mono); color: var(--dim); text-align: right; }
-  .hb .top { color: var(--ink); font-weight: 600; }
-  .cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 24px; }
-  .cols div { border-top: 3px solid var(--places); padding-top: 10px; font-size: 14px; color: var(--soft); }
-  .cols b { display: block; color: var(--ink); }
-  .cols q { display: block; margin-top: 8px; font: 12px var(--mono); color: var(--dim); }
-  .nights { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
-  .nights li { display: grid; grid-template-columns: 70px 1fr; gap: 12px; padding: 12px 14px; border-radius: 12px; background: color-mix(in srgb, var(--beauty) 8%, transparent); }
-  .nights time { font: 12px/1.6 var(--mono); color: var(--dim); }
-  .nights b { display: block; }
-  .nights span { font-size: 13px; color: var(--dim); }
-  .nights .fin { background: color-mix(in srgb, var(--accent) 10%, transparent); }
-  .book { display: grid; grid-template-columns: 130px 1fr; gap: 24px; align-items: center; }
-  .cover { aspect-ratio: 2 / 3; border-radius: 4px 10px 10px 4px; background: linear-gradient(160deg, var(--accent), var(--beauty)); color: #fff;
-    display: flex; flex-direction: column; justify-content: space-between; padding: 12px 10px; box-shadow: 0 10px 24px rgba(60,30,60,.18); }
-  .cover b { font: 400 17px/1.1 var(--serif); }
-  .cover span { font: 9px var(--mono); letter-spacing: .1em; text-transform: uppercase; opacity: .85; }
-  .typo { display: grid; gap: 8px; }
-  .typo div { display: flex; align-items: baseline; gap: 10px; font: 14px var(--mono); }
-  .typo s { color: var(--accent); text-decoration-thickness: 2px; }
-  .typo em { color: var(--soft); font-style: normal; }
-  .typo small { margin-left: auto; color: var(--dim); }
-  #list { max-height: min(62vh, 520px); overflow-y: auto; }
-  @media (max-width: 560px) {
-    .cols { grid-template-columns: 1fr; }
-    .book { grid-template-columns: 100px 1fr; gap: 16px; }
-    .hb { grid-template-columns: 96px 1fr auto; }
-  }
+  /* 10 escaped */
+  .steps { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+  .steps li { display: grid; grid-template-columns: 110px 1fr; gap: 14px; padding: 12px 14px; border-radius: 12px; background: color-mix(in srgb, var(--career) 9%, transparent); }
+  .steps li:last-child { background: color-mix(in srgb, var(--career) 22%, transparent); font-weight: 600; }
+  .steps time { font: 12px/1.6 var(--mono); color: var(--dim); }
+  .steps.nyc li { background: color-mix(in srgb, var(--nyc) 9%, transparent); }
+  .steps.nyc li:last-child { background: color-mix(in srgb, var(--nyc) 20%, transparent); }
+  .pairs { display: grid; gap: 4px; }
+  .pair { display: grid; grid-template-columns: 1fr 30px 1fr; align-items: center; gap: 8px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .pair:last-child { border-bottom: 0; }
+  .pair .a { font: 13px var(--mono); }
+  .pair .arrow { color: var(--accent); text-align: center; }
+  .pair .b { font-weight: 600; }
+  .pair small { display: block; font: 11px var(--mono); color: var(--dim); font-weight: 400; }
 
-  /* ---------- motion ---------- */
-  .card .qbars .b, .card .week .b, .card .mbars .b, .card .hours .h {
-    transform-origin: bottom; transition: transform .9s cubic-bezier(.2,.8,.2,1) var(--d, 0s);
-  }
-  .card .hb .t i, .card .track .off { transform-origin: left; transition: transform .9s cubic-bezier(.2,.8,.2,1) var(--d, 0s); }
-  .card .tl li, .card .nights li, .card .reveal { transition: opacity .5s ease var(--d, 0s), transform .5s ease var(--d, 0s); }
-  .card.pre .qbars .b, .card.pre .week .b, .card.pre .mbars .b, .card.pre .hours .h { transform: scaleY(0); }
-  .card.pre .hb .t i, .card.pre .track .off { transform: scaleX(0); }
-  .card.pre .tl li, .card.pre .nights li, .card.pre .reveal { opacity: 0; transform: translateY(8px); }
-  .card .track .lab { transition: opacity .4s ease calc(var(--d, 0s) + .6s); }
-  .card.pre .track .lab { opacity: 0; }
+  /* 11 change */
+  .months { display: grid; gap: 6px; }
+  .mrow { display: grid; grid-template-columns: 64px 1fr; gap: 10px; align-items: center; }
+  .mrow span { font: 12px var(--mono); color: var(--dim); }
+  .mix { display: flex; height: 24px; border-radius: 6px; overflow: hidden; }
+  .mix i { display: block; height: 100%; }
+  .spikes { list-style: none; padding: 0; margin: 18px 0 0; display: grid; gap: 8px; }
+  .spikes li { display: grid; grid-template-columns: 110px 1fr auto; gap: 12px; align-items: baseline; padding: 10px 14px; border-radius: 12px; background: color-mix(in srgb, var(--line) 35%, transparent); }
+  .spikes time { font: 12px var(--mono); color: var(--dim); }
+  .spikes small { font: 11px var(--mono); color: var(--dim); }
 
-  /* ---------- photo ---------- */
-  .hero { margin: calc(-1 * clamp(20px, 4vw, 34px)) calc(-1 * clamp(20px, 4vw, 34px)) 26px; }
-  .hero .frame { overflow: hidden; border-radius: 18px 18px 0 0; aspect-ratio: 2.4 / 1; background: var(--line); }
-  .hero img { width: 100%; height: 100%; object-fit: cover; display: block; transform: scale(1.12); animation: drift 14s ease-out forwards; transition: opacity .8s ease; }
-  .card.pre .hero img { opacity: 0; }
-  @keyframes drift { from { transform: scale(1.14) translate(1.5%, 1%); } to { transform: scale(1.02) translate(0, 0); } }
-  .hero figcaption { font-size: 11px; color: var(--dim); padding: 6px clamp(20px, 4vw, 34px) 0; }
-  .hero figcaption a { color: inherit; }
-  .art p { margin: 0; font: italic 400 18px/1.3 var(--serif); color: var(--soft); padding: 10px 0; border-bottom: 1px solid var(--line); }
-  .art { grid-template-columns: repeat(2, 1fr) !important; column-gap: 24px; }
-  .cover { animation: float 5s ease-in-out infinite; }
-  @keyframes float { 50% { transform: translateY(-6px) rotate(-1.5deg); } }
+  /* 12 quiz */
+  .quiz { display: grid; gap: 14px; }
+  .qz .clue { font: 15px var(--mono); padding: 12px 14px; border-radius: 12px; background: color-mix(in srgb, var(--line) 40%, transparent); }
+  .qz .opts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+  .qz button { text-align: left; font: 13px var(--mono); padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--card); color: var(--ink); cursor: pointer; }
+  .qz button.right { border-color: var(--career); background: color-mix(in srgb, var(--career) 14%, transparent); }
+  .qz button.wrongpick { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); }
+  .qz .res { font-size: 14px; color: var(--soft); min-height: 22px; margin-top: 8px; }
+  .score { font: 400 30px var(--serif); }
 
-  /* ---------- media ---------- */
-  .vids { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px; margin-top: 18px; }
-  .vids figure { margin: 0; }
-  .vids video, .vids img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 12px; display: block; background: var(--line); }
-  .vids figcaption { font-size: 13px; color: var(--soft); margin-top: 6px; }
-  .vids figcaption b { color: var(--ink); font-weight: 600; }
-  h3 { font: 500 11px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--dim); margin: 34px 0 0; }
-  .pitch { display: grid; grid-template-columns: 220px 1fr; gap: 18px; align-items: center; margin: 0 0 26px; padding: 14px; border-radius: 14px; background: color-mix(in srgb, var(--places) 9%, transparent); }
-  .yt { position: relative; aspect-ratio: 16 / 9; border-radius: 10px; overflow: hidden; background: #000; border: 0; padding: 0; cursor: pointer; display: block; width: 100%; }
-  .yt img { width: 100%; height: 100%; object-fit: cover; opacity: .85; display: block; }
-  .yt span { position: absolute; inset: 0; display: grid; place-items: center; color: #fff; font-size: 34px; text-shadow: 0 2px 12px rgba(0,0,0,.5); }
-  .yt iframe { width: 100%; height: 100%; border: 0; display: block; }
-  .pitch p { margin: 0; color: var(--soft); font-size: 14px; }
-  .pitch b { display: block; color: var(--ink); font-size: 16px; }
-  .photos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 24px; }
-  .photos figure { margin: 0; }
-  .photos img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 12px; display: block; }
-  .photos figcaption { font-size: 12px; color: var(--dim); margin-top: 6px; }
-  .art { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-  .art figure { margin: 0; }
-  .art img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 10px; display: block; }
-  .art figcaption { font: italic 400 15px/1.3 var(--serif); color: var(--soft); margin-top: 6px; }
-  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-  .chips span { font: 12px var(--mono); color: var(--soft); border: 1px solid var(--line); border-radius: 999px; padding: 5px 11px; }
-  .bookvid { width: 100%; border-radius: 12px; display: block; background: var(--line); }
-  .play {
-    font: 500 13px var(--sans); color: var(--ink); background: transparent; border: 1px solid var(--accent);
-    border-radius: 999px; padding: 7px 16px; cursor: pointer; margin: 0 0 16px;
-  }
-  .play:hover { background: color-mix(in srgb, var(--accent) 10%, transparent); }
-  .clock { font: 400 40px/1 var(--serif); color: var(--accent); min-width: 4.5ch; display: inline-block; }
+  /* 13 end */
+  .end { background: var(--night); color: var(--night-ink); padding: clamp(90px, 16vh, 160px) 0 60px; margin-top: 90px; }
+  .end h2 { color: var(--night-ink); }
+  .end h2 em { color: #E58AAE; }
+  .end p { color: #CFC4CB; max-width: 640px; font-size: 18px; }
+  .end .last { font: italic 400 clamp(24px, 4vw, 36px)/1.3 var(--serif); color: #E58AAE; margin-top: 34px; max-width: 18em; }
+  footer { font: 11px/1.8 var(--mono); color: var(--night-dim); background: var(--night); padding: 20px var(--gut) 40px; text-align: center; }
+  footer a { color: inherit; }
 
-  @media (max-width: 560px) {
-    .pitch { grid-template-columns: 1fr; }
-    .photos { grid-template-columns: repeat(2, 1fr); }
-    .art { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 640px) {
+    .grid2, .verdict, .ends { grid-template-columns: 1fr; }
+    .wr { grid-template-columns: 1fr; }
+    .wr .inf { border-right: 0; border-bottom: 1px dashed var(--line); }
+    .lb .row { grid-template-columns: 26px minmax(90px, 1fr) 1fr 40px; gap: 8px; }
+    .qz .opts { grid-template-columns: 1fr; }
+    .learn::before { left: 84px; }
+    .learn li { grid-template-columns: 72px 26px 1fr; }
+    .hours, .hx { gap: 1px; }
+    .mbars { gap: 2px; }
+    .mbars b { display: none; }
+    .spikes li { grid-template-columns: 1fr; gap: 2px; }
+    .pair { grid-template-columns: 1fr; }
+    .pair .arrow { text-align: left; }
+    .steps li { grid-template-columns: 1fr; gap: 2px; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .hero img, .cover { animation: none !important; }
-    .card *, .card.pre * { transition: none !important; transform: none !important; opacity: 1 !important; }
+    html { scroll-behavior: auto; }
+    .rv, .grow, .growy, .chain li { opacity: 1 !important; transform: none !important; transition: none !important; }
+    .cursor { animation: none; }
   }
-
-  footer { text-align: center; font: 11px var(--mono); letter-spacing: .08em; color: var(--dim); padding: 0 var(--gut) 40px; }
-  body:not(.has-result) footer { position: fixed; bottom: 0; left: 0; right: 0; }
-
-  @media (max-width: 560px) {
-    .tl::before { left: 87px; }
-    .tl li { grid-template-columns: 76px 22px 1fr; }
-    .tl time { font-size: 11px; }
-    .parts { grid-template-columns: repeat(2, 1fr); }
-    .week { gap: 4px; }
-    .week b { font-size: 15px; }
-    .hours { gap: 1px; }
-    .hx { gap: 1px; }
-    .mbars { gap: 4px; }
-    .mbars b { font-size: 10px; }
-    #q { font-size: 16px; }
-  }
-  @media (prefers-reduced-motion: reduce) { .card { animation: none; } }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <div class="kicker">Search History · a year of me · Oct 2025 – Sep 2026</div>
-    <h1>What does a year of <em>searching</em> say about me?</h1>
-    <p class="lede">105,092 pages, 19,626 searches, 1,974 videos and 297 files from two Google accounts, cleaned and modeled into answers.</p>
 
-    <div class="search" id="search">
+<nav class="nav" aria-label="Sections">
+  <a class="mark" href="#top">8,730 QUESTIONS</a>
+  <div class="links">
+    <a href="#top" data-sec="top">Home</a>
+    <a href="#browser" data-sec="browser">My browser</a>
+    <a href="#attention" data-sec="attention">Obsessions</a>
+    <a href="#curious" data-sec="curious deep vocab">How I think</a>
+    <a href="#when" data-sec="when">When I'm me</a>
+    <a href="#roles" data-sec="roles wrong">Who I am</a>
+    <a href="#learn" data-sec="learn change">How I grew</a>
+    <a href="#escaped" data-sec="escaped">Real life</a>
+    <a href="#prove" data-sec="prove end">Prove it</a>
+  </div>
+</nav>
+<dialog class="info" id="info" aria-labelledby="infotitle"></dialog>
+<header class="hero" id="top">
+  <div class="wrap">
+    <div class="evidence" id="evidence"></div>
+    <p class="lead">There should be enough evidence here to reconstruct a person. So I tried.</p>
+    <h1>If all you had was my search history, could you figure out <em>who I am</em>?<span class="cursor" aria-hidden="true"></span></h1>
+    <div class="ask" id="ask">
       <div class="bar">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-        <input id="q" type="text" autocomplete="off" spellcheck="false"
-               role="combobox" aria-expanded="false" aria-controls="list" aria-autocomplete="list"
-               aria-label="Search what my data says about me">
+        <input id="q" type="text" autocomplete="off" spellcheck="false" placeholder="Ask the evidence a question"
+               role="combobox" aria-expanded="false" aria-controls="list" aria-autocomplete="list" aria-label="Ask the evidence a question">
       </div>
-      <ul id="list" role="listbox" aria-label="Suggestions"></ul>
+      <ul id="list" role="listbox" aria-label="Questions"></ul>
     </div>
-  </header>
+    <a class="start" href="#attention">[ START WITH THE EVIDENCE ↓ ]</a>
+  </div>
+</header>
 
-  <main id="result" aria-live="polite"></main>
-</div>
-<footer>Prototype · numbers from my Google Takeout · not affiliated with Google</footer>
+<main id="main"></main>
+
+<section class="end" id="end">
+  <div class="wrap" id="endwrap"></div>
+</section>
+<footer>
+  8,730 Questions · Suhani Tiwari · built from my own Google Takeout, cleaned and modeled on my laptop · not affiliated with Google<br>
+  <a href="https://suhxnitiwari.github.io/listening-galaxy/">Heavy Rotation</a> · <a href="https://suhanitiwari.com">suhanitiwari.com</a>
+</footer>
 
 <script>
-const PREFIX = "suhani is ";
+const $ = (s, el = document) => el.querySelector(s);
+const fmt = n => n.toLocaleString();
+const pct = x => Math.round(x * 100) + "%";
+const clock = h => { const x = ((h % 24) + 24) % 24, hh = Math.floor(x), mm = Math.round((x - hh) * 60) % 60;
+  return `${hh % 12 || 12}:${String(mm).padStart(2, "0")} ${hh < 12 ? "AM" : "PM"}`; };
+const color = t => `var(--${String(t).replace(/[^a-z]/g, "")}, var(--other))`;
+const MON = m => new Date(m + "-15T12:00").toLocaleString("en-US", { month: "short" });
+const DAY = d => new Date(d + "T12:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+const label = t => t === "popculture" || t === "pop culture" ? "pop culture" : t;
 
-// ---------- data (computed by the pipeline; hard-coded for the prototype) ----------
-const BUILDER = [
-  { d: "Aug 11 '25", t: "Pitched ClipCurator", s: "a 9-minute pitch video, before any code", c: "--places", big: true },
-  { d: "Sep 3",      t: "First Python notebook", s: "numbers and strings", c: "--career", big: true },
-  { d: "Sep 15–24",  t: "Conditionals → loops", c: "--career" },
-  { d: "Oct 6–27",   t: "Functions → dictionaries → sets → files", c: "--career" },
-  { d: "Nov 17",     t: "Lambdas, map and filter", c: "--career" },
-  { d: "Dec 3",      t: "Pandas", c: "--career" },
-  { d: "Dec 17",     t: "Python final exam", s: "46 notebooks in one semester", c: "--career", big: true },
-  { d: "Jan 21 '26", t: "10 Days of JavaScript", c: "--beauty", big: true },
-  { d: "Feb 4",      t: "First product brief", c: "--food" },
-  { d: "Feb 23–25",  t: "DOM → React", c: "--beauty" },
-  { d: "Mar 2",      t: "First GitHub link", c: "--beauty" },
-  { d: "Mar 19–21",  t: "Product requirements → feature prioritization", c: "--food" },
-  { d: "Mar 26–27",  t: "Backend routes, server.js, SQL", c: "--beauty" },
-  { d: "Apr 5",      t: "TypeScript and a design doc", c: "--beauty" },
-  { d: "Apr 8–22",   t: "Prototype → north star metric → MVP", c: "--food", big: true },
-  { d: "Sep 28–30",  t: "The build sprint", s: "my three most productive days of the year", c: "--accent", big: true },
-];
-const BUILD_Q = [["Oct–Dec", 0], ["Jan–Mar", 8], ["Apr–Jun", 129], ["Jul–Sep", 3755]];
-
-// bedtime / first activity, in hours after midnight of the night (wake is next day)
-const SLEEP = [
-  ["Mon", 2.00, 12.77], ["Tue", 1.62, 12.55], ["Wed", 1.67, 12.53], ["Thu", 0.93, 12.17],
-  ["Fri", 1.83, 13.08], ["Sat", 2.63, 13.62], ["Sun", 2.28, 11.10],
+const QUESTIONS = [
+  ["browser", "What's on my browser?", "02", "bookmarks tabs extensions apps chrome pink theme favorites"],
+  ["attention", "What gets my attention?", "02", "obsession index love favorite most searched nyc dresses coffee"],
+  ["curious", "How do I get curious?", "03", "follow ups chain rewrite questions typos chicago skirt"],
+  ["deep", "How deep is deep?", "04", "rabbit hole longest session midnight tabs"],
+  ["when", "When am I me?", "05", "sleep bedtime night owl hour 3 am time day week"],
+  ["roles", "Can search history identify my roles?", "06", "student builder marketer planner baker artist fan who"],
+  ["wrong", "What would Google get wrong?", "07", "mistakes inference wrong concealer best"],
+  ["vocab", "So what does a search reveal?", "08", "words vocabulary best near me how why think"],
+  ["learn", "Can you watch me learn?", "09", "python code react skills learning projects build"],
+  ["escaped", "Which searches escaped the browser?", "10", "oracle internship job places black fox real life"],
+  ["change", "Can Google watch someone change?", "11", "months year change life events finals september"],
+  ["prove", "You think you know me? Prove it.", "12", "quiz game guess next"],
+  ["end", "So… could you?", "13", "ending answer conclusion"],
 ];
 
-// median productive actions per day (school, career, building, planning, files)
-const WEEK = [
-  ["Mon", 28, "<b>Finishing files.</b> I save more school files on Mondays than any other day, and work peaks at 11 PM."],
-  ["Tue", 45, "<b>Career + building.</b> Job hunting most of the day, work peaks at 8 PM."],
-  ["Wed", 35, "<b>Build day.</b> 2.3× my usual building, coding peaks at 5 PM."],
-  ["Thu", 59, "<b>My most productive day.</b> The most career work and calendar checks of the week, and my earliest bedtime after it."],
-  ["Fri", 16, "<b>Catch-up, then out.</b> School at 4 PM, then the quietest evening of the week."],
-  ["Sat", 12, "<b>Off the clock.</b> School nearly disappears and it's my latest night (2:38 AM)."],
-  ["Sun", 27, "<b>Reset day.</b> School and career prep for the week, work peaks at 7 PM."],
-];
-
-// searches per hour and the top topic in that hour
-const HOURS = [
-  [1299,"fashion","Fashion 30%, beauty 23%"],[1050,"fashion","Fashion 36%, beauty 24%"],[754,"fashion","Fashion 31%, beauty 26%"],
-  [394,"beauty","Beauty 33%, overtaking fashion"],[152,"fashion","Fashion 53%"],[104,"fashion","Fashion 55%"],
-  [39,"fashion","Fashion 31%, career 25%"],[61,"food","Food 57%: brunch plans"],[51,"career","Career 22%, beauty 22%"],
-  [92,"food","Food 35%"],[253,"beauty","Beauty 23%, places 16%"],[421,"food","Food 32%, places 26%"],
-  [757,"places","Places 33%: NYC restaurants and neighborhoods"],[851,"places","Places 32%, food 19%"],[980,"fashion","Fashion 29%, places 23%"],
-  [1218,"places","Places 23%, fashion 22%"],[1260,"fashion","Fashion 24%, places 23%"],[1247,"places","Places 28%, fashion 27%"],
-  [1256,"places","Places 23%, beauty 20%"],[1394,"fashion","Fashion 28%, places 19%"],[1377,"fashion","Fashion 29%, places 20%"],
-  [1519,"fashion","Fashion 36%: the evening peak"],[1502,"fashion","Fashion 28%, places 23%"],[1595,"fashion","Fashion 32%, food 16%: my busiest hour"],
-];
-
-const CITIES = [["Austin", 722], ["New York", 193], ["Chicago", 51], ["Dallas", 42], ["London", 23], ["Paris", 10]];
-const NYC = [
-  ["Living", "studio apartments in the West Village, East Village and Brooklyn", "which nyc neighborhood has 22 year olds"],
-  ["Working", "the Spotify, Pinterest and Netflix NYC offices", "new grad marketing jobs in nyc"],
-  ["Eating", "brunch, coffee shops and restaurants", "which nyc coffee shop just opened here in austin"],
-];
-
-// nights I stayed up, labeled from what the data shows that day
-const LATE = [
-  ["Nov 16", "all-nighter", "Recruiting marathon, between two of my biggest career days"],
-  ["Nov 21", "all-nighter", "Recruiting marathon"],
-  ["Dec 9",  "online until 8:00 AM", "Finals"],
-  ["Dec 12", "online until 6:13 AM", "Finals"],
-  ["Dec 15", "online until 6:51 AM", "Finals"],
-  ["Feb 2",  "all-nighter", "A long night"],
-  ["Aug 29", "all-nighter", "Writing my study-abroad scholarship application"],
-  ["Sep 27", "all-nighter", "The night before the build sprint"],
-];
-
-const BAKES = [["Chocolate chip cookies", 43, 83], ["Banana bread", 22, 38], ["Brownies", 18, 35], ["Muffins", 15, 30], ["Tres leches", 7, 11]];
-
-const TYPOS = [["ausitn", "austin", 21], ["choclate", "chocolate", 7], ["abraod", "abroad", 5], ["chcolate", "chocolate", 4], ["mccoms", "mccombs", 4], ["frwncg toast", "french toast", 3], ["resturant", "restaurant", 3]];
-
-const ROLES = [["Marketing", 83], ["Business & ops", 56], ["Product management", 39], ["Tech", 30], ["Consulting", 20]];
-
-const MARKETING = [["", "Starbucks"], ["", "Owala"], ["", "Liquid Death"], ["", "Athletic Brewing"], ["", "Wendy's"]];
-const ART = [
-  ["coexistence-of-both-my-worlds", "Coexistence of Both My Worlds"],
-  ["navigating-indian-american-identity", "Navigating Indian-American Identity"],
-  ["embracing-cultural-identity", "Embracing Cultural Identity"],
-  ["traditionalism-versus-modernism", "Traditionalism Versus Modernism"],
-  ["packing-home", "Packing Home"],
-  ["diya-thali", "Diya Thali"],
-];
-const ART_SEARCHES = ["lips drawing tutorial", "easy eye drawing", "barbie doll dress drawing", "sunflower painting van gogh", "watercolor pencils tutorial", "easy flower painting", "studio art minor ut austin"];
-
-// free photos from Unsplash (unsplash.com/license), credited on each card
-const PHOTOS = {
-  "a builder": ["1555066931-4365d14bab8c", "Arnold Francisca", "clark_fransa", "Code on a laptop screen"],
-  "a night owl": ["1657731641319-f93235c6a47f", "Birti", "birtiishar", "City lights through a window at night"],
-  "most productive on thursdays": ["1558478551-be297c7bb253", "Alexa Williams", "glamorousplanning", "Writing in a planner"],
-  "in beauty mode at 3 am": ["1596462502278-27bfdc403348", "Shamblen Studios", "shamblenstudios", "Pink makeup brushes"],
-  "dreaming of nyc": ["1496588152823-86ff7695e68f", "Luca Bravo", "lucabravo", "The Brooklyn Bridge and Manhattan"],
-  "a marketer": ["1690733546551-1007bc0a3414", "Fiona Murray-deGraaff", "fionamurrayphoto", "A mood board of photos"],
-  "a networker": ["1604881988758-f76ad2f7aac1", "Priscilla Du Preez", "priscilladupreez", "Two people talking over coffee"],
-  "up all night for what matters": ["1623599008581-79de6f90594e", "Anis Rahman", "ar_graphics_", "A desk lamp on at night"],
-  "an artist": ["1510832842230-87253f48d74f", "Rifqi Ali Ridho", "rifqialiridho", "A paintbrush dipping into paint"],
-  "a baker": ["1499636136210-6f4ee915583e", "Jennifer Pallian", "foodess", "Chocolate chip cookies"],
-  "a published author": ["1457369804613-52c61a468e7d", "Patrick Tomasso", "impatrickt", "Open books"],
-  "an explorer": ["1528109966604-5a6a4a964e8d", "Matthew Kwong", "mattykwong1", "Someone browsing on a laptop"],
-  "always misspelling austin": ["1521225753516-46438a76f25a", "Andrew Seaman", "amseaman", "A typewriter"],
+// "More info" for every chapter: what it is, how it was made, what it hides
+const EP = {
+  browser: { c: "#FFAEBD", log: "Before the searches, the room they happened in: my browser as I left it. The theme color, the tabs I never closed, what I bookmarked and when, and the apps I say are my favorites versus the ones I actually use.",
+    cast: "Chrome settings, synced tabs, bookmarks, extensions, visit counts", genres: "Settings parsing, ARGB color decoding, usage counts", mood: "Pink, Personal, Caught in the act",
+    rating: "PG", why: "Banking, investing, apartment, scholarship and job-application bookmarks are hidden, and so are tabs about health, travel bookings and weddings.", like: ["attention", "wrong", "roles"] },
+  attention: { c: "#C2577A", log: "Before claiming anything about who I am, find what I keep coming back to. Not the most-searched thing: the thing I search often, on many days, in long sessions, in many different ways.",
+    cast: "Google searches (personal account)", genres: "Text normalization, n-grams, geometric mean of log-scaled features", mood: "Revealing, Repetitive, A little obsessive",
+    rating: "PG", why: "Words that describe where I live are excluded, and only hand-approved terms are shown.", like: ["curious", "vocab", "change"] },
+  curious: { c: "#5E62B0", log: "How does one question become many? I grouped back-to-back searches about the same thing into “questions” and measured what happens when the first search isn't enough.",
+    cast: "Google searches, pages visited between them", genres: "Sessionization, question threading, reformulation analysis", mood: "Funny, Typo-filled, Surprisingly efficient",
+    rating: "PG", why: "Only two real chains are shown, both approved. No names, prices or brands.", like: ["deep", "vocab", "prove"] },
+  deep: { c: "#D2603A", log: "The longest night of the year, stacked in ten-minute slices: a build day that started at 4:23 PM and ended at 2:17 AM.",
+    cast: "Google searches, page visits, YouTube watches", genres: "Session ranking, topic tagging, time bucketing", mood: "Chaotic, Productive, Past midnight",
+    rating: "PG", why: "The opening search names a real person, so it's hidden. Brand searches are left out.", like: ["learn", "when", "curious"] },
+  when: { c: "#7C5CC4", log: "When does each version of me show up? My bedtime, my hours and my weekdays, measured from the longest gap in activity each night.",
+    cast: "Every timestamp across laptop and phone, Austin time", genres: "Gap detection, medians, hour-by-topic profiles", mood: "Nocturnal, Interactive, Honest",
+    rating: "PG", why: "“Sleep” is offline time, not measured sleep. No locations are shown.", like: ["deep", "roles", "change"] },
+  roles: { c: "#2F8F5F", log: "Can the evidence name who I am? Each role is built from everything in my data that points to it, month by month, and you get a vote.",
+    cast: "Searches, pages, videos, Drive files, calendar", genres: "Rule-based classification, monthly evidence counts", mood: "Interactive, Flattering, Debatable",
+    rating: "PG", why: "Roles built on shopping or gossip were cut. Votes stay on your device.", like: ["wrong", "learn", "end"] },
+  wrong: { c: "#B4436C", log: "Behavioral data isn't ground truth. Every card here is a real wrong inference made while analyzing my data, corrected by me.",
+    cast: "My own corrections", genres: "Error analysis, data skepticism", mood: "Self-aware, Funny, The most important chapter",
+    rating: "PG", why: "Every “reality” is in my words or approved by me.", like: ["roles", "vocab", "end"] },
+  vocab: { c: "#5E62B0", log: "If searches don't show what I love, maybe they show how I think: the words I reach for, and how long my questions are.",
+    cast: "9,436 distinct searches", genres: "Keyword frequency, length distribution", mood: "Analytical, Short and to the point",
+    rating: "G", why: "Only counts are shown, never the searches themselves.", like: ["curious", "attention", "wrong"] },
+  learn: { c: "#D2603A", log: "I barely Googled code, so the learning lives in my school Drive: every step from my first Python notebook to my own projects is dated from a file.",
+    cast: "School Drive file titles and dates, project visits", genres: "Timeline reconstruction, monthly aggregation", mood: "Ambitious, Steady, Then all at once",
+    rating: "G", why: "File titles and dates only. File contents are never read.", like: ["deep", "escaped", "change"] },
+  escaped: { c: "#1F5F86", log: "Some searches answered a question. Others changed what I did next: a summer at Oracle, trips to Chicago, New York, Denver and Miami, a coffee shop I went to and reviewed, and eleven trips I only ever searched flights for.",
+    cast: "Searches, email subject lines, Maps reviews, Drive files", genres: "Event linking, timeline reconstruction", mood: "Real, Surprising, Proof",
+    rating: "PG", why: "No hotel names, prices, or application details beyond what's on my résumé.", like: ["learn", "change", "end"] },
+  change: { c: "#6E7F96", log: "Zoom out from hours to months. Which month changed me most, and could a pipeline detect life events without being told they happened?",
+    cast: "Every event, grouped by month and day", genres: "Jensen–Shannon divergence, z-score anomaly detection", mood: "Big picture, Uncanny",
+    rating: "PG", why: "Only topic shares and dates are shown.", like: ["learn", "escaped", "when"] },
+  prove: { c: "#C98A00", log: "You've seen my patterns. Real searches, real next searches: can you guess what I typed?",
+    cast: "Two approved question chains", genres: "Quiz", mood: "Playful, Harder than it looks",
+    rating: "G", why: "Wrong answers were written by me; right answers are real.", like: ["curious", "roles", "end"] },
 };
-const photo = key => {
-  const ph = PHOTOS[key];
-  if (!ph) return "";
-  const [id, by, user, alt] = ph;
-  const src = w => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&h=${Math.round(w * .42)}&q=70`;
-  const ref = "?utm_source=search_history&utm_medium=referral";
-  return `<figure class="hero">
-      <div class="frame"><img src="${src(1200)}" srcset="${src(700)} 700w, ${src(1200)} 1200w, ${src(1800)} 1800w" sizes="(max-width: 900px) 100vw, 860px" alt="${alt}"></div>
-      <figcaption>Photo by <a href="https://unsplash.com/@${user}${ref}" target="_blank" rel="noopener">${by}</a> on <a href="https://unsplash.com/${ref}" target="_blank" rel="noopener">Unsplash</a></figcaption>
-    </figure>`;
-};
+QUESTIONS.forEach((x, i) => x[2] = String(i + 2).padStart(2, "0"));
+const EP_NUM = Object.fromEntries(QUESTIONS.map(([id, q, n]) => [id, [n, q]]));
 
-const EXPLORE = [["Jan",147],["Feb",126],["Mar",112],["Apr",81],["May",64],["Jun",65],["Jul",62],["Aug",31],["Sep",56]];
-
-const ANSWERS = [
-  { key: "a builder", n: "0 → 3,755", render: renderBuilder },
-  { key: "a night owl", n: "1:54 AM", render: renderSleep },
-  { key: "most productive on thursdays", n: "59 / day", render: renderWeek },
-  { key: "in beauty mode at 3 am", n: "24 hours", render: renderHours },
-  { key: "dreaming of nyc", n: "193 searches", render: renderNYC },
-  { key: "a marketer", n: "#1 role", render: renderMarketer },
-  { key: "a networker", n: "8,920 profiles", render: renderNetworker },
-  { key: "up all night for what matters", n: "8 nights", render: renderLate },
-  { key: "an artist", n: "6 pieces", render: renderArtist },
-  { key: "a published author", n: "1 book", render: renderAuthor },
-  { key: "a baker", n: "43 ways", render: renderBaker },
-  { key: "an explorer", n: "752 channels", render: renderExplorer },
-  { key: "always misspelling austin", n: "21 times", render: renderTypos },
-];
-
-// ---------- search box ----------
-const q = document.getElementById("q");
-const list = document.getElementById("list");
-const search = document.getElementById("search");
-const result = document.getElementById("result");
-let shown = [], active = -1, typing = null;
-
-function lev(a, b) {
-  const m = Array.from({ length: a.length + 1 }, (_, i) => [i]);
-  for (let j = 1; j <= b.length; j++) m[0][j] = j;
-  for (let i = 1; i <= a.length; i++)
-    for (let j = 1; j <= b.length; j++)
-      m[i][j] = Math.min(m[i-1][j] + 1, m[i][j-1] + 1, m[i-1][j-1] + (a[i-1] === b[j-1] ? 0 : 1));
-  return m[a.length][b.length];
+function openInfo(id, D) {
+  const e = EP[id], [n, q] = EP_NUM[id], dlg = document.getElementById("info");
+  dlg.style.setProperty("--c", e.c);
+  dlg.innerHTML = `
+    <div class="top"><button class="x" type="button" aria-label="Close">×</button>
+      <div class="ep">Episode ${n}</div><h3 id="infotitle">${q}</h3>
+      <button class="go" type="button" data-go="${id}">▶ Watch this chapter</button></div>
+    <div class="body"><div class="grid">
+      <div><div class="meta"><span>Oct 2025 – Oct 2026</span><span class="tag">${e.rating}</span><span>${fmt(D.meta.questions)} questions</span><span class="tag">HD DATA</span></div>
+        <p>${e.log}</p></div>
+      <div class="side"><div><span>Cast: </span>${e.cast}</div><div><span>Genres: </span>${e.genres}</div><div><span>This episode is: </span>${e.mood}</div></div>
+    </div>
+    <h4>More like this</h4>
+    <div class="like">${e.like.map(k => { const [m, t] = EP_NUM[k]; return `<button type="button" data-go="${k}" style="--c:${(EP[k] || {}).c || "#E58AAE"}"><div class="art">${t}</div><small>Episode ${m}</small></button>`; }).join("")}</div>
+    <div class="about"><h4>About <b>${q}</b></h4><dl>
+      <dt>Directed by:</dt><dd>Suhani Tiwari</dd>
+      <dt>Cast:</dt><dd>${e.cast}</dd>
+      <dt>Genres:</dt><dd>${e.genres}</dd>
+      <dt>This episode is:</dt><dd>${e.mood}</dd>
+      <dt>Privacy rating:</dt><dd><span class="rating">${e.rating}</span>${e.why}</dd>
+    </dl></div></div>`;
+  dlg.querySelector(".x").onclick = () => dlg.close();
+  dlg.querySelectorAll("[data-go]").forEach(b => b.onclick = () => { dlg.close(); document.getElementById(b.dataset.go).scrollIntoView({ behavior: "smooth" }); });
+  dlg.showModal();
 }
 
-function rest() {
-  const v = q.value.toLowerCase().replace(/\s+/g, " ").trimStart();
-  return v.startsWith(PREFIX) ? v.slice(PREFIX.length) : v.startsWith("suhani is") ? "" : v;
-}
-
-function suggest(force = false) {
-  const r = rest().trim();
-  let items = ANSWERS.filter(a => a.key.startsWith(r) || (r && a.key.includes(r)));
-  let dym = null;
-  if (!items.length && r.length > 2) {
-    const best = ANSWERS.map(a => [lev(r, a.key.slice(0, Math.max(r.length, 4))), a]).sort((x, y) => x[0] - y[0])[0];
-    if (best[0] <= Math.max(2, Math.floor(r.length / 3))) { dym = best[1]; items = [best[1]]; }
-  }
-  shown = items; active = items.length ? 0 : -1;
-  list.innerHTML = items.map((a, i) => {
-    const typed = a.key.startsWith(r) ? r.length : 0;
-    const label = dym
-      ? `<span class="s dym">Did you mean: <b>${a.key}</b>?</span>`
-      : `<span class="s">suhani is ${a.key.slice(0, typed)}<b>${a.key.slice(typed)}</b></span>`;
-    return `<li role="option" id="opt${i}" aria-selected="${i === active}" data-i="${i}">${label}<span class="n">${a.n}</span></li>`;
-  }).join("");
-  const open = items.length > 0 && (force || document.activeElement === q);
-  search.classList.toggle("open", open);
-  q.setAttribute("aria-expanded", open);
-  q.setAttribute("aria-activedescendant", active >= 0 ? `opt${active}` : "");
-}
-
-function highlight(i) {
-  active = i;
-  [...list.children].forEach((li, k) => li.setAttribute("aria-selected", k === i));
-  q.setAttribute("aria-activedescendant", `opt${i}`);
-}
-
-function choose(a) {
-  stopTyping();
-  q.value = PREFIX + a.key;
-  search.classList.remove("open");
-  q.setAttribute("aria-expanded", "false");
-  q.blur();
-  document.body.classList.add("has-result");
-  const others = ANSWERS.filter(o => o !== a)
-    .map(o => `<button type="button" data-k="${o.key}">suhani is ${o.key}</button>`).join("");
-  result.innerHTML = `<p class="meta">Results for “suhani is ${a.key}”</p><article class="card pre">${photo(a.key)}${a.render()}<div class="more">${others}</div></article>`;
-  result.querySelectorAll(".more button").forEach(b =>
-    b.addEventListener("click", () => choose(ANSWERS.find(o => o.key === b.dataset.k))));
-  if (dayTimer) { clearInterval(dayTimer); dayTimer = null; }
-  wire();
-  animate(result.querySelector(".card"));
-  history.replaceState(null, "", "#" + a.key.replace(/ /g, "-"));
-  result.scrollIntoView({ behavior: "smooth", block: "start" });
-}
-
-q.addEventListener("focus", () => { stopTyping(); if (!q.value) q.value = PREFIX; suggest(); });
-q.addEventListener("input", suggest);
-q.addEventListener("blur", () => setTimeout(() => search.classList.remove("open"), 120));
-q.addEventListener("keydown", e => {
-  if (!shown.length) return;
-  if (e.key === "ArrowDown") { e.preventDefault(); highlight((active + 1) % shown.length); }
-  else if (e.key === "ArrowUp") { e.preventDefault(); highlight((active - 1 + shown.length) % shown.length); }
-  else if (e.key === "Enter" && active >= 0) { e.preventDefault(); choose(shown[active]); }
-  else if (e.key === "Escape") { search.classList.remove("open"); }
-});
-list.addEventListener("mousedown", e => {
-  const li = e.target.closest("li"); if (li) { e.preventDefault(); choose(shown[+li.dataset.i]); }
+fetch("data.json").then(r => r.json()).then(build).catch(err => {
+  console.error(err);
+  $("#main").innerHTML = `<div class="wrap"><p class="lede" style="padding:60px 0">The evidence didn't load. Try refreshing.</p></div>`;
 });
 
-// type "suhani is " on load, then show every suggestion
-function stopTyping() { if (typing) { clearTimeout(typing); typing = null; } }
-function autoType() {
-  if (matchMedia("(prefers-reduced-motion: reduce)").matches) { q.value = PREFIX; return; }
-  let i = 0;
-  const step = () => {
-    q.value = PREFIX.slice(0, ++i);
-    if (i < PREFIX.length) typing = setTimeout(step, 90);
-    else { typing = null; q.focus(); suggest(true); }
-  };
-  typing = setTimeout(step, 700);
+function chapter(id, num, q, inner) {
+  num = (QUESTIONS.find(x => x[0] === id) || [, , num])[2];
+  const more = `<button class="more rv" type="button" data-info="${id}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 11v6M12 7.5v.5"/></svg>More info</button>`;
+  return `<section class="ch" id="${id}"><div class="wrap"><div class="kicker rv">${num} · ${q}</div>${inner.replace("</h2>", "</h2>" + more)}</div></section>`;
 }
 
-// ---------- answers ----------
-const css = v => `var(${v})`;
+function build(D) {
+  const M = D.meta, months = Object.keys(D.months), parts = [];
 
-function renderBuilder() {
-  const max = Math.max(...BUILD_Q.map(x => x[1]));
-  return `
-    <h2>From my first line of Python to <em>shipping my own products</em>, in one year.</h2>
-    <p class="sub">I pitched a product before I could code. Then I taught myself to build one. Every step below is dated from the files I saved.</p>
-    <div class="legend">
-      <span><i style="background:var(--places)"></i>Pitch</span>
-      <span><i style="background:var(--career)"></i>Python</span>
-      <span><i style="background:var(--beauty)"></i>Web dev</span>
-      <span><i style="background:var(--food)"></i>Product</span>
-      <span><i style="background:var(--accent)"></i>My own projects</span>
+  $("#evidence").innerHTML = [
+    [M.questions, "questions"], [M.searches, "searches"], [M.pages, "pages visited"], [M.videos, "videos watched"],
+    [M.drive_files, "files I made"], [365, "days"], [2, "Google accounts"]
+  ].map(([n, l]) => `<div><b data-count="${n}">0</b>${l}</div>`).join("");
+
+  // my browser ----------------------------------------------------
+  const B = D.browser, PB = B.bookmarks;
+  const amax = Math.max(...B.apps.map(a => a.visits));
+  const favs = new Set(B.favorites_i_picked);
+  parts.push(chapter("browser", "02", "What's on my browser?", `
+    <h2 class="rv">Before the searches, <em>the room they happened in</em>.</h2>
+    <p class="lede rv">My browser, as I left it. Both of my Google accounts were set to pink.</p>
+    <div class="chrome rv" style="--pink:${B.theme.personal}">
+      <div class="tabs-row"><div class="dots"><i></i><i></i><i></i></div>
+        ${B.tabs_shown.map(([t, n], i) => `<span class="tab ${i === 0 ? "on" : ""}" title="${t}">${t}${n > 1 ? `<b>×${n}</b>` : ""}</span>`).join("")}
+        <span class="more-tabs">+${fmt(B.tabs_open - B.tabs_shown.reduce((s, x) => s + x[1], 0))} more</span></div>
+      <div class="omni"><div>8,730 questions</div></div>
+      <div class="bms" aria-label="The bookmark bar my data would make">${B.data_bar.map(b => `<span title="Opened on ${b.days} different days">${b.title}</span>`).join("")}</div>
+      <div class="page"><div class="word">${fmt(B.tabs_open)} tabs</div><p>open across my ${B.devices} devices when I exported my data. ${B.own_site_tabs} of them were my own websites, and my most-open tab of all was my own homepage.</p></div>
     </div>
-    <ol class="tl">${BUILDER.map(s => `
-      <li class="${s.big ? "big" : ""}" style="--c:${css(s.c)}">
-        <time>${s.d}</time><span class="dot"></span>
-        <p>${s.t}${s.s ? `<small>${s.s}</small>` : ""}</p>
-      </li>`).join("")}
-    </ol>
-    <div class="qbars" role="img" aria-label="Visits to my own projects by quarter: 0, 8, 129, then 3,755">
-      ${BUILD_Q.map(([l, v]) => `<div><b>${v.toLocaleString()}</b><div class="b" style="height:${(v / max) * 100}%"></div><span>${l}</span></div>`).join("")}
+    <div class="swatches rv">
+      <div class="swatch"><i style="background:${B.theme.personal}"></i>personal account · ${B.theme.personal}</div>
+      <div class="swatch"><i style="background:${B.theme.school}"></i>UT account · ${B.theme.school}</div>
     </div>
-    <p class="note">Visits to my own projects (my site, local dev servers, GitHub, Render) by quarter.</p>`;
-}
-
-function renderSleep() {
-  const start = -3, end = 14; // 9 PM to 2 PM
-  const pos = h => ((h - start) / (end - start)) * 100;
-  const fmt = h => { const x = ((h % 24) + 24) % 24; const hh = Math.floor(x), mm = Math.round((x - hh) * 60);
-    return `${hh % 12 || 12}:${String(mm).padStart(2, "0")} ${hh < 12 ? "AM" : "PM"}`; };
-  return `
-    <h2>I go offline at <em>1:54 AM</em>.</h2>
-    <p class="sub">Each bar is my typical night: from the last thing I did online to the first thing the next day, across my laptop and phone.</p>
-    <div class="stats">
-      <div class="stat"><b>1:54 AM</b><span>typical bedtime</span></div>
-      <div class="stat"><b>29%</b><span>of nights past 3 AM</span></div>
-      <div class="stat"><b>6–8 AM</b><span>still online during finals</span></div>
+    <p class="note rv">The theme colors are decoded from my Chrome settings, where they're stored as signed integers. The bookmark bar isn't my real one: it's the one my data would make, ranked by how many different days I opened each site (LinkedIn on ${B.data_bar[0].days} of them). My real bar has ${PB.personal_total} bookmarks; ${PB.personal_hidden} of them are banking, apartment and application links that stay private.</p>
+    <div class="grid2" style="margin-top:28px">
+      <div class="card rv"><div class="kicker" style="color:var(--dim)">My UT bookmarks, by date</div>
+        <ul class="bmlist" style="margin-top:12px">${PB.school_bar.map(b => `<li class="${PB.ai_day.includes(b.title) ? "ai" : ""}"><time>${DAY(b.added)}</time><span>${b.title}</span></li>`).join("")}</ul>
+        <p class="note" style="margin-bottom:0">On Aug 31, 2026 I bookmarked ${PB.ai_day.filter(x => x !== "Slack").join(", ")} and Slack in one sitting: the first day of my build season.</p></div>
+      <div class="card rv" style="--d:.1s"><div class="kicker" style="color:var(--dim)">Extensions</div>
+        <p class="sub" style="margin:10px 0 0">${B.extensions.personal} on my personal account, ${B.extensions.school} on my UT account. Mostly about time and school:</p>
+        <div class="ext">${B.extensions.names_from_my_browser.map(e => `<span>${e}</span>`).join("")}</div>
+        <p class="note" style="margin-bottom:0">Two of them just add more colors to Google Calendar.</p></div>
     </div>
-    <div class="sleep" role="img" aria-label="Typical offline window by night of the week">
-      ${SLEEP.map(([d, b, w]) => `
-        <span class="d">${d}</span>
-        <div class="track"><div class="off ${d === "Thu" || d === "Sat" ? "hi" : ""}" style="left:${pos(b)}%;width:${pos(w) - pos(b)}%"></div>
-          <span class="lab" style="left:calc(${pos(b)}% + 8px)">${fmt(b)} → ${fmt(w)}</span></div>`).join("")}
-      <div class="axis">${[[-3, "9 PM"], [0, "midnight"], [6, "6 AM"], [12, "noon"], [14, "2 PM"]].map(([h, l]) => `<span style="left:${pos(h)}%">${l}</span>`).join("")}</div>
+    <div class="kicker rv" style="margin:46px 0 12px;color:var(--dim)">The apps I call my favorites vs. the ones I actually use</div>
+    <div class="card rv"><div class="apps">${B.apps.map((a, i) => `
+      <span>${a.app}</span><span class="tr"><i class="grow" style="width:${(a.visits / amax) * 100}%;--d:${i * 60}ms"></i></span>
+      <span class="n">${fmt(a.visits)}</span><span class="fav" title="${favs.has(a.app) ? "In my favorites" : "Not in my favorites"}">${favs.has(a.app) ? "★" : ""}</span>`).join("")}</div>
+      <p class="note" style="margin-bottom:0">★ = pinned in my Google apps favorites. Drive is my #2 favorite, yet my personal account opened it ${B.apps.find(a => a.app === "Drive").visits} times all year. (My real Drive is on my UT account: 297 files, but that account kept no browsing history to count.)</p></div>
+    <p class="bridge rv">That's the room. Now, what was I looking at?</p>`));
+
+  // 02 ------------------------------------------------------------
+  const maxI = Math.max(...D.obsessions.map(o => o.index));
+  parts.push(chapter("attention", "02", "What gets my attention?", `
+    <h2 class="rv">Before claiming anything, find what I <em>keep coming back to</em>.</h2>
+    <p class="lede rv">Not just what I searched most. An obsession is something I search a lot, on many different days, in long sessions, in many different ways. So I built an index for it.</p>
+    <div class="card rv"><div class="lb">${D.obsessions.map((o, i) => `
+      <div class="row">
+        <span class="rk">${i + 1}</span>
+        <span class="t">${o.term}<small>${o.searches} searches · ${o.days} days · ${o.variety} ways</small></span>
+        <span class="track"><i class="grow" style="width:${(o.index / maxI) * 100}%;--d:${i * 80}ms"></i></span>
+        <span class="v">${o.index}</span>
+      </div>`).join("")}</div>
+      <div class="formula">OBSESSION INDEX = geometric mean of searches, different days, deepest single session, different ways I asked and estimated minutes, each log-scaled. It's only high if it's high on everything.</div>
     </div>
-    <p class="sub" style="margin:22px 0 0">Thursday night is my earliest (after my busiest day). Saturday is my latest. Sunday is my shortest rest, because Monday starts early.</p>
-    <p class="note">“Offline” is the longest gap in activity each night, not measured sleep.</p>`;
-}
+    <p class="note rv">“Austin” would be #1 with ${D.vocabulary.austin} searches. It's left out: I live here, so it's context, not an obsession.</p>
+    <p class="bridge rv">That's what I look at. But how do I go looking?</p>`));
 
-function renderWeek() {
-  const max = Math.max(...WEEK.map(x => x[1]));
-  return `
-    <h2>Thursday is when I <em>get things done</em>.</h2>
-    <p class="sub">Productive actions per day (school, career, building, planning and finished files), typical day for each weekday. Tap a day.</p>
-    <div class="week">${WEEK.map(([d, v], i) => `
-      <div class="col ${d === "Thu" ? "top sel" : ""}" tabindex="0" role="button" data-i="${i}" aria-label="${d}: ${v} productive actions">
-        <b>${v}</b><div class="b" style="height:${(v / max) * 100}%"></div><span>${d}</span>
-      </div>`).join("")}
+  // 03 ------------------------------------------------------------
+  const C = D.curiosity;
+  parts.push(chapter("curious", "03", "How do I get curious?", `
+    <h2 class="rv">One question is <em>usually</em> enough.</h2>
+    <p class="lede rv">I expected to find a girl who needs seventeen follow-ups for everything. The data disagreed.</p>
+    <div class="grid2">
+      <div class="card rv"><div class="big" data-count="${Math.round(C.one_search * 100)}" data-suffix="%">0%</div>
+        <p class="sub">of my ${fmt(M.questions)} questions took a single search.</p></div>
+      <div class="card rv" style="--d:.12s"><div class="big" data-count="${Math.round(C.rewrote_without_clicking * 100)}" data-suffix="%">0%</div>
+        <p class="sub">of the times I rewrote a search, I hadn't opened a single result first. I'd rather rephrase than read.</p></div>
     </div>
-    <p class="dayline" id="dayline">${WEEK[3][2]}</p>`;
-}
-
-function renderHours() {
-  const max = Math.max(...HOURS.map(x => x[0]));
-  const lab = h => `${h % 12 || 12} ${h < 12 ? "AM" : "PM"}`;
-  return `
-    <h2>At 3 AM, <em>beauty</em> takes over my searches.</h2>
-    <p class="sub">19,626 searches by hour. Height is how much I search, color is what I search most. Tap an hour, or play my day.</p>
-    <button class="play" type="button" id="playday">▶ Play my day</button>
-    <div class="legend">
-      <span><i style="background:var(--fashion)"></i>Fashion</span>
-      <span><i style="background:var(--beauty)"></i>Beauty</span>
-      <span><i style="background:var(--places)"></i>Places</span>
-      <span><i style="background:var(--food)"></i>Food</span>
-      <span><i style="background:var(--career)"></i>Career</span>
+    <div class="kicker rv" style="margin:46px 0 12px;color:var(--dim)">How I ask a question, when one search isn't enough</div>
+    <div class="card rv">
+      <div class="tabs" role="group" aria-label="Real question chains">${D.chains.map((c, i) => `<button type="button" data-chain="${i}" aria-pressed="${i === 0}">${c.label}</button>`).join("")}</div>
+      <ol class="chain" id="chain"></ol>
+      <div class="chain-meta" id="chainmeta"></div>
     </div>
-    <div class="hours">${HOURS.map(([v, t], h) => `
-      <div class="h ${h === 3 ? "sel" : ""}" tabindex="0" role="button" data-h="${h}" aria-label="${lab(h)}: ${v} searches, mostly ${t}"
-           style="height:${(v / max) * 100}%;background:var(--${t})"></div>`).join("")}
-    </div>
-    <div class="hx">${HOURS.map((_, h) => `<span>${({0: "12 AM", 6: "6 AM", 12: "noon", 18: "6 PM"})[h] || ""}</span>`).join("")}</div>
-    <p class="hourline" id="hourline"><b>3 AM</b> · 394 searches · ${HOURS[3][2]}</p>
-    <div class="parts">
-      <div style="--c:var(--food)"><b>Morning</b>food and brunch</div>
-      <div style="--c:var(--places)"><b>Afternoon</b>places, and dreaming of NYC</div>
-      <div style="--c:var(--fashion)"><b>Evening</b>fashion, peaking at 9 PM</div>
-      <div style="--c:var(--beauty)"><b>After midnight</b>beauty mode</div>
-    </div>`;
-}
+    <p class="note rv">Real searches, in order, typos included. My longest single question took ${C.longest} different searches.</p>
+    <p class="bridge rv">Most questions end fast. The ones that don't become rabbit holes.</p>`));
 
-function renderExplorer() {
-  const max = Math.max(...EXPLORE.map(x => x[1]));
-  return `
-    <h2>I watched <em>752 channels</em>, and 567 of them only once.</h2>
-    <p class="sub">I'm an explorer on YouTube: my top 10 channels are only 28% of what I watch. New channels I found each month, which drop as I get pickier.</p>
-    <div class="stats">
-      <div class="stat"><b>1,974</b><span>videos</span></div>
-      <div class="stat"><b>2</b><span>videos in a typical session</span></div>
-      <div class="stat"><b>27%</b><span>of plays are rewatches</span></div>
-    </div>
-    <div class="mbars" role="img" aria-label="New channels found per month, January to September: 147 down to 56">
-      ${EXPLORE.map(([m, v]) => `<div><b>${v}</b><div class="b" style="height:${(v / max) * 100}%"></div><span>${m}</span></div>`).join("")}
-    </div>`;
-}
-
-const hbars = (rows, color, topIdx = 0) => {
-  const max = Math.max(...rows.map(r => r[1]));
-  return `<div class="hb">${rows.map(([l, v], i) => `
-    <span class="l ${i === topIdx ? "top" : ""}">${l}</span>
-    <span class="t"><i style="width:${(v / max) * 100}%;--c:${color}"></i></span>
-    <span class="v">${v.toLocaleString()}</span>`).join("")}</div>`;
-};
-
-function renderNYC() {
-  return `
-    <h2>After Austin, the city I search most is <em>New York</em>.</h2>
-    <p class="sub">193 different NYC searches, more than Chicago, London, Paris or even Dallas, where I grew up. Most of them were in November and December, around 12 PM and 5 PM.</p>
-    ${hbars(CITIES, "var(--places)", 1)}
-    <div class="cols">${NYC.map(([h, d, ex]) => `<div><b>${h}</b>${d}<q>${ex}</q></div>`).join("")}</div>
-    <p class="note">Searches that mention each city by name, Oct 2025 – Sep 2026.</p>`;
-}
-
-function renderNetworker() {
-  return `
-    <h2>I look up <em>people</em> 6× more than I look up jobs.</h2>
-    <p class="sub">On LinkedIn I opened 8,920 profiles and my messages 1,510 times, against 1,339 job searches. The roles I looked at most:</p>
-    <div class="stats">
-      <div class="stat"><b>8,920</b><span>profiles viewed</span></div>
-      <div class="stat"><b>591</b><span>job postings read</span></div>
-      <div class="stat"><b>3</b><span>recruiting waves</span></div>
-    </div>
-    ${hbars(ROLES, "var(--career)")}
-    <p class="sub" style="margin:22px 0 0">I recruit in waves: October–November, January and July, mostly on Wednesdays and Thursdays, and almost never on Saturdays.</p>
-    <p class="note">Roles from the titles of job postings I opened. No company names.</p>`;
-}
-
-function renderLate() {
-  return `
-    <h2>I stay up all night for <em>things that matter</em>.</h2>
-    <p class="sub">My latest nights of the year weren't random. Each one lines up with something I was working toward.</p>
-    <ol class="nights">${LATE.map(([d, k, w]) => `
-      <li class="${w === "Finals" ? "fin" : ""}"><time>${d}</time><div><b>${w}</b><span>${k}</span></div></li>`).join("")}
-    </ol>
-    <p class="note">All-nighter = less than 3 hours offline that night across laptop and phone.</p>`;
-}
-
-function renderAuthor() {
-  return `
-    <div class="book">
-      <div class="cover" aria-hidden="true"><b>Girls Can Be Engineers, Too!</b><span>Suhani Tiwari</span></div>
-      <div>
-        <h2>Before any of this, I <em>wrote a book</em>.</h2>
-        <p class="sub" style="margin:0"><i>Girls Can Be Engineers, Too!</i> is on Amazon as an eBook and a paperback, in the US and the UK. Everything else on this page is what I learned and made next.</p>
+  // 04 ------------------------------------------------------------
+  const H = D.rabbit_hole, R = D.rabbit_hole_records;
+  const hm = m => `${Math.floor(m / 60)}h ${m % 60}m`;
+  parts.push(chapter("deep", "04", "How deep is deep?", `
+    <h2 class="rv">Anatomy of a <em>rabbit hole</em>.</h2>
+    <p class="lede rv">${DAY(H.date)}: ${H.label}. Each bar is ten minutes; its color is what I was doing.</p>
+    <div class="card rv">
+      <div class="legend" id="striplegend"></div>
+      <svg class="strip" id="strip" role="img" aria-label="What I was doing in each ten minutes of a ${hm(H.minutes)} session"></svg>
+      <ul class="rh-q">${H.searches_shown.map(x => `<li><time>+${Math.floor(x.min / 60)}h${String(x.min % 60).padStart(2, "0")}</time><span>${x.q}</span></li>`).join("")}</ul>
+      <div class="ends">
+        <div><span>Started with</span><p>${H.started}</p></div>
+        <div><span>Ended with</span><p>${H.ended}</p></div>
       </div>
-    </div>`;
-}
-
-function renderBaker() {
-  return `
-    <h2>I searched for chocolate chip cookies <em>43 different ways</em>.</h2>
-    <p class="sub">Every search, recipe page and video about the same dish merges into one bake, the same way my Spotify pipeline merged duplicate songs. Different ways I searched for each:</p>
-    ${hbars(BAKES.map(([l, u]) => [l, u]), "var(--food)")}
-    <p class="sub" style="margin:22px 0 0">One of my real questions to Google: <q>does nutmeg go in banana bread</q>.</p>`;
-}
-
-function renderTypos() {
-  return `
-    <h2>I misspelled the city I live in <em>21 times</em>.</h2>
-    <p class="sub">I type faster than I spell. My most common search typos:</p>
-    <div class="typo">${TYPOS.map(([w, r, n]) => `<div><s>${w}</s><em>→ ${r}</em><small>${n}×</small></div>`).join("")}</div>
-    <p class="note">Try it: misspell one of the answers in the search bar, like “suhani is a buildr”.</p>`;
-}
-
-
-function renderMarketer() {
-  return `
-    <h2>Marketing is the job I look at most, and the work I <em>keep making</em>.</h2>
-    <p class="sub">Marketing was my #1 role on job sites (83 postings), ahead of business, product and tech. My Drive is full of it too: HBR cases on Liquid Death, Athletic Brewing and Wendy's, a Starbucks deck and an Owala marketing analysis.</p>
-    <div class="stats">
-      <div class="stat"><b>83</b><span>marketing postings read</span></div>
-      <div class="stat"><b>4</b><span>HBR case write-ups</span></div>
+      <div class="stats">
+        <div class="stat"><b>${hm(H.minutes)}</b><span>${clock(+H.start_time.slice(0, 2) + H.start_time.slice(3) / 60)} → ${clock(+H.end_time.slice(0, 2) + H.end_time.slice(3) / 60)}</span></div>
+        <div class="stat"><b data-count="${H.searches}">0</b><span>searches</span></div>
+        <div class="stat"><b data-count="${H.pages}">0</b><span>pages</span></div>
+      </div>
+      <p class="note" style="margin:0">There were casualties. Mostly browser tabs.</p>
     </div>
-    <h3>Brands I've made projects about</h3>
-    <div class="chips">${MARKETING.map(([, t]) => `<span>${t}</span>`).join("")}</div>`;
-}
+    <div class="records rv">
+      <div><b>${hm(R.longest_minutes)}</b><span>longest session of the year (this one)</span></div>
+      <div><b>${R.most_searches_in_session}</b><span>most searches in one session</span></div>
+      <div><b>${fmt(R.most_pages_in_session)}</b><span>most pages in one session</span></div>
+      <div><b>${R.sessions_crossing_midnight}</b><span>sessions that crossed midnight</span></div>
+    </div>
+    <p class="bridge rv">Which raises a question. When does this happen?</p>`));
 
-function renderArtist() {
-  return `
-    <h2>My art is about living between <em>two worlds</em>.</h2>
-    <p class="sub">I'm still teaching myself: drawing eyes and lips, watercolor pencils, flowers. And I looked up the studio art minor at UT more than once.</p>
-    <h3>Pieces I've made</h3>
-    <div class="art">${ART.map(([, t]) => `<p class="reveal">${t}</p>`).join("")}</div>
-    <h3>What I searched to learn</h3>
-    <div class="chips">${ART_SEARCHES.map(q => `<span>${q}</span>`).join("")}</div>`;
+  // 05 ------------------------------------------------------------
+  const S = D.sleep, histKeys = [-3, -2, -1, 0, 1, 2, 3, 4, 5, 6];
+  const histMax = Math.max(...histKeys.map(k => S.bed_histogram[k] || 0));
+  parts.push(chapter("when", "05", "When am I me?", `
+    <h2 class="rv">Apparently I'm several different people, depending on <em>the hour</em>.</h2>
+    <div class="card rv guess" id="guess">
+      <p class="sub" style="margin:0">Before I show you anything: what time do you think I usually go to bed?</p>
+      <div class="val" id="gval"></div>
+      <input type="range" id="grange" min="-3" max="5" step="0.25" value="-1" aria-label="Your guess for my bedtime">
+      <button class="btn" type="button" id="greveal">Reveal</button>
+      <div id="ganswer" hidden>
+        <p class="sub" id="gtext"></p>
+        <div class="hist">${histKeys.map(k => `<div class="${k === Math.floor(S.median_bed - 24) ? "you" : ""}"><i class="growy" style="height:${((S.bed_histogram[k] || 0) / histMax) * 100}%"></i><span>${clock(k).replace(":00", "")}</span></div>`).join("")}</div>
+        <p class="note">Nights by the hour I went offline. “Offline” is the longest gap in activity across my laptop and phone, not measured sleep.</p>
+      </div>
+    </div>
+    <div class="kicker rv" style="margin:46px 0 12px;color:var(--dim)">What I search, hour by hour</div>
+    <div class="card rv">
+      <button class="pill" type="button" id="play">▶ Play my day</button>
+      <div class="legend" style="margin:14px 0 10px">${[...new Set(D.hours.map(h => h.top))].map(t => `<span><i style="background:${color(t)}"></i>${label(t)}</span>`).join("")}</div>
+      <div class="hours" id="hours"></div>
+      <div class="hx">${D.hours.map(h => `<span>${({ 0: "12 AM", 6: "6 AM", 12: "noon", 18: "6 PM" })[h.hour] || ""}</span>`).join("")}</div>
+      <div class="readout" id="readout"></div>
+    </div>
+    <div class="kicker rv" style="margin:46px 0 12px;color:var(--dim)">My typical night, by day of the week</div>
+    <div class="card rv"><div class="nights" id="nights"></div></div>
+    <p class="bridge rv">Enough patterns. Can the evidence say who I am?</p>`));
+
+  // 06 ------------------------------------------------------------
+  parts.push(chapter("roles", "06", "Can search history identify my roles?", `
+    <h2 class="rv">Google thinks I'm…</h2>
+    <p class="lede rv">Each role is an evidence board: everything in my data that points to it, month by month. You decide if it's convincing. (Your vote stays on your device.)</p>
+    <div class="roles">${D.roles.map((r, i) => {
+      const vals = months.map(m => r.by_month[m] || 0), mx = Math.max(...vals, 1);
+      return `<article class="role rv" style="--d:${(i % 3) * 80}ms">
+        <span class="ev">${fmt(r.evidence)} pieces of evidence</span>
+        <h3>${r.role.charAt(0).toUpperCase() + r.role.slice(1)}?</h3>
+        <div class="spark" aria-label="Evidence by month">${vals.map((v, k) => `<i class="growy" style="height:${(v / mx) * 100}%;--d:${k * 30}ms"></i>`).join("")}</div>
+        <span class="conf">Evidence in ${r.months_with_evidence} of ${months.length} months</span>
+        <span class="ev">${r.kinds}</span>
+        <div class="votes" data-role="${r.role}">
+          <button type="button" data-v="yes" aria-pressed="false">Convinced</button>
+          <button type="button" data-v="no" aria-pressed="false">Not enough</button>
+        </div>
+      </article>`; }).join("")}</div>
+    <p class="bridge rv">Convincing, right? Now let me break my own model.</p>`));
+
+  // 07 ------------------------------------------------------------
+  parts.push(chapter("wrong", "07", "What would Google get wrong?", `
+    <h2 class="rv">Does searching something mean I <em>care</em> about it?</h2>
+    <p class="lede rv">These aren't hypotheticals. Every inference below is a real mistake made while analyzing this data, then corrected by me.</p>
+    <div class="wrong">${D.wrong.map((w, i) => `
+      <div class="wr rv" style="--d:${i * 60}ms">
+        <div class="inf"><span>Inference</span><p>${w.inference}</p><small>Evidence: ${w.evidence}</small></div>
+        <div class="real"><span>Reality</span><p>${w.reality}</p></div>
+      </div>`).join("")}</div>
+    <p class="bridge rv">Behavioral data isn't ground truth. So what does a search actually reveal?</p>`));
+
+  // 08 ------------------------------------------------------------
+  const V = D.vocabulary;
+  const show = ["best", "is/are/does/can", "how", "what", "sale", "near me", "meaning", "images / pictures", "open now / hours", "price / cost", "why", "how to", "recipe", "vs", "reviews", "reddit", "worth it"];
+  const vmax = Math.max(...show.map(k => V[k] || 0));
+  parts.push(chapter("vocab", "08", "So what does a search reveal?", `
+    <h2 class="rv">Not what I love. Maybe <em>how I think</em>.</h2>
+    <p class="lede rv">My search vocabulary: how many of my ${fmt(M.distinct_searches)} different searches use each word. (Not counting “austin” at ${V.austin} or “nyc” at ${V.nyc}.)</p>
+    <div class="card rv"><div class="vocab">${show.map((k, i) => `
+      <span class="w">${k}</span><span class="tr"><i class="grow ${k === "best" ? "hi" : ""}" style="width:${((V[k] || 0) / vmax) * 100}%;--d:${i * 40}ms"></i></span><span class="n">${V[k] || 0}</span>`).join("")}</div></div>
+    <div class="verdict rv">
+      <div><b>I rank. I don't compare.</b>“best” ${V.best} times, “vs” only ${V.vs}.</div>
+      <div><b>I check before I commit.</b>${V["is/are/does/can"]} yes-or-no questions, only ${V.why} “why”s.</div>
+      <div><b>I plan.</b>“near me”, “open now” and “hours”: ${(V["near me"] || 0) + (V["open now / hours"] || 0)} times.</div>
+    </div>
+    <p class="note rv">My searches are short: the typical one is ${D.search_length.median_words} words, and only ${D.search_length["8+ words"]} are eight words or longer.</p>
+    <p class="bridge rv">If searches show how I think, can they show me learning?</p>`));
+
+  // 09 ------------------------------------------------------------
+  const TR = { pitch: ["--places", "Pitch"], python: ["--career", "Python"], web: ["--beauty", "Web dev"], product: ["--food", "Product"], build: ["--code", "My own projects"] };
+  const bm = Math.max(...months.map(m => D.build_by_month[m] || 0), 1);
+  parts.push(chapter("learn", "09", "Can you watch me learn?", `
+    <h2 class="rv">From my first line of Python to <em>shipping my own products</em>.</h2>
+    <p class="lede rv">I barely Googled code. The learning is in my school Drive instead: every step below is dated from a file I saved.</p>
+    <div class="card rv">
+      <div class="legend">${Object.values(TR).map(([c, l]) => `<span><i style="background:var(${c})"></i>${l}</span>`).join("")}</div>
+      <ol class="learn">${D.learning.map((s, i) => `<li class="rv" style="--d:${i * 40}ms;--c:var(${TR[s.track][0]})">
+        <time>${new Date(s.date + "T12:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "2-digit" })}</time><i></i><span>${s.step}</span></li>`).join("")}</ol>
+      <div class="mbars">${months.map((m, i) => { const v = D.build_by_month[m] || 0;
+        return `<div><b>${v ? fmt(v) : ""}</b><i class="growy" style="height:${(v / bm) * 100}%;--d:${i * 50}ms"></i><span>${MON(m)}</span></div>`; }).join("")}</div>
+      <p class="note" style="margin-bottom:0">Visits to my own projects (GitHub, local dev servers, my sites) by month.</p>
+    </div>
+    <p class="bridge rv">Some searches answered a question. Others changed what I did next.</p>`));
+
+  // 10 ------------------------------------------------------------
+  const E = D.escaped;
+  parts.push(chapter("escaped", "10", "Which searches escaped the browser?", `
+    <h2 class="rv">A search in November became <em>a summer at Oracle</em>.</h2>
+    <div class="card rv"><ul class="steps">${E.oracle_steps.map(s => `<li><time>${s.date.length > 7 ? DAY(s.date) : "May–Aug 2026"}</time><span>${s.what}</span></li>`).join("")}</ul></div>
+    <h3 class="rv" style="font:400 clamp(26px,4vw,38px)/1.1 var(--serif);margin:56px 0 14px">Where my searches <em style="color:var(--accent)">took me</em>, and where they only wished to.</h3>
+    <div class="card rv">
+      <svg class="tripmap" id="tripmap" viewBox="0 0 1000 380" role="img" aria-label="Map of trips from Austin: solid lines to Chicago, New York, Dallas, Denver and Miami; dashed lines to places I only searched flights for"></svg>
+      <div class="legend" style="margin:10px 0 0"><span><i style="background:var(--accent)"></i>went (solid)</span><span><i style="background:var(--dim)"></i>only searched flights (dashed)</span></div>
+    </div>
+    <div class="trips rv">${D.trips.went.map(t => `<div class="trip"><b>${t.name}</b><span>${t.when}</span>
+      <ul>${t.evidence.map(([d, q]) => `<li><time>${d}</time>${q}</li>`).join("")}</ul></div>`).join("")}</div>
+    <p class="note rv">Every trip is reconstructed from searches like “near me” and “which terminal”. The data never says where I slept, and neither does this page.</p>
+    <h3 class="rv" style="font:400 clamp(26px,4vw,38px)/1.1 var(--serif);margin:56px 0 14px">Another search in November became <em style="color:var(--accent)">a trip to New York</em>.</h3>
+    <div class="card rv"><ul class="steps nyc">${E.nyc_steps.map(s => `<li><time>${DAY(s.date)}</time><span>${s.what}</span></li>`).join("")}</ul></div>
+    <p class="note rv">Every step is a real search, page or email subject line. “Near me” in Manhattan means I was there.</p>
+    <div class="kicker rv" style="margin:46px 0 12px;color:var(--dim)">Search → place · search → project</div>
+    <div class="card rv"><div class="pairs">
+      ${E.places.slice(0, 1).map(p => `<div class="pair"><span class="a">${p.searches} searches for “${p.place.toLowerCase()}”</span><span class="arrow">→</span><span class="b">Went, and left a 5-star review<small>${DAY(p.reviewed)}</small></span></div>`).join("")}
+      ${E.projects.map(p => `<div class="pair"><span class="a">“${p.search}”<small>${DAY(p.searched)}</small></span><span class="arrow">→</span><span class="b">${p.made}<small>${p.made_on ? DAY(p.made_on) : ""}</small></span></div>`).join("")}
+    </div></div>
+    <p class="bridge rv">Zoom out from days to months. Can Google watch someone change?</p>`));
+
+  // 11 ------------------------------------------------------------
+  const shift = [...D.month_shift].sort((a, b) => b.js_divergence - a.js_divergence)[0];
+  const topicsShown = ["fashion", "career", "beauty", "school", "code", "social", "places", "food", "planning", "nyc", "pop culture", "business", "art"];
+  parts.push(chapter("change", "11", "Can Google watch someone change?", `
+    <h2 class="rv">The month I changed most was <em>${new Date(shift.to + "-15T12:00").toLocaleString("en-US", { month: "long" })}</em>.</h2>
+    <p class="lede rv">Each bar is one month of my attention. The biggest jump between two months (measured with Jensen–Shannon divergence) was ${MON(shift.from)} → ${MON(shift.to)}, when code went from almost nothing to the top.</p>
+    <div class="card rv">
+      <div class="months">${months.map((m, i) => `<div class="mrow"><span>${MON(m)} '${m.slice(2, 4)}</span><div class="mix">${Object.entries(D.months[m]).map(([t, v]) =>
+        `<i class="grow" title="${label(t)} ${pct(v)}" style="width:${v * 100}%;background:${color(t)};--d:${i * 40}ms"></i>`).join("")}</div></div>`).join("")}</div>
+      <div class="legend" style="margin:14px 0 0">${topicsShown.map(t => `<span><i style="background:${color(t)}"></i>${t}</span>`).join("")}</div>
+    </div>
+    <div class="kicker rv" style="margin:46px 0 12px;color:var(--dim)">Could you detect life events without being told?</div>
+    <p class="sub rv">I gave the pipeline nothing but activity counts and asked which days stood out. It found these:</p>
+    <ul class="spikes rv">${D.spikes.slice(0, 8).map(s => { const ev = D.events.find(e => e.date === s.date);
+      return `<li><time>${DAY(s.date)}</time><span>${label(s.topic)} spike${ev ? ` · <b>${ev.what}</b>` : ""}</span><small>${s.z} std. devs above a normal day</small></li>`; }).join("")}</ul>
+    <p class="bridge rv">You've seen my patterns. Let's see if you learned them.</p>`));
+
+  // 12 ------------------------------------------------------------
+  parts.push(chapter("prove", "12", "You think you know me? Prove it.", `
+    <h2 class="rv">What did I search <em>next</em>?</h2>
+    <p class="lede rv">Real searches, real next searches. The typos are a hint.</p>
+    <div class="quiz">${D.quiz.map((z, i) => {
+      const opts = [...z.options]; opts.splice((i * 2 + 1) % 4, 0, z.answer);
+      return `<div class="card qz rv" data-answer="${z.answer.replace(/"/g, "&quot;")}">
+        <div class="clue">${z.clue} → ?</div>
+        <div class="opts">${opts.map(o => `<button type="button">${o}</button>`).join("")}</div>
+        <div class="res" aria-live="polite"></div></div>`; }).join("")}</div>
+    <p class="score rv" id="score"></p>`));
+
+  $("#main").innerHTML = parts.join("");
+
+  // 13 ------------------------------------------------------------
+  $("#endwrap").innerHTML = `
+    <div class="kicker" style="color:#E58AAE">${EP_NUM.end[0]} · So… could you?</div>
+    <h2>${fmt(M.questions)} questions got <em>surprisingly close</em>.</h2>
+    <p>They found the student, the builder, the marketer, the planner, the girl who keeps dreaming about New York, and the one who would rather rewrite a question than read the answer.</p>
+    <p>They caught what I wanted, what I was learning, what I couldn't stop thinking about, and sometimes what I was about to do next, like a summer at Oracle and a trip to New York that both started with a search in November.</p>
+    <p>But every time the data was wrong, it was wrong about the same thing.</p>
+    <p class="last">Search history records the question. Not the reason I cared enough to ask it.</p>`;
+
+  wireAll(D);
 }
 
 function countUp(el) {
-  const raw = el.textContent.trim();
-  const m = raw.match(/^([\d,]+)(%?)$/);
-  if (!m) return;
-  const end = +m[1].replace(/,/g, ""), suffix = m[2], t0 = performance.now(), dur = 900;
-  const tick = now => {
-    const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
-    el.textContent = Math.round(end * e).toLocaleString() + suffix;
-    if (k < 1) requestAnimationFrame(tick);
-  };
+  const end = +el.dataset.count, suffix = el.dataset.suffix || "", t0 = performance.now(), dur = 1100;
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) { el.textContent = fmt(end) + suffix; return; }
+  const tick = now => { const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+    el.textContent = fmt(Math.round(end * e)) + suffix; if (k < 1) requestAnimationFrame(tick); };
   requestAnimationFrame(tick);
 }
 
-function animate(card) {
-  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const groups = [".qbars .b", ".week .b", ".mbars .b", ".hours .h", ".hb .t i", ".track .off", ".track .lab", ".tl li", ".nights li", ".reveal"];
-  groups.forEach(sel => card.querySelectorAll(sel).forEach((el, i) => el.style.setProperty("--d", `${i * (sel.includes("hours") ? 25 : 60)}ms`)));
-  if (!reduce) card.querySelectorAll(".stat b, .qbars b, .week b, .mbars b, .hb .v").forEach(countUp);
-  requestAnimationFrame(() => requestAnimationFrame(() => card.classList.remove("pre")));
+function wireAll(D) {
+  document.querySelectorAll("[data-info]").forEach(b => b.addEventListener("click", () => openInfo(b.dataset.info, D)));
+  const dlg = document.getElementById("info");
+  dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
 
-}
+  // nav: highlight the section on screen
+  const links = [...document.querySelectorAll(".nav .links a")];
+  const secs = ["top", ...QUESTIONS.map(x => x[0])].map(id => document.getElementById(id)).filter(Boolean);
+  const navObs = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    links.forEach(a => a.setAttribute("aria-current", a.dataset.sec.split(" ").includes(e.target.id)));
+  }), { rootMargin: "-45% 0px -50% 0px" });
+  secs.forEach(s => navObs.observe(s));
 
-let dayTimer = null;
-const playBtn = () => document.getElementById("playday");
-function stopDay() { if (dayTimer) { clearInterval(dayTimer); dayTimer = null; if (playBtn()) playBtn().textContent = "▶ Play my day"; } }
-function playDay() {
-  if (dayTimer) return stopDay();
-  const bars = [...result.querySelectorAll(".hours .h")];
-  let h = 0;
-  playBtn().textContent = "❚❚ Pause";
-  const step = () => {
-    bars[h].dispatchEvent(new Event("mouseenter"));
-    bars.forEach((b, k) => b.classList.toggle("sel", k === h));
-    const [v, , t] = HOURS[h];
-    document.getElementById("hourline").innerHTML = `<span class="clock">${h % 12 || 12} ${h < 12 ? "AM" : "PM"}</span><br>${v.toLocaleString()} searches · ${t}`;
-    h++;
-    if (h === 24) stopDay();
+  // reveal on scroll
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add("in");
+    e.target.querySelectorAll("[data-count]").forEach(countUp);
+    io.unobserve(e.target);
+  }), { threshold: .12 });
+  document.querySelectorAll(".rv").forEach(el => io.observe(el));
+  document.querySelectorAll("#evidence [data-count]").forEach((el, i) => setTimeout(() => countUp(el), 200 + i * 120));
+
+  // question chains, typed out one search at a time
+  let chainTimer;
+  const showChain = i => {
+    const c = D.chains[i];
+    clearTimeout(chainTimer);
+    $("#chain").innerHTML = c.searches.map(s => `<li>${s}</li>`).join("");
+    $("#chainmeta").textContent = `${DAY(c.date)} · ${c.searches.length} searches in ${c.minutes} minutes`;
+    const lis = [...document.querySelectorAll("#chain li")];
+    let k = 0; const step = () => { if (k < lis.length) { lis[k++].classList.add("on"); chainTimer = setTimeout(step, 260); } };
+    step();
+    document.querySelectorAll("[data-chain]").forEach(b => b.setAttribute("aria-pressed", b.dataset.chain == i));
   };
-  step();
-  dayTimer = setInterval(step, 650);
-}
+  document.querySelectorAll("[data-chain]").forEach(b => b.addEventListener("click", () => showChain(+b.dataset.chain)));
+  const chainObs = new IntersectionObserver(es => { if (es[0].isIntersecting) { showChain(0); chainObs.disconnect(); } }, { threshold: .3 });
+  chainObs.observe($("#chain"));
 
-function wire() {
-  const lines = { week: document.getElementById("dayline"), hour: document.getElementById("hourline") };
-  result.querySelectorAll(".week .col").forEach(c => {
-    const pick = () => {
-      result.querySelectorAll(".week .col").forEach(x => x.classList.toggle("sel", x === c));
-      lines.week.innerHTML = WEEK[+c.dataset.i][2];
-    };
-    c.addEventListener("click", pick);
-    c.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(); } });
-  });
-  if (playBtn()) playBtn().addEventListener("click", playDay);
-  result.querySelectorAll(".hours .h").forEach(c => {
-    const pick = () => {
-      const h = +c.dataset.h, [v, , t] = HOURS[h];
-      result.querySelectorAll(".hours .h").forEach(x => x.classList.toggle("sel", x === c));
-      lines.hour.innerHTML = `<b>${h % 12 || 12} ${h < 12 ? "AM" : "PM"}</b> · ${v.toLocaleString()} searches · ${t}`;
-    };
-    c.addEventListener("click", () => { stopDay(); pick(); });
-    c.addEventListener("mouseenter", () => { if (!dayTimer) pick(); });
-    c.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(); } });
-  });
-}
+  // rabbit hole strip
+  const H = D.rabbit_hole, svg = $("#strip"), buckets = Math.ceil(H.minutes / 10) + 1, W = 900, Hh = 150;
+  const byB = {}; H.strip.forEach(([b, t, n]) => (byB[b] = byB[b] || []).push([t, n]));
+  const maxB = Math.max(...Object.values(byB).map(a => a.reduce((s, [, n]) => s + n, 0)));
+  svg.setAttribute("viewBox", `0 0 ${W} ${Hh}`); svg.setAttribute("preserveAspectRatio", "none");
+  let out = "";
+  for (let b = 0; b < buckets; b++) {
+    let y = Hh; const bw = W / buckets;
+    (byB[b] || []).sort((a, c) => c[1] - a[1]).forEach(([t, n]) => {
+      const h = (n / maxB) * (Hh - 6);
+      out += `<rect x="${b * bw + .5}" y="${y - h}" width="${Math.max(bw - 1, .5)}" height="${h}" fill="${color(t)}"><title>${label(t)}</title></rect>`;
+      y -= h;
+    });
+  }
+  svg.innerHTML = out;
+  const present = {}; H.strip.forEach(([, t, n]) => present[t] = (present[t] || 0) + n);
+  $("#striplegend").innerHTML = Object.entries(present).sort((a, b) => b[1] - a[1]).slice(0, 8)
+    .map(([t]) => `<span><i style="background:${color(t)}"></i>${t === "other" ? "everything else" : label(t)}</span>`).join("");
+  svg.querySelectorAll("rect").forEach((r, i) => { r.style.opacity = 0; r.style.transition = `opacity .3s ease ${Math.min(i * 6, 2000)}ms`; });
+  new IntersectionObserver((es, o) => { if (es[0].isIntersecting) { svg.querySelectorAll("rect").forEach(r => r.style.opacity = 1); o.disconnect(); } }, { threshold: .3 }).observe(svg);
 
-// deep link (#a-builder) or the typing intro
-const hash = decodeURIComponent(location.hash.slice(1)).replace(/-/g, " ");
-const start = ANSWERS.find(a => a.key === hash);
-if (start) choose(start); else autoType();
+  // trips map: equirectangular projection, arcs from Austin
+  (() => {
+    const T = D.trips, svg = $("#tripmap"), W = 1000, Hh = 380;
+    const P = (lat, lon) => [((lon + 170) / 330) * W, ((62 - lat) / 66) * Hh];
+    const OFF = { "Chicago": [-52, -8], "New York": [8, -6], "Denver": [-50, -6], "Dallas": [8, -4], "Austin": [-46, 18], "Miami": [8, 14],
+                  "Los Angeles": [-78, 4], "Mexico City": [-74, 16], "Cancún": [8, 14], "Seattle": [-50, -4], "Honolulu": [6, 16] };
+    let g = "";
+    for (let lon = -165; lon <= 158; lon += 6) for (let lat = -3; lat <= 60; lat += 6) { const [x, y] = P(lat, lon); g += `<circle class="grid" cx="${x}" cy="${y}" r="1.1"/>`; }
+    const [hx, hy] = P(T.home.lat, T.home.lon);
+    const arc = (b, cls, i) => { const [x, y] = P(b.lat, b.lon), mx = (hx + x) / 2, my = Math.min(hy, y) - Math.abs(x - hx) * .22 - 18;
+      const len = Math.hypot(x - hx, y - hy) * 1.25 + 40;
+      return `<path class="${cls}" d="M${hx},${hy} Q${mx},${my} ${x},${y}" style="stroke-dashoffset:${cls === "went" ? len : 0};${cls === "went" ? `stroke-dasharray:${len};transition:stroke-dashoffset 1.4s ease ${i * .25}s` : ""}"/>
+        <circle class="${cls}" cx="${x}" cy="${y}" r="${cls === "went" ? 5 : 3.5}"/><text class="${cls}" x="${x + (OFF[b.name] || [7])[0]}" y="${y + (OFF[b.name] || [0, -6])[1]}">${b.name}</text>`; };
+    svg.innerHTML = g + T.dreamed.map((b, i) => arc(b, "dream", i)).join("") + T.went.map((b, i) => arc(b, "went", i)).join("") +
+      `<circle class="home" cx="${hx}" cy="${hy}" r="6"/><text class="went" x="${hx + OFF.Austin[0]}" y="${hy + OFF.Austin[1]}">Austin</text>`;
+    new IntersectionObserver((es, o) => { if (es[0].isIntersecting) { svg.querySelectorAll("path.went").forEach(p => p.style.strokeDashoffset = 0); o.disconnect(); } }, { threshold: .3 }).observe(svg);
+  })();
+
+  // bedtime guess
+  const r = $("#grange"), v = $("#gval");
+  const showGuess = () => v.textContent = clock(+r.value);
+  r.addEventListener("input", showGuess); showGuess();
+  $("#greveal").addEventListener("click", () => {
+    const g = +r.value, real = D.sleep.median_bed - 24, diff = Math.round(Math.abs(g - real) * 60);
+    $("#ganswer").hidden = false;
+    $("#gtext").innerHTML = `My typical bedtime is <b>${clock(real)}</b>. ${diff <= 20 ? "You basically nailed it." : `You were off by ${Math.floor(diff / 60) ? Math.floor(diff / 60) + "h " : ""}${diff % 60}m.`}`;
+    requestAnimationFrame(() => requestAnimationFrame(() => $("#ganswer").classList.add("in")));
+    $("#greveal").disabled = true;
+  });
+
+  // hours + play my day
+  const hmax = Math.max(...D.hours.map(h => h.searches));
+  $("#hours").innerHTML = D.hours.map(h => `<div tabindex="0" role="button" class="growy" data-h="${h.hour}" aria-label="${clock(h.hour)}: ${h.searches} searches, mostly ${label(h.top)}" style="height:${(h.searches / hmax) * 100}%;background:${color(h.top)};--d:${h.hour * 25}ms"></div>`).join("");
+  $("#hours").classList.add("rv"); io.observe($("#hours"));
+  const pick = h => {
+    document.querySelectorAll("#hours div").forEach(d => d.classList.toggle("sel", +d.dataset.h === h));
+    const x = D.hours[h]; $("#readout").innerHTML = `<b>${clock(h).replace(":00", "")}</b>${fmt(x.searches)} searches · mostly ${label(x.top)}`;
+  };
+  pick(3);
+  let dayT = null;
+  const stop = () => { if (dayT) { clearInterval(dayT); dayT = null; $("#play").textContent = "▶ Play my day"; } };
+  document.querySelectorAll("#hours div").forEach(d => {
+    d.addEventListener("click", () => { stop(); pick(+d.dataset.h); });
+    d.addEventListener("mouseenter", () => { if (!dayT) pick(+d.dataset.h); });
+    d.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); stop(); pick(+d.dataset.h); } });
+  });
+  $("#play").addEventListener("click", () => {
+    if (dayT) return stop();
+    let h = 0; $("#play").textContent = "❚❚ Pause"; pick(h);
+    dayT = setInterval(() => { h++; if (h > 23) return stop(); pick(h); }, 600);
+  });
+
+  // nights by weekday
+  const pos = h => ((h + 3) / 17) * 100;
+  $("#nights").innerHTML = D.sleep.by_night.map((n, i) => `<span class="d">${n.day}</span>
+    <div class="tr"><div class="off grow" style="left:${pos(n.bed)}%;width:${pos(n.wake) - pos(n.bed)}%;--d:${i * 70}ms"></div>
+    <span class="lab" style="left:calc(${pos(n.bed)}% + 6px)">${clock(n.bed)} → ${clock(n.wake)}</span></div>`).join("") +
+    `<div class="axis">${[[-3, "9 PM"], [0, "midnight"], [6, "6 AM"], [12, "noon"]].map(([h, l]) => `<span style="left:${pos(h)}%">${l}</span>`).join("")}</div>`;
+  $("#nights").classList.add("rv"); io.observe($("#nights"));
+
+  // votes, remembered on this device only
+  document.querySelectorAll(".votes").forEach(g => {
+    let saved = null; try { saved = localStorage.getItem("vote:" + g.dataset.role); } catch (e) {}
+    g.querySelectorAll("button").forEach(b => {
+      if (saved === b.dataset.v) b.setAttribute("aria-pressed", "true");
+      b.addEventListener("click", () => {
+        g.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b));
+        try { localStorage.setItem("vote:" + g.dataset.role, b.dataset.v); } catch (e) {}
+      });
+    });
+  });
+
+  // quiz
+  let right = 0, done = 0;
+  document.querySelectorAll(".qz").forEach(z => z.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+    if (z.dataset.done) return; z.dataset.done = 1; done++;
+    const ok = b.textContent === z.dataset.answer;
+    if (ok) right++;
+    z.querySelectorAll("button").forEach(x => { if (x.textContent === z.dataset.answer) x.classList.add("right"); });
+    if (!ok) b.classList.add("wrongpick");
+    z.querySelector(".res").textContent = ok ? "You know me. Unsettling." : `Nope. I searched “${z.dataset.answer}”.`;
+    if (done === D.quiz.length) $("#score").textContent = `${right} of ${D.quiz.length}. ${right === D.quiz.length ? "Okay, you might actually know me." : right ? "Close. The internet still knows me better." : "The internet knows me better than you do."}`;
+  })));
+
+  // the search bar: ask a question, jump to its chapter
+  const q = $("#q"), list = $("#list"), ask = $("#ask");
+  let shown = [], active = -1;
+  const lev = (a, b) => { const m = Array.from({ length: a.length + 1 }, (_, i) => [i]); for (let j = 1; j <= b.length; j++) m[0][j] = j;
+    for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++) m[i][j] = Math.min(m[i-1][j] + 1, m[i][j-1] + 1, m[i-1][j-1] + (a[i-1] === b[j-1] ? 0 : 1)); return m[a.length][b.length]; };
+  const render = () => {
+    const t = q.value.toLowerCase().trim();
+    let items = QUESTIONS.filter(([, l, , k]) => !t || l.toLowerCase().includes(t) || t.split(/\s+/).every(w => (l + " " + k).toLowerCase().includes(w))), dym = false;
+    if (!items.length && t.length > 2) {
+      const best = QUESTIONS.map(x => [Math.min(...(x[1] + " " + x[3]).toLowerCase().replace(/[^a-z ]/g, "").split(/\s+/).map(w => lev(t, w))), x]).sort((a, b) => a[0] - b[0])[0];
+      if (best[0] <= 2) { items = [best[1]]; dym = true; }
+    }
+    shown = items; active = items.length ? 0 : -1;
+    list.innerHTML = items.map(([, l, n], i) => `<li role="option" id="o${i}" aria-selected="${i === 0}" data-i="${i}">${dym ? "<i>Did you mean:</i> " : ""}<b>${l}</b><span class="n">${n}</span></li>`).join("");
+    const open = items.length > 0; ask.classList.toggle("open", open); q.setAttribute("aria-expanded", open);
+  };
+  const go = i => { const id = shown[i][0]; ask.classList.remove("open"); q.blur(); document.getElementById(id).scrollIntoView({ behavior: "smooth" }); };
+  q.addEventListener("focus", render); q.addEventListener("input", render);
+  q.addEventListener("blur", () => setTimeout(() => ask.classList.remove("open"), 150));
+  q.addEventListener("keydown", e => {
+    if (!shown.length) return;
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); active = (active + (e.key === "ArrowDown" ? 1 : -1) + shown.length) % shown.length;
+      [...list.children].forEach((li, k) => li.setAttribute("aria-selected", k === active)); q.setAttribute("aria-activedescendant", "o" + active); }
+    else if (e.key === "Enter" && active >= 0) { e.preventDefault(); go(active); }
+    else if (e.key === "Escape") ask.classList.remove("open");
+  });
+  list.addEventListener("mousedown", e => { const li = e.target.closest("li"); if (li) { e.preventDefault(); go(+li.dataset.i); } });
+}
 </script>
 </body>
 </html>
