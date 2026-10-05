@@ -263,7 +263,7 @@ const hideTip = () => tip.hidden = true;
 const HT = D.hour_topic, HTOT = HT.map(r => r.reduce((a, b) => a + b, 0)), PEAK = HTOT.indexOf(Math.max(...HTOT));
 const GROUPS = [['fashion', [0]], ['beauty', [2]], ['food', [3]], ['places', [1, 6]], ['rest', [4, 5, 7, 8, 9, 10]]];
 const share = (h, g) => { const k = HT[h].slice(0, 11).reduce((a, b) => a + b, 0) || 1; return GROUPS.find(x => x[0] === g)[1].reduce((s, t) => s + HT[h][t], 0) / k; };
-const S = D.sleep, BED = S.median_bed % 24, WAKE = S.by_night.map(n => n.wake).sort((a, b) => a - b)[3];
+const S = D.sleep, BED = S.median_bed % 24;
 const SITE_HTOT = Array.from({ length: 24 }, (_, h) => D.sites.reduce((a, s) => a + s.h[h], 0)), SITE_ALL = SITE_HTOT.reduce((a, b) => a + b, 0);
 const topSites = h => D.sites.slice().sort((a, b) => b.h[h] - a.h[h]).slice(0, 5);
 const signature = h => D.sites.filter(s => s.h[h] >= 25).sort((a, b) => (b.h[h] / SITE_HTOT[h]) / (b.n / SITE_ALL) - (a.h[h] / SITE_HTOT[h]) / (a.n / SITE_ALL))[0];
@@ -341,6 +341,7 @@ const GUIDES = [
   'was she in Chicago?', 'what was her longest rabbit hole?', 'how did she learn React?', 'how did she get the Oracle internship?',
   'does she build things?', 'what is she obsessed with?', 'when does she shop?', 'who is Suhani?',
 ];
+const tripNote = t => t.name === 'Dallas' ? 'Home for winter break, between the New York and Denver trips.' : 'Found from her searches there, which stay private.';
 const MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
 const DAYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 function lev(a, b) { const m = Array.from({ length: a.length + 1 }, (_, i) => [i]); for (let j = 1; j <= b.length; j++) m[0][j] = j;
@@ -367,12 +368,12 @@ function answer(raw) {
   const wd = DAYS.findIndex(d => new RegExp(`\\b${d}`).test(q));
   if (H !== null) { const parts = ['fashion', 'beauty', 'food', 'places'].map(x => [x, share(H, x)]).sort((a, b) => b[1] - a[1]), t = topSites(H);
     return { id: 'hours', p: { hour: H + .5 }, big: hs(H), sub: `${fmt(HTOT[H])} searches started in this hour across the year`,
-      text: `Mostly <b>${parts[0][0]}</b> (${Math.round(parts[0][1] * 100)}%), then ${parts[1][0]} (${Math.round(parts[1][1] * 100)}%). The sites open most at ${hs(H)}: ${t.slice(0, 3).map(s => `${fav(s.name)} ${s.name}`).join(', ')}.${H >= 2 && H < 10 ? ' Most nights she is offline by now.' : ''}`,
+      text: `Mostly <b>${parts[0][0]}</b> (${Math.round(parts[0][1] * 100)}%), then ${parts[1][0]} (${Math.round(parts[1][1] * 100)}%). The sites open most at ${hs(H)}: ${t.slice(0, 3).map(s => `${fav(s.name)} ${s.name}`).join(', ')}.${H >= 3 && H < 6 ? ' Most nights she is offline by now.' : ''}`,
       next: ['when does she sleep?', `what does she search at ${hs((H + 6) % 24)}?`, 'when is she busiest?'] }; }
   if (/sleep|bed|asleep|wake|night owl|late|offline/.test(q) || (wd >= 0 && /night/.test(q))) { const n = wd >= 0 ? S.by_night.find(x => x.day.toLowerCase() === DAYS[wd]) : null;
     return { id: 'hours', p: { hour: (n ? n.bed : BED) + .01, night: n ? n.day : 'typical' }, big: hr(n ? n.bed : BED), sub: n ? `typical last search on ${n.day} nights` : 'median last search of the night',
-      text: n ? `On ${n.day} nights her last search usually comes around <b>${hr(n.bed)}</b>, and she's back online around ${hr(n.wake)}.` : `Usually offline from about <b>${hr(BED)}</b> to ${hr(WAKE)}. ${Math.round(S.share_past_3am * 100)}% of nights go past 3 AM. Thursday nights end earliest (${hr(S.by_night[3].bed)}), Saturday nights latest (${hr(S.by_night[5].bed)}).`,
-      note: 'Offline means no activity on laptop or phone, which is close to sleep but not the same thing.', next: ['what does she search at 1 AM?', 'what does she search on Saturday nights?', 'when is she busiest?'] }; }
+      text: n ? `On ${n.day} nights her last search usually comes around <b>${hr(n.bed)}</b>.` : `Her last search of the night usually comes around <b>${hr(BED)}</b>. ${Math.round(S.share_past_3am * 100)}% of nights go past 3 AM. Thursday nights end earliest (${hr(S.by_night[3].bed)}), Saturday nights latest (${hr(S.by_night[5].bed)}).`,
+      note: 'The last search is the last activity on laptop or phone each night, which is close to bedtime but not the same thing.', next: ['what does she search at 1 AM?', 'what does she search on Saturday nights?', 'when is she busiest?'] }; }
   if (/busiest|most active|peak|search the most|most searches/.test(q)) return { id: 'hours', p: { hour: PEAK + .5 }, big: hs(PEAK), sub: `${fmt(HTOT[PEAK])} searches started in that hour, more than any other`,
       text: `Evenings are her busiest stretch, and ${hs(PEAK)} is the peak: ${Math.round(share(PEAK, 'fashion') * 100)}% of those searches are about fashion.`, next: ['what does she search at 3 AM?', 'when does she sleep?', 'which site owned the most days?'] };
   if (day !== null) { const m = D.mosaic[day];
@@ -380,7 +381,7 @@ function answer(raw) {
       next: ['which site owned the most days?', 'where did she go in December?', 'when is she busiest?'] }; }
   if (trip >= 0 || /\btrip|travel|where did she go|vacation|went\b/.test(q) || (/where/.test(q) && MONTHS.some(mm => q.includes(mm)))) {
     const i = trip >= 0 ? trip : /dec/.test(q) ? 1 : 0, t = D.trips.went[i];
-    return { id: 'places', p: { trip: i }, big: t.name, sub: t.when, text: `Nothing in the data says where she went, but her searches give it away${t.evidence.length ? `: ${t.evidence.map(e => `“${e[1]}”`).join(', ')}` : ''}.`,
+    return { id: 'places', p: { trip: i }, big: t.name, sub: t.when, text: t.evidence.length ? `Nothing in the data says where she went, but her searches give it away: ${t.evidence.map(e => `“${e[1]}”`).join(', ')}.` : tripNote(t),
       next: ['was she in Chicago?', 'where did she want to go?', 'what did she do on Oct 26?'] }; }
   if (/where did she want|dream|wish|never went/.test(q)) return { id: 'places', p: {}, big: `${D.trips.dreamed.length} cities`, sub: 'searched for, never visited (yet)', text: D.trips.dreamed.map(d => d.name).join(', ') + '.', next: ['where did she go in December?', 'was she in Chicago?'] };
   if (/oracle|intern|job|career|recruit|hired/.test(q)) { const tot = Object.values(D.escaped.oracle_by_month).reduce((a, b) => a + b, 0);
@@ -476,18 +477,17 @@ VIEWS.hours = (p = {}) => {
   $('page').querySelectorAll('[data-n]').forEach(x => x.setAttribute('aria-pressed', x.dataset.n === night));
   const sig = Array.from({ length: 24 }, (_, h) => signature(h));
   function draw() {
-    const H = Math.floor(hour) % 24, nb = night === 'typical' ? { bed: BED, wake: WAKE } : S.by_night.find(n => n.day === night);
-    let s = `<path d="${arc(nb.bed, nb.wake, R0 - 10, B1 + 4)}" fill="var(--night)" opacity=".06"/>`;
-    const mid = (nb.bed + ((nb.wake - nb.bed + 24) % 24) / 2) % 24, [mx, my] = pt(mid, 92);
-    s += `<text x="${mx}" y="${my - 5}" text-anchor="middle" font-size="12" font-weight="600" fill="var(--ink)" opacity=".75">offline</text><text x="${mx}" y="${my + 10}" text-anchor="middle" font-size="10.5" fill="var(--muted)">${hr(nb.bed)} → ${hr(nb.wake)}</text>`;
+    const H = Math.floor(hour) % 24, nb = night === 'typical' ? { bed: BED } : S.by_night.find(n => n.day === night);
+    let s = '';
     const vals = HT.map((row, h) => { const known = row.slice(0, 11).reduce((a, b) => a + b, 0) || 1; return group === 'all' ? GROUPS.map(([n, ts]) => [n, HTOT[h] * ts.reduce((a, t) => a + row[t], 0) / known]) : [[group, GROUPS.find(x => x[0] === group)[1].reduce((a, t) => a + row[t], 0)]]; });
     const mx2 = Math.max(...vals.map(v => v.reduce((a, b) => a + b[1], 0)));
     for (let h = 0; h < 24; h++) { let r = B0; for (const [n, v] of vals[h]) { if (!v) continue; const dr = v / mx2 * (B1 - B0); s += `<path d="${arc(h + .07, h + .93, r, r + dr)}" fill="var(--t-${n})" opacity="${h === H ? 1 : .55}"/>`; r += dr; } }
     for (let h = 0; h < 24; h++) { const [x, y] = pt(h + .5, B1 + 22), si = sig[h];
       s += si ? `<image href="${F(si.fav) || ''}" x="${x - 9}" y="${y - 9}" width="18" height="18" opacity="${h === H ? 1 : .8}"><title>${hs(h)} · ${si.name}</title></image>` : '';
       if (h % 6 === 0) { const [lx, ly] = pt(h, B1 + 44); s += `<text x="${lx}" y="${ly + 4}" text-anchor="middle" font-size="11.5" font-weight="700" fill="var(--ink)">${hs(h)}</text>`; } }
-    const [b0x, b0y] = pt(BED, R0 - 10), [b1x, b1y] = pt(BED, B1 + 4);
+    const [b0x, b0y] = pt(nb.bed, R0 - 10), [b1x, b1y] = pt(nb.bed, B1 + 4), [lx2, ly2] = pt(nb.bed, R0 + 18);
     s += `<line x1="${b0x}" y1="${b0y}" x2="${b1x}" y2="${b1y}" stroke="var(--rose)" stroke-width="1.5" stroke-dasharray="3 3"/>`;
+    s += `<text x="${lx2}" y="${ly2 - 4}" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--rose)">last search</text><text x="${lx2}" y="${ly2 + 9}" text-anchor="middle" font-size="10.5" fill="var(--muted)">${hr(nb.bed)}</text>`;
     const [hx, hy] = pt(hour, B1 + 8);
     s += `<line x1="${C}" y1="${C}" x2="${hx}" y2="${hy}" stroke="var(--ink)" stroke-width="2"/><circle cx="${hx}" cy="${hy}" r="7" fill="var(--ink)"/><circle cx="${C}" cy="${C}" r="4" fill="var(--ink)"/>`;
     svg.innerHTML = s;
@@ -495,7 +495,7 @@ VIEWS.hours = (p = {}) => {
     const parts = ['fashion', 'beauty', 'food', 'places'].map(x => [x, share(H, x)]).sort((a, b) => b[1] - a[1]);
     const top = topSites(H), tmax = top[0].h[H];
     $('hp').innerHTML = `<div class="kicker">at ${hs(H)}, all year</div>
-      <div class="big" style="margin-top:8px">${fmt(HTOT[H])}</div><div class="sub">searches started in this hour${H === PEAK ? ', more than any other' : ''}${H >= Math.floor(BED) && H < Math.floor(WAKE) ? ' · usually offline by now' : ''}</div>
+      <div class="big" style="margin-top:8px">${fmt(HTOT[H])}</div><div class="sub">searches started in this hour${H === PEAK ? ', more than any other' : ''}${H >= 3 && H < 6 ? ' · usually offline by now' : ''}</div>
       <div style="margin:16px 0 6px" class="kicker">what about</div>
       ${parts.map(([n, v]) => `<div class="row"><i style="width:10px;height:10px;border-radius:50%;background:var(--t-${n})"></i><div>${n}<div class="track"><b style="width:${v * 100}%;background:var(--t-${n})"></b></div></div><span class="v">${Math.round(v * 100)}%</span></div>`).join('')}
       <div style="margin:16px 0 6px" class="kicker">sites open at ${hs(H)}</div>
@@ -558,7 +558,7 @@ VIEWS.places = (p = {}) => {
     <div class="dream">${T.dreamed.map(d => `<span class="pill">${d.name} <span style="color:var(--muted)">${md(new Date(d.first + 'T12:00'))}</span></span>`).join('')}</div></div>`;
   const pick = i => { const t = T.went[i]; $('page').querySelectorAll('[data-t]').forEach(b => b.setAttribute('aria-pressed', +b.dataset.t === i));
     $('tp').innerHTML = `<div class="kicker">${fav('maps.google.com')} ${t.name}</div><div class="big" style="margin-top:8px;font-family:var(--serif);font-weight:400">${t.when}</div>
-      ${t.evidence.length ? `<div style="margin-top:14px">${t.evidence.map(([d, q]) => `<div class="step"><span class="t">${d}</span><span class="s">${q}</span></div>`).join('')}</div>` : '<p class="sub" style="margin-top:12px">Home for winter break: the searches turn local again.</p>'}`; };
+      ${t.evidence.length ? `<div style="margin-top:14px">${t.evidence.map(([d, q]) => `<div class="step"><span class="t">${d}</span><span class="s">${q}</span></div>`).join('')}</div>` : `<p class="sub" style="margin-top:12px">${tripNote(t)}</p>`}`; };
   $('page').querySelectorAll('[data-t]').forEach(b => b.onclick = () => pick(+b.dataset.t)); pick(p.trip ?? 0);
   // Chicago, Oct 26: step through the afternoon
   let k = 0;

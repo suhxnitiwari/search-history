@@ -12,7 +12,7 @@ The follow-up to [Heavy Rotation](https://suhxnitiwari.github.io/listening-galax
 
 The page is my Chrome window. You type the questions; the data answers them. The bookmark bar is the navigation, and each bookmark wears the favicon of the site whose data drives it.
 
-1. **Hours:** every search of the year on one clock you can drag: what I search at each hour, when I search most (9 PM) and when I'm offline
+1. **Hours:** every search of the year on one clock you can drag: what I search at each hour, when I search most (9 PM) and when my last search of the night comes
 2. **Days:** 365 days, one favicon each, for the site that owned the day
 3. **Most visited:** sites sized by how many days I opened them, with when I open each one
 4. **Places:** five trips found from airport and "near me" searches, plus the cities I only searched
