@@ -9,16 +9,17 @@
 <meta property="og:description" content="A year of my Google searches, inside my own browser. Ask it anything about me.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://suhxnitiwari.github.io/search-history/">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='16' fill='%232B211C'/%3E%3Ctext x='16' y='22' font-family='Georgia,serif' font-size='18' text-anchor='middle' fill='%23FDFBF8'%3ES%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%20fill%3D%22none%22%20stroke-width%3D%2217%22%3E%3Cpath%20d%3D%22M65.3%2017.1A20%2020%200%201%200%2050%2050A20%2020%200%201%201%2034.7%2082.9%22%20pathLength%3D%22100%22%20stroke%3D%22%23C8577A%22%20stroke-dasharray%3D%2225.4%20100%22%20stroke-dashoffset%3D%220%22/%3E%3Cpath%20d%3D%22M65.3%2017.1A20%2020%200%201%200%2050%2050A20%2020%200%201%201%2034.7%2082.9%22%20pathLength%3D%22100%22%20stroke%3D%22%23E28DA6%22%20stroke-dasharray%3D%2225.4%20100%22%20stroke-dashoffset%3D%22-25%22/%3E%3Cpath%20d%3D%22M65.3%2017.1A20%2020%200%201%200%2050%2050A20%2020%200%201%201%2034.7%2082.9%22%20pathLength%3D%22100%22%20stroke%3D%22%239E3556%22%20stroke-dasharray%3D%2225.4%20100%22%20stroke-dashoffset%3D%22-50%22/%3E%3Cpath%20d%3D%22M65.3%2017.1A20%2020%200%201%200%2050%2050A20%2020%200%201%201%2034.7%2082.9%22%20pathLength%3D%22100%22%20stroke%3D%22%23D46F8E%22%20stroke-dasharray%3D%2225.4%20100%22%20stroke-dashoffset%3D%22-75%22/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Outfit:wght@500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=JetBrains+Mono:wght@400;600&display=swap">
 <style>
 /* Layout: my Chrome window in quiet ivory and walnut; the real favicons are the color. The bookmark bar is the
    navigation: each bookmark is a chapter, wearing the favicon of the site whose data drives it. One chapter at a
    time fills the page, and every chapter is something to touch: drag, scrub, step, click a day. */
 :root {
   --frame: #E9E3DB; --frame-2: #DED6CC; --bar: #F7F3EE; --omni: #ECE6DF; --page: #FDFBF8; --surface: #FFFFFF;
+  --pk1: #C8577A; --pk2: #E28DA6; --pk3: #9E3556; --pk4: #D46F8E; --pk5: #B4486B;
   --ink: #2B211C; --muted: #7C7067; --rule: #E6DED4; --rose: #A9676B; --rose-soft: #F3E6E4; --sel: #2B211C; --on-sel: #FDFBF8;
   --t-fashion: #B97979; --t-beauty: #8A5A86; --t-food: #B08A3C; --t-places: #4F6B4A; --t-rest: #A79C92; --t-none: #E4DCD2;
   --night: #2B211C;
@@ -26,10 +27,12 @@
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
   --frame: #231C18; --frame-2: #2E2520; --bar: #1B1512; --omni: #2E2520; --page: #16110F; --surface: #211A16;
+  --pk1: #E58FA8; --pk2: #F3B9C9; --pk3: #D46F8E; --pk4: #EBA2B7; --pk5: #DB7F9C;
   --ink: #F1EAE2; --muted: #A99C91; --rule: #352B25; --rose: #D79A9E; --rose-soft: #3A2A29; --sel: #F1EAE2; --on-sel: #16110F;
   --t-fashion: #D49598; --t-beauty: #B98BB4; --t-food: #D2AE62; --t-places: #8DAA86; --t-rest: #7D7168; --t-none: #3A302A; --night: #FFFFFF; color-scheme: dark; } }
 :root[data-theme="dark"] {
   --frame: #231C18; --frame-2: #2E2520; --bar: #1B1512; --omni: #2E2520; --page: #16110F; --surface: #211A16;
+  --pk1: #E58FA8; --pk2: #F3B9C9; --pk3: #D46F8E; --pk4: #EBA2B7; --pk5: #DB7F9C;
   --ink: #F1EAE2; --muted: #A99C91; --rule: #352B25; --rose: #D79A9E; --rose-soft: #3A2A29; --sel: #F1EAE2; --on-sel: #16110F;
   --t-fashion: #D49598; --t-beauty: #B98BB4; --t-food: #D2AE62; --t-places: #8DAA86; --t-rest: #7D7168; --t-none: #3A302A; --night: #FFFFFF; color-scheme: dark; }
 
@@ -104,6 +107,23 @@ h1.q em { font-style: italic; color: var(--rose); }
 .home { min-height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 30px; padding: 40px 16px 56px; box-sizing: border-box; }
 .mark { font-family: var(--serif); font-weight: 400; font-size: clamp(76px, 13vw, 168px); letter-spacing: -.04em; line-height: .9; margin: 0; }
 .mark em { color: var(--rose); }
+.mark { font-family: "Outfit", var(--ui); font-weight: 500; letter-spacing: -.035em; line-height: 1; }
+.mark .m0 { color: var(--pk1); } .mark .m1 { color: var(--pk2); } .mark .m2 { color: var(--pk3); } .mark .m3 { color: var(--pk4); } .mark .m4 { color: var(--pk5); } .mark .m5 { color: var(--pk2); }
+.gbar { padding: 0 10px 0 12px; gap: 6px; border-color: transparent; box-shadow: 0 1px 6px rgba(43, 33, 28, .14), 0 0 0 1px var(--rule); }
+.gbar:focus-within { box-shadow: 0 2px 14px rgba(43, 33, 28, .18), 0 0 0 1px var(--rule); }
+.gplus { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; color: var(--ink); flex: 0 0 auto; }
+.gplus:hover { background: var(--omni); }
+.gplus svg { width: 26px; height: 26px; }
+.gask { display: flex; align-items: center; gap: 8px; height: 50px; padding: 0 22px 0 18px; border-radius: 999px; background: var(--omni); font: 600 19px var(--ui); color: var(--ink); flex: 0 0 auto; }
+.gask:hover { background: var(--frame-2); }
+.gask svg { width: 24px; height: 24px; }
+.gcards { display: flex; justify-content: center; gap: 14px; width: min(980px, 100%); }
+.gcard { flex: 1 1 0; min-width: 0; display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 14px; background: var(--rose-soft); text-align: left; }
+.gcard:hover { filter: brightness(.97); }
+.gcard b { display: block; font: 600 16px var(--ui); color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gcard small { display: block; font-size: 14px; color: var(--muted); margin-top: 2px; }
+.gcard > span { min-width: 0; }
+@media (max-width: 760px) { .gcards { flex-direction: column; } .gask { padding: 0 14px; font-size: 16px; height: 42px; } .gplus { width: 40px; height: 40px; } }
 .sbox { width: min(980px, 100%); height: 84px; display: flex; align-items: center; gap: 12px; padding: 0 8px 0 22px; box-sizing: border-box; border-radius: 999px; background: var(--surface); border: 1px solid var(--rule); box-shadow: 0 2px 10px rgba(43, 33, 28, .07); position: relative; }
 .sbox input { flex: 1; min-width: 0; border: 0; outline: none; background: transparent; font: 25px var(--ui); color: var(--ink); }
 .sbox input::placeholder { color: var(--muted); }
@@ -194,7 +214,7 @@ h1.q em { font-style: italic; color: var(--rose); }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 
 .bm.seen { color: var(--muted); }
-.bms > .bm:not(.askbm) { flex: 1 1 auto; justify-content: center; font-size: 15px; padding: 9px 12px; }
+.bms > .bm:not(.askbm) { flex: 1 1 0; min-width: max-content; justify-content: center; font-size: 15px; padding: 9px 12px; }
 .bm.askbm { background: var(--ink); color: var(--on-sel); font-size: 18px; font-weight: 600; padding: 12px 26px 12px 12px; gap: 11px; flex: 0 0 auto; box-shadow: 0 2px 10px rgba(43, 33, 28, .18); }
 .bm.askbm:hover, .bm.askbm[aria-current="page"] { background: var(--ink); color: var(--on-sel); }
 .bm.askbm[aria-current="page"]::after { display: none; }
@@ -322,7 +342,7 @@ const CH = [
   { id: 'learning', label: 'Learning', icon: '@colab', q: 'How did she learn to build?', hint: 'her UT files, in order' },
   { id: 'career', label: 'Career', icon: 'LinkedIn', q: 'How did a search become a job?', hint: 'Oracle, month by month' },
 ];
-const SFAV = '<span class="fv l">S</span>';
+const SFAV = '<svg class="fv slogo" viewBox="0 0 100 100" fill="none" stroke-width="17"><path d="M65.3 17.1A20 20 0 1 0 50 50A20 20 0 1 1 34.7 82.9" pathLength="100" stroke="var(--pk1)" stroke-dasharray="25.4 100" stroke-dashoffset="0"/><path d="M65.3 17.1A20 20 0 1 0 50 50A20 20 0 1 1 34.7 82.9" pathLength="100" stroke="var(--pk2)" stroke-dasharray="25.4 100" stroke-dashoffset="-25"/><path d="M65.3 17.1A20 20 0 1 0 50 50A20 20 0 1 1 34.7 82.9" pathLength="100" stroke="var(--pk3)" stroke-dasharray="25.4 100" stroke-dashoffset="-50"/><path d="M65.3 17.1A20 20 0 1 0 50 50A20 20 0 1 1 34.7 82.9" pathLength="100" stroke="var(--pk4)" stroke-dasharray="25.4 100" stroke-dashoffset="-75"/></svg>';
 let cur = 'home', curP = {}, hist = [{ id: 'home', p: {} }], hpos = 0;
 const seen = new Set();
 function chrome() {
@@ -330,12 +350,12 @@ function chrome() {
   const title = cur === 'search' ? `${curP.q} · Search` : c ? c.q : 'New Tab';
   $('strip').innerHTML = `<div class="lights" aria-hidden="true"><i></i><i></i><i></i></div>
     <div class="tab on">${c ? fav(c.icon) : cur === 'search' ? fav('@search') : SFAV}<span class="t">${esc(title)}</span><span style="opacity:.5">✕</span></div>
-    ${D.sites.slice(0, 12).map(s => `<div class="tab mini" data-tip="${s.name} · opened on ${s.days} days">${fav(s.name)}<span class="t">${s.name}</span></div>`).join('')}
-    <span class="count"><b>473</b> tabs open</span>`;
+    ${D.tabs.order.map(n => SITE[n] || D.tabs.extra.find(x => x.name === n)).filter(Boolean).map(s => `<div class="tab mini" data-tip="${s.name} · opened on ${s.days} days">${fav(SITE[s.name] ? s.name : s.fav)}<span class="t">${s.name}</span></div>`).join('')}
+    <span class="count" data-tip="Tabs open across my phone and laptop on the day I exported my data">${fmt(473)} tabs open</span>`;
   $('bms').innerHTML = `<button data-go="home" ${cur === 'home' || cur === 'search' ? 'aria-current="page"' : ''} data-tip="Ask anything about Suhani · press /" class="bm askbm"><span class="ai" aria-hidden="true">⌕</span>Ask about Suhani</button><span class="sep"></span>` +
     CH.map((x, i) => `<button class="bm${seen.has(x.id) ? ' seen' : ''}" data-go="${x.id}" ${x.id === cur ? 'aria-current="page"' : ''} data-tip="<b>${x.q}</b><br>${x.hint} · key ${(i + 1) % 10}">${fav(x.icon)}${x.label}</button>`).join('') +
-    `<span class="bmfill"></span><span class="progress">${seen.size} of ${CH.length} opened</span><span class="sep"></span>
-    <div class="folder"><button class="bm" id="allb" aria-expanded="false"><svg class="fv" viewBox="0 0 16 16" aria-hidden="true"><path d="M1.5 4.5a1 1 0 0 1 1-1h3.6l1.4 1.5h6a1 1 0 0 1 1 1v6.5a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1z" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>All bookmarks</button>
+    `<span class="sep"></span>
+    <div class="folder"><button class="bm" id="allb" aria-expanded="false" aria-label="All bookmarks, ${seen.size} of ${CH.length} opened" data-tip="All bookmarks · ${seen.size} of ${CH.length} opened"><svg class="fv" viewBox="0 0 16 16" aria-hidden="true"><path d="M1.5 4.5a1 1 0 0 1 1-1h3.6l1.4 1.5h6a1 1 0 0 1 1 1v6.5a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1z" fill="none" stroke="currentColor" stroke-width="1.3"/></svg></button>
       <div class="menu" id="menu" hidden>${CH.map((x, i) => `<button data-go="${x.id}">${fav(x.icon)}<span><b>${x.label}</b><small>${x.q}</small></span><em>${seen.has(x.id) ? '✓' : (i + 1) % 10}</em></button>`).join('')}</div></div>`;
   $('omniFav').innerHTML = c ? fav(c.icon) : cur === 'search' ? fav('@search') : SFAV;
   $('omniIn').value = cur === 'search' ? curP.q : c ? c.id : '';
@@ -527,18 +547,44 @@ function askMore(c) {
 $('omniIn').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.value.trim()) { const v = e.target.value.trim(), c = CH.find(x => x.id === v.toLowerCase()); c ? go(c.id) : ask(v); } });
 
 VIEWS.home = () => {
+  const plus = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
+  const spark = `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="11" r="5.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M14.2 15.2 19 20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M18.5 2.5l.9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.9z" fill="currentColor"/></svg>`;
   $('page').innerHTML = `<div class="home">
-    <h1 class="mark">Suhani<em>.</em></h1>
+    <h1 class="mark" aria-label="Suhani">${[...'Suhani'].map((ch, i) => `<span class="m${i}">${ch}</span>`).join('')}</h1>
     <p class="hint">A year of my Google searches. Ask it anything about me.</p>
-    <div class="sbox"><span style="color:var(--muted)">⌕</span><div class="field"><div class="ghost" id="gh"></div><input id="sq" placeholder="Ask a question about Suhani" autocomplete="off" spellcheck="false" aria-label="Ask a question about Suhani"></div><div class="ac" id="ac" hidden></div></div>
-    <div class="asks">${STARTERS.map(q => `<button class="askq" data-ask="${esc(q)}">${q}</button>`).join('')}</div>
+    <div class="sbox gbar"><button type="button" class="gplus" id="gplus" aria-label="See every question you can ask" data-tip="Every question you can ask">${plus}</button>
+      <div class="field"><div class="ghost" id="gh"></div><input id="sq" autocomplete="off" spellcheck="false" aria-label="Ask a question about Suhani"></div>
+      <button type="button" class="gask" id="gask">${spark}Ask</button><div class="ac" id="ac" hidden></div></div>
+    <div class="gcards">${CARDS.map(c => `<button class="gcard" data-ask="${esc(c[0])}">${fav(c[2])}<span><b>${c[0]}</b><small>${c[1]}</small></span></button>`).join('')}</div>
     <div class="tiles-h">Most visited · by days opened, Oct 2025 – Oct 2026</div>
     <div class="tiles">${D.sites.slice(0, 4).map(s => `<button class="tile" data-site="${s.name}"><span class="c">${fav(s.name)}</span>${s.name}<small>${s.days} days</small></button>`).join('')}</div>
   </div>`;
-  guideBox($('sq'), $('ac'), $('gh'), ask);
+  const inp = $('sq');
+  guideBox(inp, $('ac'), $('gh'), ask);
+  typeLoop(inp);
+  // empty box: Enter or Ask runs the question being typed
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter' && !inp.value.trim() && typeLoop.cur) ask(typeLoop.cur); });
+  $('gask').onclick = () => ask(inp.value.trim() || typeLoop.cur || STARTERS[0]);
+  $('gplus').onclick = e => { e.stopPropagation(); inp.focus(); };
   $('page').querySelectorAll('[data-ask]').forEach(b => b.onclick = () => ask(b.dataset.ask));
   $('page').querySelectorAll('[data-site]').forEach(b => b.onclick = () => go('sites', { site: b.dataset.site }));
 };
+// questions typed into the empty search box, one after another
+const TYPED = ['is she a night owl?', 'what is she obsessed with?', 'how did she plan New York?', 'what is she doing at 10 PM?',
+  'where would she study abroad?', 'what does she watch?', 'does college make her stay up later?', 'could you reconstruct her year from Google alone?'];
+function typeLoop(inp) {
+  const run = typeLoop.run = (typeLoop.run || 0) + 1; let qi = 0, ci = 0, back = false;
+  const step = () => {
+    if (run !== typeLoop.run || !document.body.contains(inp)) return;
+    const q = TYPED[qi]; typeLoop.cur = q;
+    if (reduce) { inp.placeholder = q; qi = (qi + 1) % TYPED.length; return setTimeout(step, 2800); }
+    if (!back) { inp.placeholder = q.slice(0, ++ci); if (ci === q.length) { back = true; return setTimeout(step, 1900); } return setTimeout(step, 45 + Math.random() * 55); }
+    inp.placeholder = q.slice(0, --ci); if (ci === 0) { back = false; qi = (qi + 1) % TYPED.length; return setTimeout(step, 380); } setTimeout(step, 18);
+  };
+  step();
+}
+const CARDS = [['is she a night owl?', 'when she goes offline, and why', '@search'], ['how did she plan New York?', 'one search that became a trip', 'Wikipedia'],
+  ['could you reconstruct her year from Google alone?', 'twelve months, no calendar', '@calendar']];
 VIEWS.search = p => {
   const a = answer(p.q), c = a.id ? CH.find(x => x.id === a.id) : null;
   const card = a.none ? `<div class="snip"><p style="font-size:17px;margin:0">No answer for that one in the data.${a.dym ? ` Did you mean: <button class="dym" data-q="${esc(a.dym)}">${esc(a.dym)}</button>?` : ''}</p></div>`
