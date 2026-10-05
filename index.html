@@ -288,7 +288,9 @@ const CH = [
   { id: 'days', label: 'Days', icon: '@calendar', q: 'Which site owned each day?', hint: 'one favicon per day' },
   { id: 'sites', label: 'Most visited', icon: 'Instagram', q: 'Where does her attention go?', hint: 'sites by days opened' },
   { id: 'places', label: 'Travel', icon: '@maps', q: 'Where in the world is she looking?', hint: 'every place she searched, and the trips she took' },
+  { id: 'watch', label: 'Watchlist', icon: 'netflix.com', q: 'What does she watch?', hint: 'shows, movies and books she looked up' },
   { id: 'hole', label: 'Rabbit hole', icon: 'Wikipedia', q: 'How deep does she go?', hint: 'one 9-hour session' },
+  { id: 'mind', label: 'Mind', icon: 'youtube.com', q: 'What is she trying to understand?', hint: 'psychology and the self-help she watches' },
   { id: 'learning', label: 'Learning', icon: '@colab', q: 'How did she learn to build?', hint: 'her UT files, in order' },
   { id: 'career', label: 'Career', icon: 'LinkedIn', q: 'How did a search become a job?', hint: 'Oracle, month by month' },
   { id: 'building', label: 'Building', icon: 'github.com', q: 'Did she change?', hint: 'visits to her own sites' },
@@ -304,10 +306,10 @@ function chrome() {
     ${D.sites.slice(0, 26).map(s => `<div class="tab mini" data-tip="${s.name} · opened on ${s.days} days">${fav(s.name)}</div>`).join('')}
     <span class="count"><b>473</b> tabs open</span>`;
   $('bms').innerHTML = `<button class="bm" data-go="home" ${cur === 'home' || cur === 'search' ? 'aria-current="page"' : ''} data-tip="Ask a question · suhani.search">${SFAV}Ask</button><span class="sep"></span>` +
-    CH.map((x, i) => `<button class="bm${seen.has(x.id) ? ' seen' : ''}" data-go="${x.id}" ${x.id === cur ? 'aria-current="page"' : ''} data-tip="<b>${x.q}</b><br>${x.hint} · key ${i + 1}">${fav(x.icon)}${x.label}</button>`).join('') +
+    CH.map((x, i) => `<button class="bm${seen.has(x.id) ? ' seen' : ''}" data-go="${x.id}" ${x.id === cur ? 'aria-current="page"' : ''} data-tip="<b>${x.q}</b><br>${x.hint} · key ${(i + 1) % 10}">${fav(x.icon)}${x.label}</button>`).join('') +
     `<span class="bmfill"></span><span class="progress">${seen.size} of ${CH.length} opened</span><span class="sep"></span>
     <div class="folder"><button class="bm" id="allb" aria-expanded="false"><svg class="fv" viewBox="0 0 16 16" aria-hidden="true"><path d="M1.5 4.5a1 1 0 0 1 1-1h3.6l1.4 1.5h6a1 1 0 0 1 1 1v6.5a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1z" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>All bookmarks</button>
-      <div class="menu" id="menu" hidden>${CH.map((x, i) => `<button data-go="${x.id}">${fav(x.icon)}<span><b>${x.label}</b><small>${x.q}</small></span><em>${seen.has(x.id) ? '✓' : i + 1}</em></button>`).join('')}</div></div>`;
+      <div class="menu" id="menu" hidden>${CH.map((x, i) => `<button data-go="${x.id}">${fav(x.icon)}<span><b>${x.label}</b><small>${x.q}</small></span><em>${seen.has(x.id) ? '✓' : (i + 1) % 10}</em></button>`).join('')}</div></div>`;
   $('omniFav').innerHTML = c ? fav(c.icon) : cur === 'search' ? fav('@search') : SFAV;
   $('omniIn').value = cur === 'search' ? curP.q : c ? c.id : '';
   $('who').textContent = cur === 'learning' ? 'UT account' : 'Personal account';
@@ -428,6 +430,11 @@ function answer(raw) {
   const place = D.travel.find(t => new RegExp(`\\b${t.name.toLowerCase()}\\b`).test(q) && !(t.name === 'Austin' && /ut austin/.test(q)));
   if (place && !site) { const gname = { home: 'home', went: 'a trip she took', 'study abroad': 'a place she looked at for study abroad', searched: 'a place she searched' }[place.group];
     return { id: 'places', p: { place: place.name }, big: place.name, sub: `${place.searches} ${place.searches === 1 ? 'search' : 'searches'}${place.travel ? `, ${place.travel} about travel` : ''}`, text: `${place.name} is ${gname}. It shows up in her searches from ${new Date(place.first + '-15').toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}${place.last !== place.first ? ` to ${new Date(place.last + '-15').toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}` : ''}.`, next: ['where in the world is she looking?', 'where did she go in December?', 'where did she want to go?'] }; }
+  const title = D.watchlist.find(w => { const t = w.title.toLowerCase().replace(/ \(book\)$/, ''); return t.length >= 5 && new RegExp(`\\b${t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(q) && (t.includes(' ') || /watch|show|movie|film|book|read|season|episode|series|cast/.test(q)); });
+  if (!title && /what does she (watch|read)|watchlist|what (shows|movies|books)|favorite show|favourite show/.test(q)) { const W = D.watchlist.slice().sort((a, b) => b.days - a.days);
+    return { id: 'watch', p: {}, big: W[0].title, sub: `her most looked-up title, on ${W[0].days} days`, text: `Then ${W.slice(1, 5).map(w => w.title).join(', ')}. ${W.filter(w => w.kind === 'show').length} shows, ${W.filter(w => w.kind === 'movie').length} movies and ${W.filter(w => w.kind === 'book').length} books in all.`, next: ['what does she watch?'] }; }
+  if (title && !site) return { id: 'watch', p: { title: title.title }, big: title.title, sub: `${title.kind} · looked up on ${title.days} ${title.days === 1 ? 'day' : 'days'}`,
+    text: `${title.search_days ? `${title.search_days} ${title.search_days === 1 ? 'day' : 'days'} with searches` : ''}${title.search_days && title.streaming_days ? ', ' : ''}${title.streaming_days ? `${title.streaming_days} on a streaming site` : ''}, from ${new Date(title.first + 'T12:00').toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}.`, next: ['what does she watch?'] };
   if (site) { const hmax = Math.max(...site.h);
     return { id: 'sites', p: { site: site.name }, big: `${site.days} days`, sub: `${fmt(site.n)} visits · ${site.name}`, text: `${fav(site.name)} ${site.name}: opened on ${site.days} of 365 days, busiest at ${hs(site.h.indexOf(hmax))}${owned[site.name] ? `, and it owned ${owned[site.name]} ${owned[site.name] === 1 ? "day" : "days"} outright` : ''}.`, next: ['which site owned the most days?', `when does she open ${site.name}?`, 'what is she obsessed with?'] }; }
   if (/owned|most days|every day|which site|most visited|attention/.test(q) && !site) { const [n, k] = Object.entries(owned).sort((a, b) => b[1] - a[1])[0];
@@ -666,6 +673,45 @@ VIEWS.sites = (p = {}) => {
   pickSite(p.site && SITE[p.site] ? p.site : list[0].name);
 };
 
+// ----------------------------------------------------------------- WATCHLIST: what she looked up to watch and read
+VIEWS.watch = (p = {}) => {
+  const c = CH.find(x => x.id === 'watch'), W = D.watchlist, K = [['show', 'Shows', 'var(--rose)'], ['movie', 'Movies', 'var(--t-food)'], ['book', 'Books', 'var(--t-places)']];
+  const kc = k => K.find(x => x[0] === k)[2], mx = Math.max(...W.map(w => w.days));
+  $('page').innerHTML = `<div class="wrap">${head(c, `${W.length} shows, movies and books I looked up this year, from my searches and streaming history. Netflix never names what you watch, so it can only show up here when I searched for it.`)}
+    <div class="pills" style="margin-bottom:12px"><span class="lbl">show</span><button class="pill" data-k="all" aria-pressed="true">all ${W.length}</button>${K.map(([k, n, col]) => `<button class="pill" data-k="${k}" aria-pressed="false" style="--c:${col}"><i></i>${n} ${W.filter(w => w.kind === k).length}</button>`).join('')}</div>
+    <div class="two"><div class="panel" id="wl"></div><div class="panel" id="wp"></div></div></div>`;
+  let k = 'all', sel = p.title || W.slice().sort((a, b) => b.days - a.days)[0].title;
+  const mon = d => new Date(d + 'T12:00').toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+  const draw = () => {
+    $('wl').innerHTML = W.filter(w => k === 'all' || w.kind === k).sort((a, b) => b.days - a.days).map(w => `<div class="row" style="cursor:pointer${w.title === sel ? ';font-weight:600' : ''}" data-w="${esc(w.title)}"><i style="width:10px;height:10px;border-radius:50%;background:${kc(w.kind)}"></i><div>${w.title.replace(/ \(book\)$/, '')}<div class="track"><b style="width:${w.days / mx * 100}%;background:${kc(w.kind)}"></b></div></div><span class="v">${w.days} ${w.days === 1 ? 'day' : 'days'}</span></div>`).join('');
+    const w = W.find(x => x.title === sel);
+    $('wp').innerHTML = `<div class="kicker"><i style="width:10px;height:10px;border-radius:50%;background:${kc(w.kind)};display:inline-block"></i> ${w.kind}</div>
+      <div class="big" style="margin-top:8px;font-family:var(--serif);font-weight:400">${w.title.replace(/ \(book\)$/, '')}</div><div class="sub">looked up on ${w.days} ${w.days === 1 ? 'day' : 'days'}</div>
+      ${w.search_days ? `<div class="row"><span></span><div>days she searched for it<div class="track"><b style="width:${w.search_days / w.days * 100}%"></b></div></div><span class="v">${w.search_days}</span></div>` : ''}
+      ${w.streaming_days ? `<div class="row"><span></span><div>days it was open on a streaming site<div class="track"><b style="width:${w.streaming_days / w.days * 100}%"></b></div></div><span class="v">${w.streaming_days}</span></div>` : ''}
+      <p class="sub" style="margin-top:12px">${mon(w.first)}${w.last !== w.first ? ` → ${mon(w.last)}` : ''}</p>`;
+    $('wl').querySelectorAll('[data-w]').forEach(r => r.onclick = () => { sel = r.dataset.w; draw(); }); };
+  $('page').querySelectorAll('[data-k]').forEach(b => b.onclick = () => { k = b.dataset.k; $('page').querySelectorAll('[data-k]').forEach(x => x.setAttribute('aria-pressed', x === b)); const vis = W.filter(w => k === 'all' || w.kind === k); if (!vis.some(w => w.title === sel)) sel = vis.sort((a, b) => b.days - a.days)[0].title; draw(); });
+  draw();
+};
+
+// ----------------------------------------------------------------- MIND: psychology as a potential interest, and the self-help she watches
+VIEWS.mind = () => {
+  const c = CH.find(x => x.id === 'mind'), P = D.mind.psychology, SI = D.mind.self_improvement;
+  const t0 = new Date('2025-10-01'), t1 = new Date('2026-10-01'), x = d => Math.max(0, Math.min(100, (new Date(d) - t0) / (t1 - t0) * 100));
+  const months = Object.entries(SI.months).sort(), mm = Math.max(...months.map(m => m[1])), tm = Math.max(...SI.themes.map(t => t.videos));
+  $('page').innerHTML = `<div class="wrap">${head(c, `Two things my browser keeps circling: psychology, as a possible interest, and the self-help I watch. Themes and counts only; the more personal videos stay private.`)}
+    <div class="two"><div class="panel"><div class="kicker">${fav('wikipedia.org')} psychology · when each theme shows up</div>
+      <div style="position:relative;margin-top:16px">${P.map(t => `<div style="margin:0 0 16px"><div style="display:flex;justify-content:space-between;font-size:14px"><span>${t.theme}</span><span class="v">${t.searches} searches</span></div>
+        <div style="position:relative;height:8px;background:var(--rule);border-radius:4px;margin-top:6px"><b style="position:absolute;left:${x(t.first)}%;width:${Math.max(2, x(t.last) - x(t.first))}%;top:0;bottom:0;background:var(--t-places);border-radius:4px"></b></div></div>`).join('')}
+        <div style="display:flex;justify-content:space-between" class="sub"><span>Oct 2025</span><span>Apr 2026</span><span>Oct 2026</span></div></div></div>
+      <div class="panel"><div class="kicker">${fav('youtube.com')} self-help videos</div><div class="big" style="margin-top:8px">${SI.videos}</div><div class="sub">watched this year, most often between ${hs(SI.peak_hours[0])} and ${hs(SI.peak_hours[1] + 1)}</div>
+        <div class="bars" style="height:110px;gap:3px;margin-top:14px">${months.map(([m, v]) => `<button aria-label="${m}: ${v} videos" data-tipv="${new Date(m + '-15').toLocaleDateString('en-US', { month: 'long' })} · ${v} videos"><i style="height:${v / mm * 100}%"></i>${new Date(m + '-15').toLocaleDateString('en-US', { month: 'narrow' })}</button>`).join('')}</div>
+        <div class="kicker" style="margin:18px 0 6px">what they're about</div>
+        ${SI.themes.slice().sort((a, b) => b.videos - a.videos).map(t => `<div class="row"><span></span><div>${t.theme}<div class="track"><b style="width:${t.videos / tm * 100}%"></b></div></div><span class="v">${t.videos}</span></div>`).join('')}</div></div></div>`;
+  $('page').querySelectorAll('[data-tipv]').forEach(b => { b.onpointerenter = e => showTip(e, b.dataset.tipv); b.onpointerleave = hideTip; });
+};
+
 // ----------------------------------------------------------------- RABBIT HOLE: replay a session
 VIEWS.hole = () => {
   const c = CH.find(x => x.id === 'hole'), RH = D.rabbit_hole, [h0, m0] = RH.start_time.split(':').map(Number), t0 = h0 * 60 + m0;
@@ -736,7 +782,7 @@ VIEWS.building = () => {
   $('lin').onclick = () => scale(false); $('log').onclick = () => scale(true);
 };
 
-addEventListener('keydown', e => { if (!/INPUT|TEXTAREA/.test(document.activeElement.tagName) && /^[1-8]$/.test(e.key) && !e.metaKey && !e.ctrlKey) go(CH[+e.key - 1].id); if (e.key === 'Escape') { $('ev').hidden = true; } if (e.key === '/' && document.activeElement.tagName !== 'INPUT') { e.preventDefault(); $('omniIn').focus(); $('omniIn').select(); } });
+addEventListener('keydown', e => { if (!/INPUT|TEXTAREA/.test(document.activeElement.tagName) && /^[0-9]$/.test(e.key) && !e.metaKey && !e.ctrlKey && CH[(+e.key + 9) % 10]) go(CH[(+e.key + 9) % 10].id); if (e.key === 'Escape') { $('ev').hidden = true; } if (e.key === '/' && document.activeElement.tagName !== 'INPUT') { e.preventDefault(); $('omniIn').focus(); $('omniIn').select(); } });
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => go(cur, curP, false));
 addEventListener('hashchange', () => { const id = location.hash.slice(1) || 'home'; if (id !== cur && !(id === 'home' && cur === 'search')) go(id); });
 document.fonts.ready.then(() => go((location.hash || '#home').slice(1), {}, false));
