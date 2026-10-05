@@ -265,11 +265,22 @@ const hideTip = () => tip.hidden = true;
 // ----------------------------------------------------------------- shared numbers
 const HT = D.hour_topic, HTOT = HT.map(r => r.reduce((a, b) => a + b, 0)), PEAK = HTOT.indexOf(Math.max(...HTOT));
 const GROUPS = [['fashion', [0]], ['beauty', [2]], ['food', [3]], ['places', [1, 6]], ['rest', [4, 5, 7, 8, 9, 10]]];
-const share = (h, g) => { const k = HT[h].slice(0, 11).reduce((a, b) => a + b, 0) || 1; return GROUPS.find(x => x[0] === g)[1].reduce((s, t) => s + HT[h][t], 0) / k; };
+const share = (h, g) => GROUPS.find(x => x[0] === g)[1].reduce((s, t) => s + HT[h][t], 0) / (HTOT[h] || 1);
+const GNAME = { fashion: 'fashion', beauty: 'beauty', food: 'food and coffee', places: 'places and travel' };
+const GALL = Object.fromEntries(['fashion', 'beauty', 'food', 'places'].map(g => [g, HT.reduce((a, r) => a + GROUPS.find(x => x[0] === g)[1].reduce((s, t) => s + r[t], 0), 0) / HTOT.reduce((a, b) => a + b, 0)]));
+const RANK = HTOT.map((n, h) => [n, h]).sort((a, b) => b[0] - a[0]).map(x => x[1]);
+// what makes an hour different from the rest of her day: the topic most above its usual share, if any clearly is
+const hourRead = H => { const n = HTOT[H];
+  const level = RANK[0] === H ? 'her busiest search hour' : RANK.indexOf(H) < 6 ? 'one of her busiest hours' : n < 100 ? 'one of her quietest hours' : n < 300 ? 'a quieter hour' : 'a steady hour';
+  if (n < 100) return { level, text: `Only ${n} searches in a whole year, about ${n < 52 ? 'one every week or two' : 'one a week'}. Too few to have a theme.` };
+  const g = ['fashion', 'beauty', 'food', 'places'].map(g => { const c = Math.round(share(H, g) * n); return { g, c, p: share(H, g), lift: share(H, g) / GALL[g] }; });
+  const st = g.filter(x => x.c >= 30 && x.lift >= 1.4).sort((a, b) => b.lift - a.lift)[0], big = g.slice().sort((a, b) => b.p - a.p)[0], si = signature(H);
+  return { level, text: (st ? `${GNAME[st.g][0].toUpperCase() + GNAME[st.g].slice(1)} stands out: ${Math.round(st.p * 100)}% of her searches at ${hs(H)}, ${st.lift.toFixed(1)}× her usual share.` : `No single topic owns this hour; the biggest is ${GNAME[big.g]}, at ${Math.round(big.p * 100)}% of her searches.`)
+    + (si ? ` Most typical site at ${hs(H)}: ${fav(si.name)} ${si.name}, open ${((si.h[H] / SITE_HTOT[H]) / (si.n / SITE_ALL)).toFixed(1)}× more than usual.` : '') }; };
 const S = D.sleep, BED = S.median_bed % 24;
 const SITE_HTOT = Array.from({ length: 24 }, (_, h) => D.sites.reduce((a, s) => a + s.h[h], 0)), SITE_ALL = SITE_HTOT.reduce((a, b) => a + b, 0);
 const topSites = h => D.sites.slice().sort((a, b) => b.h[h] - a.h[h]).slice(0, 5);
-const signature = h => D.sites.filter(s => s.h[h] >= 25).sort((a, b) => (b.h[h] / SITE_HTOT[h]) / (b.n / SITE_ALL) - (a.h[h] / SITE_HTOT[h]) / (a.n / SITE_ALL))[0];
+const signature = h => D.sites.filter(s => s.h[h] >= 25 && s.n >= 300).sort((a, b) => (b.h[h] / SITE_HTOT[h]) / (b.n / SITE_ALL) - (a.h[h] / SITE_HTOT[h]) / (a.n / SITE_ALL))[0];
 const owned = {}; D.mosaic.forEach(m => { if (m) owned[m[0]] = (owned[m[0]] || 0) + 1; });
 
 // ----------------------------------------------------------------- evidence
@@ -403,16 +414,17 @@ function answer(raw) {
   const site = D.sites.find(s => q.includes(s.name.toLowerCase()) && s.name.length > 2);
   const trip = D.trips.went.findIndex(t => q.includes(t.name.toLowerCase()) || (t.name === 'New York' && /\bnyc\b/.test(q)));
   const wd = DAYS.findIndex(d => new RegExp(`\\b${d}`).test(q));
-  if (H !== null) { const parts = ['fashion', 'beauty', 'food', 'places'].map(x => [x, share(H, x)]).sort((a, b) => b[1] - a[1]), t = topSites(H);
-    return { id: 'hours', p: { hour: H + .5 }, big: hs(H), sub: `${fmt(HTOT[H])} searches started in this hour across the year`,
-      text: `Mostly <b>${parts[0][0]}</b> (${Math.round(parts[0][1] * 100)}%), then ${parts[1][0]} (${Math.round(parts[1][1] * 100)}%). The sites open most at ${hs(H)}: ${t.slice(0, 3).map(s => `${fav(s.name)} ${s.name}`).join(', ')}.${H >= 3 && H < 6 ? ' Most nights she is offline by now.' : ''}`,
+  if (H !== null) { const r = hourRead(H);
+    return { id: 'hours', p: { hour: H + .5 }, big: hs(H), sub: `${fmt(HTOT[H])} searches started in this hour across the year · ${r.level}`, text: r.text,
       next: ['when does she sleep?', `what does she search at ${hs((H + 6) % 24)}?`, 'when is she busiest?'] }; }
   if (/sleep|bed|asleep|wake|night owl|late|offline/.test(q) || (wd >= 0 && /night/.test(q))) { const n = wd >= 0 ? S.by_night.find(x => x.day.toLowerCase() === DAYS[wd]) : null;
     return { id: 'hours', p: { hour: (n ? n.bed : BED) + .01, night: n ? n.day : 'typical' }, big: hr(n ? n.bed : BED), sub: n ? `typical last search on ${n.day} nights` : 'median last search of the night',
       text: n ? `On ${n.day} nights her last search usually comes around <b>${hr(n.bed)}</b>.` : `Her last search of the night usually comes around <b>${hr(BED)}</b>. ${Math.round(S.share_past_3am * 100)}% of nights go past 3 AM. Thursday nights end earliest (${hr(S.by_night[3].bed)}), Saturday nights latest (${hr(S.by_night[5].bed)}).`,
       note: 'The last search is the last activity on laptop or phone each night, which is close to bedtime but not the same thing.', next: ['what does she search at 1 AM?', 'what does she search on Saturday nights?', 'when is she busiest?'] }; }
-  if (/busiest|most active|peak|search the most|most searches/.test(q)) return { id: 'hours', p: { hour: PEAK + .5 }, big: hs(PEAK), sub: `${fmt(HTOT[PEAK])} searches started in that hour, more than any other`,
-      text: `Evenings are her busiest stretch, and ${hs(PEAK)} is the peak: ${Math.round(share(PEAK, 'fashion') * 100)}% of those searches are about fashion.`, next: ['what does she search at 3 AM?', 'when does she sleep?', 'which site owned the most days?'] };
+  if (/busiest|most active|peak|search the most|most searches/.test(q)) { const B = D.busy, bh = B.hours.indexOf(Math.max(...B.hours)), mlabel = new Date(B.month_top[0] + '-15').toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    return { id: 'hours', p: { hour: bh + .5 }, big: hs(bh), sub: `her busiest hour, across ${fmt(B.total)} searches, page visits and videos`,
+      text: `${Math.round(B.evening_share * 100)}% of everything she does online happens between 6 PM and midnight. Searches alone peak an hour earlier, at ${hs(PEAK)}. Her busiest weekday is ${B.weekday_top[0]} (about ${fmt(B.weekday_top[1])} things a day), her quietest ${B.weekday_low[0]}. Busiest month: ${mlabel}, recruiting season. Busiest single day: ${md(new Date(B.day_top[0] + 'T12:00'))}, the build sprint (${fmt(B.day_top[1])}).`,
+      next: ['when does she sleep?', 'what does she search at 9 PM?', 'what were her eras this year?'] }; }
   if (day !== null) { const m = D.mosaic[day];
     return { id: 'days', p: { day }, big: mdy(dayDate(day)), sub: `${dayCount[day]} searches that day`, text: m ? `${fav(m[0])} <b>${m[0]}</b> owned the day with ${m[1]} visits.${day === 23 ? ' She was in Chicago, looking for somewhere to eat.' : ''}` : 'A quiet day in the sites shown here.',
       next: ['which site owned the most days?', 'where did she go in December?', 'when is she busiest?'] }; }
@@ -549,17 +561,18 @@ VIEWS.hours = (p = {}) => {
     svg.innerHTML = s;
     $('rd').innerHTML = `<b>${hs(H)}</b><span>${fmt(HTOT[H])} searches${H === PEAK ? ' · busiest' : ''}</span>`;
     const parts = ['fashion', 'beauty', 'food', 'places'].map(x => [x, share(H, x)]).sort((a, b) => b[1] - a[1]);
-    const top = topSites(H), tmax = top[0].h[H];
+    const top = D.sites.filter(x => x.h[H] >= 25 && x.n >= 300).map(x => [x, (x.h[H] / SITE_HTOT[H]) / (x.n / SITE_ALL)]).sort((a, b) => b[1] - a[1]).slice(0, 5), tmax = top.length ? top[0][1] : 1, rd = hourRead(H);
     $('hp').innerHTML = `<div class="kicker">at ${hs(H)}, all year</div>
-      <div class="big" style="margin-top:8px">${fmt(HTOT[H])}</div><div class="sub">searches started in this hour${H === PEAK ? ', more than any other' : ''}${H >= 3 && H < 6 ? ' · usually offline by now' : ''}</div>
-      <div style="margin:16px 0 6px" class="kicker">what about</div>
-      ${parts.map(([n, v]) => `<div class="row"><i style="width:10px;height:10px;border-radius:50%;background:var(--t-${n})"></i><div>${n}<div class="track"><b style="width:${v * 100}%;background:var(--t-${n})"></b></div></div><span class="v">${Math.round(v * 100)}%</span></div>`).join('')}
-      <div style="margin:16px 0 6px" class="kicker">sites open at ${hs(H)}</div>
-      ${top.map(s2 => `<div class="row">${fav(s2.name)}<div>${s2.name}<div class="track"><b style="width:${s2.h[H] / tmax * 100}%"></b></div></div><span class="v">${fmt(s2.h[H])}</span></div>`).join('')}
-      ${sig[H] ? `<p style="font-size:14px;margin:12px 0 0">Most typical of this hour: ${fav(sig[H].name)} <b>${sig[H].name}</b>, ${((sig[H].h[H] / SITE_HTOT[H]) / (sig[H].n / SITE_ALL)).toFixed(1)}× its usual share.</p>` : ''}
+      <div class="big" style="margin-top:8px">${fmt(HTOT[H])}</div><div class="sub">searches started in this hour · ${rd.level}${H >= 3 && H < 6 ? ' · usually offline by now' : ''}</div>
+      <p style="font-size:14.5px;line-height:1.5;margin:12px 0 0">${rd.text}</p>
+      <div style="margin:16px 0 6px" class="kicker">share of all her searches at ${hs(H)}</div>
+      ${parts.map(([n, v]) => `<div class="row"><i style="width:10px;height:10px;border-radius:50%;background:var(--t-${n})"></i><div>${GNAME[n]}<div class="track"><b style="width:${v * 100}%;background:var(--t-${n})"></b></div></div><span class="v">${Math.round(v * 100)}%</span></div>`).join('')}
+      <p class="sub" style="margin:6px 0 0">The other ${Math.round((1 - parts.reduce((a, p) => a + p[1], 0)) * 100)}% are about everything else, or no clear topic.</p>
+      ${top.length ? `<div style="margin:16px 0 6px" class="kicker">sites most typical of ${hs(H)}</div>
+      ${top.map(([s2, k]) => `<div class="row">${fav(s2.name)}<div>${s2.name}<div class="track"><b style="width:${k / tmax * 100}%"></b></div></div><span class="v">${k.toFixed(1)}×</span></div>`).join('')}` : ''}
       <p style="margin:14px 0 0"><button class="src" id="hev">view-source: this hour →</button></p>`;
-    $('hev').onclick = () => evidence(`warehouse.db · hour ${H}`, 'Searches and page visits that started in this hour of the day, all year. Topic shares use only searches that have a topic.', ['measure', 'value'],
-      [['searches', HTOT[H]], ...GROUPS.map(([n, ts]) => [n, ts.reduce((a, t) => a + HT[H][t], 0)]), ['unclassified', HT[H][11]], ...top.map(s2 => [s2.name + ' visits', s2.h[H]])]);
+    $('hev').onclick = () => evidence(`warehouse.db · hour ${H}`, 'Searches and page visits that started in this hour of the day, all year. Topic shares are out of every search in the hour, including ones with no clear topic.', ['measure', 'value'],
+      [['searches', HTOT[H]], ...GROUPS.map(([n, ts]) => [n, ts.reduce((a, t) => a + HT[H][t], 0)]), ['unclassified', HT[H][11]], ...top.map(([s2]) => [s2.name + ' visits', s2.h[H]])]);
   }
   function dots() {
     const r = cv.getBoundingClientRect(), dpr = Math.min(2, devicePixelRatio || 1), k = r.width / 460; cv.width = r.width * dpr; cv.height = r.height * dpr;
