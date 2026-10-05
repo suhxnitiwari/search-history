@@ -215,6 +215,12 @@ h1.q em { font-style: italic; color: var(--rose); }
 .course { font-family: var(--serif); font-size: 16px; line-height: 1.25; }
 .course.code { font-family: var(--mono); font-size: 12.5px; color: var(--muted); }
 .badge { font: 600 11.5px var(--ui); padding: 3px 8px; border-radius: 999px; background: var(--rose-soft); color: var(--rose); white-space: nowrap; }
+.doodle { position: relative; display: inline-block; }
+.doodle .mark { cursor: pointer; }
+#dood { position: absolute; pointer-events: auto; opacity: 0; }
+.dcap { position: absolute; left: 50%; top: -30px; transform: translateX(-50%); white-space: nowrap; font: 12px var(--mono); color: var(--muted); opacity: 0; transition: opacity .4s; pointer-events: none; }
+.dcap.on { opacity: 1; }
+@media (max-width: 640px) { .dcap { white-space: normal; width: 90vw; text-align: center; } }
 .tip { position: fixed; z-index: 9; pointer-events: none; background: var(--ink); color: var(--on-sel); font-size: 12.5px; line-height: 1.45; padding: 8px 11px; border-radius: 8px; max-width: 240px; transform: translate(12px, 12px); }
 
 @media (max-width: 900px) { .two { grid-template-columns: minmax(0, 1fr); } .tiles { grid-template-columns: repeat(4, 84px); } }
@@ -424,10 +430,10 @@ const GUIDE_GROUPS = [
   ['Career', ['how did she get the Oracle internship?', 'when did she first search for Oracle?', 'what does she do at Oracle?']],
   ['Overall', ['who is Suhani?', 'what is she obsessed with?']],
 ];
-const FACT_ORDER = ['Taste', 'Beauty', 'Coffee and food', 'Standards', 'Five versions of her', 'Eras', 'Curiosity', 'Decisions', 'Both things are true', 'What survived', 'Surprises'];
+const FACT_ORDER = ['Taste', 'Beauty', 'Coffee and food', 'Standards', 'Five versions of her', 'Eras', 'Curiosity', 'Decisions', 'Both things are true', 'What survived', 'Surprises', 'Year in numbers', 'Watching and reading', 'Places and plans', 'Study and work'];
 GUIDE_GROUPS.splice(GUIDE_GROUPS.findIndex(g => g[0] === 'Rabbit hole'), 0, ...FACT_ORDER.map(name => [name, D.facts.filter(f => f.group === name).map(f => f.q)]));
 GUIDE_GROUPS.push(['The ending', D.facts.filter(f => f.group === 'Ending').map(f => f.q)]);
-const GROUP_ICON = { Taste: 'aritzia.com', Beauty: 'sephora.com', 'Coffee and food': 'opentable.com', Standards: 'louisvuitton.com', 'Five versions of her': '@search', Eras: '@calendar', Curiosity: 'wikipedia.org', Decisions: '@search', 'Both things are true': '@search', 'What survived': '@search', Surprises: '@search', 'The ending': '@search', Overall: '@search' };
+const GROUP_ICON = { Taste: 'aritzia.com', Beauty: 'sephora.com', 'Coffee and food': 'opentable.com', Standards: 'louisvuitton.com', 'Five versions of her': '@search', Eras: '@calendar', Curiosity: 'wikipedia.org', Decisions: '@search', 'Both things are true': '@search', 'What survived': '@search', Surprises: '@search', 'Year in numbers': '@calendar', 'Watching and reading': 'netflix.com', 'Places and plans': '@maps', 'Study and work': 'linkedin.com', 'The ending': '@search', Overall: '@search' };
 const GUIDES = GUIDE_GROUPS.flatMap(g => g[1]);
 const tripNote = t => t.name === 'Dallas' ? 'Home for winter break, between the New York and Denver trips.' : 'Found from her searches there, which stay private.';
 const MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
@@ -560,11 +566,57 @@ function askMore(c) {
 }
 $('omniIn').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.value.trim()) { const v = e.target.value.trim(), c = CH.find(x => x.id === v.toLowerCase()); c ? go(c.id) : ask(v); } });
 
+// ----------------------------------------------------------------- THE SUHANI DOODLE: 365 days, one favicon each, flying in to spell her name
+// Each day's favicon is the site that owned that day. They land left to right in date order (October to September), hold, then the wordmark returns.
+let doodled = false;
+function doodle(auto) {
+  const h1 = $('page').querySelector('.mark'), cv = $('dood'), cap = $('dcap'); if (!h1 || !cv) return;
+  const days = D.mosaic.map((m, i) => m && F(SITE[m[0]]?.fav || m[0]) ? { i, site: m[0], src: F(SITE[m[0]]?.fav || m[0]) } : null).filter(Boolean);
+  let raf = 0, hits = [], phase = 'idle';
+  const play = () => {
+    cancelAnimationFrame(raf);
+    const box = h1.getBoundingClientRect(); if (box.width < 40 || box.height < 20 || !days.length) return;
+    const pad = 60, W = Math.round(box.width + pad * 2), H = Math.round(box.height + pad * 2), dpr = Math.min(2, devicePixelRatio || 1);
+    Object.assign(cv.style, { left: -pad + 'px', top: -pad + 'px', width: W + 'px', height: H + 'px' }); cv.width = W * dpr; cv.height = H * dpr;
+    const x = cv.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0);
+    // the letters, drawn off screen where the real ones sit
+    const off = document.createElement('canvas'); off.width = W; off.height = H; const o = off.getContext('2d');
+    const cs = getComputedStyle(h1); o.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`; o.textBaseline = 'alphabetic'; o.fillStyle = '#000';
+    for (const sp of h1.querySelectorAll('span')) { const r = sp.getBoundingClientRect(), mt = o.measureText(sp.textContent);
+      o.fillText(sp.textContent, r.left - box.left + pad + (r.width - mt.width) / 2, r.top - box.top + pad + (r.height + mt.fontBoundingBoxAscent - mt.fontBoundingBoxDescent) / 2); }
+    const px = o.getImageData(0, 0, W, H).data, inside = (a, b) => px[(Math.round(b) * W + Math.round(a)) * 4 + 3] > 128;
+    let step = 14, pts = [];
+    for (let k = 0; k < 12; k++) { step = Math.max(3, Math.min(48, step || 14)); pts = []; for (let yy = step / 2; yy < H; yy += step) for (let xx = step / 2; xx < W; xx += step) if (inside(xx, yy)) pts.push([xx, yy]);
+      if (!pts.length) return; if (pts.length >= days.length && pts.length < days.length * 1.25) break; step *= Math.sqrt(pts.length / (days.length * 1.1)); }
+    if (pts.length < days.length / 2) return;
+    pts.sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+    const pick = days.map((_, j) => pts[Math.floor(j * pts.length / days.length)]), size = Math.max(7, Math.min(18, step * .92));
+    const imgs = {}; days.forEach(d => { if (!imgs[d.src]) { const im = new Image(); im.src = d.src; imgs[d.src] = im; } });
+    const fly = days.map((d, j) => { const a = Math.random() * Math.PI * 2, r = Math.max(W, H) * (.6 + Math.random() * .4); return { d, from: [W / 2 + Math.cos(a) * r, H / 2 + Math.sin(a) * r], to: pick[j], delay: j * 6 + Math.random() * 120 }; });
+    hits = fly.map(f => ({ x: f.to[0] - pad, y: f.to[1] - pad, d: f.d }));
+    const ease = t => 1 + 2.2 * Math.pow(t - 1, 3) + 1.2 * Math.pow(t - 1, 2), T0 = performance.now(), flyMs = 900, last = fly.at(-1).delay + flyMs, hold = 1800, fadeMs = 700;
+    phase = 'flying'; h1.style.transition = 'opacity .5s'; h1.style.opacity = '.14'; cv.style.opacity = '1';
+    cap.textContent = `${days.length} days, one favicon each: the site that owned the day. Hover one.`; cap.classList.add('on');
+    const frame = now => { const t = now - T0; x.clearRect(0, 0, W, H);
+      for (const f of fly) { const k = Math.max(0, Math.min(1, (t - f.delay) / flyMs)); if (!k) continue; const e = k < 1 ? ease(k) : 1;
+        const cx = f.from[0] + (f.to[0] - f.from[0]) * e, cy = f.from[1] + (f.to[1] - f.from[1]) * e, im = imgs[f.d.src];
+        x.globalAlpha = Math.min(1, k * 2); if (im.complete && im.naturalWidth) x.drawImage(im, cx - size / 2, cy - size / 2, size, size); }
+      if (t < last + hold) raf = requestAnimationFrame(frame);
+      else { phase = 'done'; cv.style.transition = `opacity ${fadeMs}ms`; cv.style.opacity = '0'; h1.style.opacity = '1'; setTimeout(() => cap.classList.remove('on'), fadeMs); } };
+    raf = requestAnimationFrame(frame); };
+  cv.onpointermove = e => { if (phase !== 'flying') return; const r = cv.getBoundingClientRect(), pad = 60, mx = e.clientX - r.left - pad, my = e.clientY - r.top - pad;
+    const h = hits.reduce((b, p) => { const dd = (p.x - mx) ** 2 + (p.y - my) ** 2; return dd < b[0] ? [dd, p] : b; }, [400, null])[1];
+    h ? showTip(e, `${md(dayDate(h.d.i))} · ${h.d.site}`) : hideTip(); };
+  cv.onpointerleave = hideTip;
+  h1.onclick = cv.onclick = () => { if (!reduce) play(); };
+  if (auto && !reduce) (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => setTimeout(play, 250));
+}
+
 VIEWS.home = () => {
   const plus = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
   const spark = `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="11" r="5.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M14.2 15.2 19 20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M18.5 2.5l.9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.9z" fill="currentColor"/></svg>`;
   $('page').innerHTML = `<div class="home">
-    <h1 class="mark" aria-label="Suhani">${[...'Suhani'].map((ch, i) => `<span class="m${i}">${ch}</span>`).join('')}</h1>
+    <div class="doodle"><h1 class="mark" aria-label="Suhani" title="Click to replay: 365 days, one favicon each">${[...'Suhani'].map((ch, i) => `<span class="m${i}">${ch}</span>`).join('')}</h1><canvas id="dood" aria-hidden="true"></canvas><div class="dcap" id="dcap" aria-live="polite"></div></div>
     <p class="hint">A year of my Google searches, run through a data pipeline I built. Ask it anything about me.</p>
     <div class="sbox gbar"><button type="button" class="gplus" id="gplus" aria-label="See every question you can ask" data-tip="Every question you can ask">${plus}</button>
       <div class="field"><div class="ghost" id="gh"></div><input id="sq" autocomplete="off" spellcheck="false" aria-label="Ask a question about Suhani"></div>
@@ -577,6 +629,7 @@ VIEWS.home = () => {
   const inp = $('sq');
   guideBox(inp, $('ac'), $('gh'), ask);
   typeLoop(inp);
+  doodle(!doodled); doodled = true;
   // empty box: Enter or Ask runs the question being typed
   inp.addEventListener('keydown', e => { if (e.key === 'Enter' && !inp.value.trim() && typeLoop.cur) ask(typeLoop.cur); });
   $('gask').onclick = () => ask(inp.value.trim() || typeLoop.cur || STARTERS[0]);
@@ -891,10 +944,15 @@ VIEWS.career = () => {
     <div class="two" style="margin-top:22px"><div class="panel"><div class="kicker">${fav('LinkedIn')} the roles she opened</div>
         ${K.families.map(([n, v]) => `<div class="row"><span></span><div>${n}<div class="track"><b style="width:${v / fm * 100}%"></b></div></div><span class="v">${v}</span></div>`).join('')}
         <p class="sub" style="margin-top:10px">Job postings she opened, grouped by title.</p></div>
-      <div class="panel"><div class="kicker">companies she researched</div><p class="sub" style="margin:4px 0 12px">${K.company_pages} company pages; the ones she came back to most:</p>
-        <div class="pills">${K.companies.map(x => `<span class="pill">${x.name} <span style="color:var(--muted)">${x.days}d</span></span>`).join('')}</div></div></div>
+      <div class="panel"><div class="kicker">companies she researched, by industry</div><p class="sub" style="margin:4px 0 6px">${K.company_pages} company pages on LinkedIn. Pick an industry.</p>
+        <div class="pills" style="margin-bottom:12px">${K.industries.map((x, i) => `<button class="pill" data-ind="${i}" aria-pressed="${i === 0}">${x.industry} <span style="color:var(--muted)">${x.companies.length}</span></button>`).join('')}</div>
+        <div class="pills" id="indc"></div></div></div>
     <div class="panel" style="margin-top:22px"><div class="kicker">${fav('Oracle')} one search that became a job</div>
       ${O.oracle_steps.map(s => `<div class="step"><span class="t">${s.date.length > 7 ? md(new Date(s.date + 'T12:00')) : new Date(s.date + '-15').toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span><span class="s" style="font-size:16px">${s.what}</span></div>`).join('')}</div></div>`;
+  const ind = i => { $('page').querySelectorAll('[data-ind]').forEach(x => x.setAttribute('aria-pressed', +x.dataset.ind === i));
+    $('indc').innerHTML = K.industries[i].companies.map(x => `<span class="pill">${x.name}${x.days > 1 ? ` <span style="color:var(--muted)">${x.days} days</span>` : ''}</span>`).join(''); };
+  $('page').querySelectorAll('[data-ind]').forEach(x => x.onclick = () => ind(+x.dataset.ind));
+  const order = K.industries.map((x, i) => [x.companies.length, i]).sort((a, b) => b[0] - a[0]); ind(order[0][1]);
   $('page').querySelectorAll('[data-tipv]').forEach(b => { b.onpointerenter = e => showTip(e, b.dataset.tipv); b.onpointerleave = hideTip; });
 };
 
