@@ -19,7 +19,7 @@
    time fills the page, and every chapter is something to touch: drag, scrub, step, click a day. */
 :root {
   --frame: #E9E3DB; --frame-2: #DED6CC; --bar: #F7F3EE; --omni: #ECE6DF; --page: #FDFBF8; --surface: #FFFFFF;
-  --pk1: #C8577A; --pk2: #E28DA6; --pk3: #9E3556; --pk4: #D46F8E; --pk5: #B4486B;
+  --pk1: #C8577A; --pk2: #E28DA6; --pk3: #9E3556; --pk4: #D46F8E; --pk5: #B4486B; --blush: #F6D9E1; --brown: #7A4B3A; --glow: #FFF4D6;
   --ink: #2B211C; --muted: #7C7067; --rule: #E6DED4; --rose: #A9676B; --rose-soft: #F3E6E4; --sel: #2B211C; --on-sel: #FDFBF8;
   --t-fashion: #B97979; --t-beauty: #8A5A86; --t-food: #B08A3C; --t-places: #4F6B4A; --t-rest: #A79C92; --t-none: #E4DCD2;
   --night: #2B211C;
@@ -27,12 +27,12 @@
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
   --frame: #231C18; --frame-2: #2E2520; --bar: #1B1512; --omni: #2E2520; --page: #16110F; --surface: #211A16;
-  --pk1: #E58FA8; --pk2: #F3B9C9; --pk3: #D46F8E; --pk4: #EBA2B7; --pk5: #DB7F9C;
+  --pk1: #E58FA8; --pk2: #F3B9C9; --pk3: #D46F8E; --pk4: #EBA2B7; --pk5: #DB7F9C; --blush: #4A2F36; --brown: #B07A63; --glow: #FFE7A8;
   --ink: #F1EAE2; --muted: #A99C91; --rule: #352B25; --rose: #D79A9E; --rose-soft: #3A2A29; --sel: #F1EAE2; --on-sel: #16110F;
   --t-fashion: #D49598; --t-beauty: #B98BB4; --t-food: #D2AE62; --t-places: #8DAA86; --t-rest: #7D7168; --t-none: #3A302A; --night: #FFFFFF; color-scheme: dark; } }
 :root[data-theme="dark"] {
   --frame: #231C18; --frame-2: #2E2520; --bar: #1B1512; --omni: #2E2520; --page: #16110F; --surface: #211A16;
-  --pk1: #E58FA8; --pk2: #F3B9C9; --pk3: #D46F8E; --pk4: #EBA2B7; --pk5: #DB7F9C;
+  --pk1: #E58FA8; --pk2: #F3B9C9; --pk3: #D46F8E; --pk4: #EBA2B7; --pk5: #DB7F9C; --blush: #4A2F36; --brown: #B07A63; --glow: #FFE7A8;
   --ink: #F1EAE2; --muted: #A99C91; --rule: #352B25; --rose: #D79A9E; --rose-soft: #3A2A29; --sel: #F1EAE2; --on-sel: #16110F;
   --t-fashion: #D49598; --t-beauty: #B98BB4; --t-food: #D2AE62; --t-places: #8DAA86; --t-rest: #7D7168; --t-none: #3A302A; --night: #FFFFFF; color-scheme: dark; }
 
@@ -215,12 +215,25 @@ h1.q em { font-style: italic; color: var(--rose); }
 .course { font-family: var(--serif); font-size: 16px; line-height: 1.25; }
 .course.code { font-family: var(--mono); font-size: 12.5px; color: var(--muted); }
 .badge { font: 600 11.5px var(--ui); padding: 3px 8px; border-radius: 999px; background: var(--rose-soft); color: var(--rose); white-space: nowrap; }
-.doodle { position: relative; display: inline-block; }
-.doodle .mark { cursor: pointer; }
-#dood { position: absolute; pointer-events: auto; opacity: 0; }
-.dcap { position: absolute; left: 50%; top: -30px; transform: translateX(-50%); white-space: nowrap; font: 12px var(--mono); color: var(--muted); opacity: 0; transition: opacity .4s; pointer-events: none; }
-.dcap.on { opacity: 1; }
-@media (max-width: 640px) { .dcap { white-space: normal; width: 90vw; text-align: center; } }
+.ldwrap { margin: 0; width: min(640px, 92vw); line-height: 0; }
+.ld { width: 100%; height: auto; overflow: visible; }
+.ld .ld-ln { fill: none; stroke: var(--ink); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.ld g[data-k] { cursor: pointer; transform-box: fill-box; transform-origin: 50% 100%; transition: transform .25s; }
+.ld g[data-k]:hover, .ld g[data-k]:focus-visible { transform: translateY(-4px); outline: none; }
+.ldcap { min-height: 1.4em; margin-top: -10px; font: 12.5px var(--mono); color: var(--muted); text-align: center; max-width: 92vw; }
+.ld-steam path { stroke: var(--muted); stroke-width: 2.4; fill: none; stroke-linecap: round; stroke-dasharray: 6 8; animation: ld-rise 2.4s linear infinite; opacity: .7; }
+.ld-steam path:nth-child(2) { animation-delay: -.8s; } .ld-steam path:nth-child(3) { animation-delay: -1.6s; }
+@keyframes ld-rise { to { stroke-dashoffset: -28; } }
+.ld-win { fill: var(--glow); animation: ld-glow 3s ease-in-out infinite; }
+.ld-win:nth-child(3n) { animation-delay: -1s; } .ld-win:nth-child(3n+1) { animation-delay: -2s; }
+@keyframes ld-glow { 50% { opacity: .35; } }
+.ld-plane { offset-path: path("M500,182 C500,72 590,72 590,182"); offset-rotate: auto; animation: ld-fly 5s ease-in-out infinite; }
+@keyframes ld-fly { 0% { offset-distance: 2%; opacity: 0; } 12% { opacity: 1; } 88% { opacity: 1; } 100% { offset-distance: 98%; opacity: 0; } }
+.ld-cap { animation: ld-bob 2.6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes ld-bob { 50% { transform: translateY(-5px) rotate(-8deg); } }
+.ld-ribbon { animation: ld-sway 4s ease-in-out infinite; transform-box: fill-box; transform-origin: 70% 10%; }
+@keyframes ld-sway { 50% { transform: rotate(-2.5deg); } }
+@media (prefers-reduced-motion: reduce) { .ld *, .ld { animation: none !important; } }
 .tip { position: fixed; z-index: 9; pointer-events: none; background: var(--ink); color: var(--on-sel); font-size: 12.5px; line-height: 1.45; padding: 8px 11px; border-radius: 8px; max-width: 240px; transform: translate(12px, 12px); }
 
 @media (max-width: 900px) { .two { grid-template-columns: minmax(0, 1fr); } .tiles { grid-template-columns: repeat(4, 84px); } }
@@ -566,60 +579,82 @@ function askMore(c) {
 }
 $('omniIn').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.value.trim()) { const v = e.target.value.trim(), c = CH.find(x => x.id === v.toLowerCase()); c ? go(c.id) : ask(v); } });
 
-// ----------------------------------------------------------------- THE SUHANI DOODLE: her year, one pink dot per day, drifting in to spell her name
-// Each dot is a day (October on the left, September on the right), sized by how busy that day was and colored like the letter it lands in.
-// They settle, then melt into the wordmark. Hover a dot for its day; click the wordmark to replay.
-let doodled = false;
-function doodle(auto) {
-  const h1 = $('page').querySelector('.mark'), cv = $('dood'), cap = $('dcap'); if (!h1 || !cv) return;
-  const DB = D.busy.days, srt = DB.slice().sort((a, b) => a - b), q = f => srt[Math.floor(f * (srt.length - 1))], lvl = n => [.2, .4, .6, .8].filter(f => n > q(f)).length;
-  let raf = 0, hits = [], phase = 'idle';
-  const play = () => {
-    cancelAnimationFrame(raf);
-    const box = h1.getBoundingClientRect(); if (box.width < 40 || box.height < 20) return;
-    const pad = 70, W = Math.round(box.width + pad * 2), H = Math.round(box.height + pad * 2), dpr = Math.min(2, devicePixelRatio || 1);
-    Object.assign(cv.style, { left: -pad + 'px', top: -pad + 'px', width: W + 'px', height: H + 'px', transition: 'none', opacity: '1' }); cv.width = W * dpr; cv.height = H * dpr;
-    const x = cv.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0);
-    // draw each letter off screen in its own marker color, so every dot knows which letter (and pink) it belongs to
-    const off = document.createElement('canvas'); off.width = W; off.height = H; const o = off.getContext('2d', { willReadFrequently: true });
-    const cs = getComputedStyle(h1), spans = [...h1.querySelectorAll('span')], cols = spans.map(sp => getComputedStyle(sp).color);
-    o.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`; o.textBaseline = 'alphabetic';
-    spans.forEach((sp, j) => { const r = sp.getBoundingClientRect(), mt = o.measureText(sp.textContent); o.fillStyle = `rgb(${(j + 1) * 40},0,0)`;
-      o.fillText(sp.textContent, r.left - box.left + pad + (r.width - mt.width) / 2, r.top - box.top + pad + (r.height + mt.fontBoundingBoxAscent - mt.fontBoundingBoxDescent) / 2); });
-    const px = o.getImageData(0, 0, W, H).data, at = (a, b) => { const k = (Math.round(b) * W + Math.round(a)) * 4; return px[k + 3] > 160 ? Math.round(px[k] / 40) - 1 : -1; };
-    let step = 10, pts = [];
-    for (let k = 0; k < 14; k++) { step = Math.max(3, Math.min(40, step || 10)); pts = [];
-      for (let yy = step / 2; yy < H; yy += step) for (let xx = step / 2; xx < W; xx += step) { const j = at(xx, yy); if (j >= 0) pts.push([xx, yy, j]); }
-      if (!pts.length) return; if (pts.length >= DB.length && pts.length < DB.length * 1.2) break; step *= Math.sqrt(pts.length / (DB.length * 1.1)); }
-    if (pts.length < DB.length / 2) return;
-    pts.sort((a, b) => a[0] - b[0] || a[1] - b[1]);
-    const R = step * .5, dots = DB.map((n, i) => { const p = pts[Math.floor(i * pts.length / DB.length)], a = -Math.PI / 2 + (Math.random() - .5) * 2.4, dist = H * (.5 + Math.random() * .5);
-      return { i, n, to: [p[0], p[1]], col: cols[p[2]] || cols[0], r: R * (.45 + .55 * (lvl(n) + 1) / 5), from: [p[0] + Math.cos(a) * dist * .6, p[1] + Math.sin(a) * dist], delay: i * 4.5 + Math.random() * 160 }; });
-    hits = dots.map(d => ({ x: d.to[0] - pad, y: d.to[1] - pad, d }));
-    const ease = t => 1 - Math.pow(1 - t, 3), T0 = performance.now(), flyMs = 1100, last = dots.at(-1).delay + flyMs, hold = 1400, melt = 900;
-    phase = 'flying'; h1.style.transition = 'opacity .6s'; h1.style.opacity = '0';
-    cap.textContent = `${DB.length} days, one dot each, sized by how busy the day was. Hover one.`; cap.classList.add('on');
-    const frame = now => { const t = now - T0; x.clearRect(0, 0, W, H);
-      const m = Math.max(0, Math.min(1, (t - last - hold) / melt)); // 0 → 1 as the dots melt into the wordmark
-      if (m > 0 && h1.style.opacity === '0') h1.style.opacity = '1';
-      for (const d of dots) { const k = Math.max(0, Math.min(1, (t - d.delay) / flyMs)); if (!k) continue; const e = ease(k);
-        const cx = d.from[0] + (d.to[0] - d.from[0]) * e, cy = d.from[1] + (d.to[1] - d.from[1]) * e;
-        x.globalAlpha = Math.min(1, k * 1.6) * (1 - m); x.fillStyle = d.col; x.beginPath(); x.arc(cx, cy, d.r * (1 + m * .6), 0, Math.PI * 2); x.fill(); }
-      if (m < 1) raf = requestAnimationFrame(frame); else { phase = 'done'; x.clearRect(0, 0, W, H); cap.classList.remove('on'); } };
-    raf = requestAnimationFrame(frame); };
-  cv.onpointermove = e => { if (phase !== 'flying') return; const r = cv.getBoundingClientRect(), mx = e.clientX - r.left - 70, my = e.clientY - r.top - 70;
-    const h = hits.reduce((b, p) => { const dd = (p.x - mx) ** 2 + (p.y - my) ** 2; return dd < b[0] ? [dd, p] : b; }, [200, null])[1];
-    h ? showTip(e, `${md(dayDate(h.d.i))} · ${fmt(h.d.n)} searches, pages and videos`) : hideTip(); };
-  cv.onpointerleave = hideTip;
-  h1.onclick = cv.onclick = () => { if (!reduce) play(); };
-  if (auto && !reduce) (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => setTimeout(play, 250));
+// ----------------------------------------------------------------- THE SUHANI DOODLE: each letter of her name drawn as something from her searches
+const LD = [['S', 'a silk ribbon', 'her style, from the words she pairs with clothes: corsets, lace, silk, ruffles'],
+  ['u', 'a coffee cup', '188 coffee and café searches, in every month of the year'],
+  ['h', 'New York', 'the city she searches most after Austin; the windows glow at 9 PM, her busiest hour'],
+  ['a', 'a handbag', 'Louis Vuitton is her luxury: 52 searches, busiest at 2 AM'],
+  ['n', 'a flight', '107 places in her searches; the plane crosses from Austin to New York'],
+  ['i', 'a concealer', 'her most-researched beauty product; the cap is the dot']];
+function letterDoodle() {
+  const cap = $('ldcap'); if (!cap) return; const rest = cap.textContent;
+  $('page').querySelectorAll('.ld g[data-k]').forEach(g => { const [l, n, t] = LD[+g.dataset.k];
+    const show = () => cap.textContent = `${l} · ${n}: ${t}`;
+    g.addEventListener('pointerenter', show); g.addEventListener('focus', show);
+    g.addEventListener('pointerleave', () => cap.textContent = rest); g.addEventListener('blur', () => cap.textContent = rest); });
 }
 
 VIEWS.home = () => {
   const plus = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
   const spark = `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="11" r="5.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M14.2 15.2 19 20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M18.5 2.5l.9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.9z" fill="currentColor"/></svg>`;
   $('page').innerHTML = `<div class="home">
-    <div class="doodle"><h1 class="mark" aria-label="Suhani" title="Click to replay: 365 days, one favicon each">${[...'Suhani'].map((ch, i) => `<span class="m${i}">${ch}</span>`).join('')}</h1><canvas id="dood" aria-hidden="true"></canvas><div class="dcap" id="dcap" aria-live="polite"></div></div>
+    <h1 class="ldwrap" aria-label="Suhani"><svg class="ld" viewBox="0 0 700 215" role="img" aria-labelledby="ldt">
+    <title id="ldt">Suhani, drawn from her searches: a silk ribbon S, a coffee cup u, a New York skyline h, a handbag a, a flight arc n and a concealer i</title>
+    <!-- S · silk ribbon -->
+    <g data-k="0" tabindex="0">
+      <g class="ld-ribbon">
+        <path d="M104,58 C88,34 34,36 36,72 C38,104 104,104 106,140 C108,176 58,190 30,166" fill="none" stroke="var(--pk1)" stroke-width="24" stroke-linecap="round"/>
+        <path d="M100,62 C84,44 44,46 46,72 C48,96 96,98 100,134" fill="none" stroke="var(--blush)" stroke-width="4" stroke-linecap="round" opacity=".8"/>
+        <path d="M104,58 C88,34 34,36 36,72 C38,104 104,104 106,140 C108,176 58,190 30,166" class="ld-ln" stroke-width="1.6" opacity=".35"/>
+        <path d="M104,58 C116,40 134,46 126,60 C120,70 108,64 104,58 Z" fill="var(--pk3)"/><path d="M104,58 C108,38 92,30 86,42 C82,52 96,60 104,58 Z" fill="var(--pk3)"/>
+        <circle cx="104" cy="58" r="5" fill="var(--pk5)"/>
+        <path d="M30,166 L16,178 L28,182 L22,194" fill="none" stroke="var(--pk1)" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/>
+      </g>
+    </g>
+    <!-- u · coffee cup -->
+    <g data-k="1" tabindex="0">
+      <g class="ld-steam"><path d="M168,80 c-8,-10 8,-16 0,-28 c-6,-10 6,-14 2,-24"/><path d="M188,82 c-8,-10 8,-16 0,-28 c-6,-10 6,-14 2,-24"/><path d="M208,80 c-8,-10 8,-16 0,-28 c-6,-10 6,-14 2,-24"/></g>
+      <ellipse cx="188" cy="190" rx="58" ry="8" fill="var(--pk3)" opacity=".9"/>
+      <path d="M232,112 C262,110 262,158 230,156" fill="none" stroke="var(--pk5)" stroke-width="10" stroke-linecap="round"/>
+      <path d="M144,96 L144,146 Q144,186 188,186 Q232,186 232,146 L232,96 Z" fill="var(--pk2)"/>
+      <path d="M144,96 L144,146 Q144,186 188,186 Q232,186 232,146 L232,96" class="ld-ln"/>
+      <ellipse cx="188" cy="96" rx="44" ry="8" fill="var(--brown)"/><ellipse cx="188" cy="96" rx="44" ry="8" class="ld-ln"/>
+      <path d="M176,96 q12,-5 24,0" fill="none" stroke="var(--glow)" stroke-width="2" stroke-linecap="round" opacity=".8"/>
+      <path d="M156,126 q32,10 64,0" fill="none" stroke="var(--blush)" stroke-width="3" stroke-linecap="round" opacity=".9"/>
+    </g>
+    <!-- h · New York: a spire tower and an arched building -->
+    <g data-k="2" tabindex="0">
+      <path d="M278,186 L278,52 L286,52 L286,34 L290,20 L294,34 L294,52 L302,52 L302,186 Z" fill="var(--pk5)"/>
+      <path d="M278,186 L278,52 L286,52 L286,34 L290,20 L294,34 L294,52 L302,52 L302,186" class="ld-ln"/>
+      <path d="M302,186 L302,128 Q333,88 364,128 L364,186 Z" fill="var(--pk4)"/>
+      <path d="M302,128 Q333,88 364,128 L364,186" class="ld-ln"/>
+      <g><rect class="ld-win" x="284" y="66" width="5" height="7" rx="1"/><rect class="ld-win" x="292" y="66" width="5" height="7" rx="1"/><rect class="ld-win" x="284" y="84" width="5" height="7" rx="1"/><rect class="ld-win" x="292" y="84" width="5" height="7" rx="1"/><rect class="ld-win" x="284" y="102" width="5" height="7" rx="1"/><rect class="ld-win" x="292" y="102" width="5" height="7" rx="1"/><rect class="ld-win" x="284" y="120" width="5" height="7" rx="1"/><rect class="ld-win" x="292" y="120" width="5" height="7" rx="1"/><rect class="ld-win" x="284" y="138" width="5" height="7" rx="1"/><rect class="ld-win" x="292" y="138" width="5" height="7" rx="1"/><rect class="ld-win" x="284" y="156" width="5" height="7" rx="1"/><rect class="ld-win" x="292" y="156" width="5" height="7" rx="1"/><rect class="ld-win" x="318" y="132" width="7" height="9" rx="1"/><rect class="ld-win" x="330" y="132" width="7" height="9" rx="1"/><rect class="ld-win" x="342" y="132" width="7" height="9" rx="1"/><rect class="ld-win" x="318" y="152" width="7" height="9" rx="1"/><rect class="ld-win" x="330" y="152" width="7" height="9" rx="1"/><rect class="ld-win" x="342" y="152" width="7" height="9" rx="1"/></g>
+      <path d="M320,186 L320,172 Q333,162 346,172 L346,186" fill="var(--pk3)"/>
+      <line x1="272" y1="186" x2="370" y2="186" class="ld-ln"/>
+    </g>
+    <!-- a · handbag -->
+    <g data-k="3" tabindex="0">
+      <path d="M404,116 C404,76 452,76 452,116" fill="none" stroke="var(--pk3)" stroke-width="8" stroke-linecap="round"/>
+      <path d="M392,116 L464,116 Q472,116 472,126 L472,176 Q472,186 462,186 L394,186 Q384,186 384,176 L384,126 Q384,116 392,116 Z" fill="var(--pk1)"/>
+      <path d="M392,116 L464,116 Q472,116 472,126 L472,176 Q472,186 462,186 L394,186 Q384,186 384,176 L384,126 Q384,116 392,116 Z" class="ld-ln"/>
+      <path d="M384,128 L428,152 L472,128" fill="var(--pk5)"/><path d="M384,128 L428,152 L472,128" class="ld-ln"/>
+      <rect x="422" y="148" width="12" height="12" rx="3" fill="var(--glow)" stroke="var(--ink)" stroke-width="2"/>
+    </g>
+    <!-- n · a flight arc with a plane crossing it -->
+    <g data-k="4" tabindex="0">
+      <path d="M500,186 L500,128 C500,82 590,82 590,128 L590,186" fill="none" stroke="var(--pk4)" stroke-width="22" stroke-linejoin="round"/>
+      <path d="M500,182 C500,72 590,72 590,182" fill="none" stroke="var(--muted)" stroke-width="1.6" stroke-dasharray="3 6" opacity=".8"/>
+      <circle cx="500" cy="190" r="5" fill="var(--pk3)"/><circle cx="590" cy="190" r="5" fill="var(--pk3)"/>
+      <g class="ld-plane"><path d="M-12,0 L10,0 M2,-1 L-4,-9 L-1,-9 L8,-1 M2,1 L-4,9 L-1,9 L8,1 M-10,0 L-13,-5 M-10,0 L-13,5" fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></g>
+    </g>
+    <!-- i · concealer, the cap is the dot -->
+    <g data-k="5" tabindex="0">
+      <rect x="618" y="104" width="38" height="82" rx="8" fill="var(--pk2)"/><rect x="618" y="104" width="38" height="82" rx="8" class="ld-ln"/>
+      <rect x="618" y="104" width="38" height="14" rx="6" fill="var(--pk5)"/>
+      <path d="M626,132 L648,132 M626,140 L642,140" stroke="var(--glow)" stroke-width="3" stroke-linecap="round"/>
+      <g class="ld-cap"><rect x="624" y="46" width="26" height="34" rx="10" fill="var(--pk3)"/><rect x="624" y="46" width="26" height="34" rx="10" class="ld-ln"/><path d="M631,54 L631,70" stroke="var(--blush)" stroke-width="3" stroke-linecap="round"/></g>
+    </g>
+  </svg></h1><div class="ldcap" id="ldcap" aria-live="polite">Hover a letter to see where it came from.</div>
     <p class="hint">A year of my Google searches, run through a data pipeline I built. Ask it anything about me.</p>
     <div class="sbox gbar"><button type="button" class="gplus" id="gplus" aria-label="See every question you can ask" data-tip="Every question you can ask">${plus}</button>
       <div class="field"><div class="ghost" id="gh"></div><input id="sq" autocomplete="off" spellcheck="false" aria-label="Ask a question about Suhani"></div>
@@ -632,7 +667,7 @@ VIEWS.home = () => {
   const inp = $('sq');
   guideBox(inp, $('ac'), $('gh'), ask);
   typeLoop(inp);
-  doodle(!doodled); doodled = true;
+  letterDoodle();
   // empty box: Enter or Ask runs the question being typed
   inp.addEventListener('keydown', e => { if (e.key === 'Enter' && !inp.value.trim() && typeLoop.cur) ask(typeLoop.cur); });
   $('gask').onclick = () => ask(inp.value.trim() || typeLoop.cur || STARTERS[0]);
