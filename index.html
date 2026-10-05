@@ -206,6 +206,10 @@ h1.q em { font-style: italic; color: var(--rose); }
 .ev th, .ev td { padding: 5px 18px; text-align: left; white-space: nowrap; border-bottom: 1px solid var(--rule); }
 .ev th { position: sticky; top: 0; background: var(--surface); color: var(--muted); font-weight: 400; font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; }
 .ev td.n { color: var(--muted); width: 1%; text-align: right; }
+.steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.stp { background: var(--surface); border: 1px solid var(--rule); border-radius: 16px; padding: 18px; }
+@media (max-width: 900px) { .steps { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+@media (max-width: 560px) { .steps { grid-template-columns: minmax(0, 1fr); } }
 .tip { position: fixed; z-index: 9; pointer-events: none; background: var(--ink); color: var(--on-sel); font-size: 12.5px; line-height: 1.45; padding: 8px 11px; border-radius: 8px; max-width: 240px; transform: translate(12px, 12px); }
 
 @media (max-width: 900px) { .two { grid-template-columns: minmax(0, 1fr); } .tiles { grid-template-columns: repeat(4, 84px); } }
@@ -347,7 +351,7 @@ let cur = 'home', curP = {}, hist = [{ id: 'home', p: {} }], hpos = 0;
 const seen = new Set();
 function chrome() {
   const c = CH.find(x => x.id === cur);
-  const title = cur === 'search' ? `${curP.q} · Search` : c ? c.q : 'New Tab';
+  const title = cur === 'search' ? `${curP.q} · Search` : cur === 'built' ? 'How I built it' : c ? c.q : 'New Tab';
   $('strip').innerHTML = `<div class="lights" aria-hidden="true"><i></i><i></i><i></i></div>
     <div class="tab on">${c ? fav(c.icon) : cur === 'search' ? fav('@search') : SFAV}<span class="t">${esc(title)}</span><span style="opacity:.5">✕</span></div>
     ${D.tabs.order.map(n => SITE[n] || D.tabs.extra.find(x => x.name === n)).filter(Boolean).map(s => `<div class="tab mini" data-tip="${s.name} · opened on ${s.days} days">${fav(SITE[s.name] ? s.name : s.fav)}<span class="t">${s.name}</span></div>`).join('')}
@@ -441,6 +445,7 @@ function parseDay(q) {
 const dayCount = (() => { const c = new Array(366).fill(0); for (const [d] of D.spiral) c[d]++; return c; })();
 function answer(raw) {
   const q = raw.toLowerCase().replace(/[’']/g, "'");
+  if (/how (is|was|did) (this|it|she|you) (built|build|made|make)|pipeline|data engineering|tech stack|how it works/.test(q)) return { id: 'built', p: {}, big: `${fmt(D.meta.search_page_loads)} → ${fmt(D.meta.searches)}`, sub: 'raw search logs to real searches', text: 'A Python and SQLite pipeline I wrote: two Google exports, duplicates removed, a star schema of 108,079 events, rule-based analysis, every quote approved by hand, and one small data file behind this page.', next: ['when is she busiest?', 'what were her eras this year?'] };
   const norm = x => x.toLowerCase().replace(/[’']/g, "'").replace(/[?.!]+$/, '').trim();
   const fact = D.facts.find(f => norm(f.q) === norm(q)) || D.facts.find(f => f.keys.some(k => q.includes(k)));
   if (fact) return { id: fact.chapter, p: {}, big: fact.big, sub: fact.sub, text: fact.text, rows: fact.rows,
@@ -551,11 +556,12 @@ VIEWS.home = () => {
   const spark = `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="11" r="5.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M14.2 15.2 19 20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M18.5 2.5l.9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.9z" fill="currentColor"/></svg>`;
   $('page').innerHTML = `<div class="home">
     <h1 class="mark" aria-label="Suhani">${[...'Suhani'].map((ch, i) => `<span class="m${i}">${ch}</span>`).join('')}</h1>
-    <p class="hint">A year of my Google searches. Ask it anything about me.</p>
+    <p class="hint">A year of my Google searches, run through a data pipeline I built. Ask it anything about me.</p>
     <div class="sbox gbar"><button type="button" class="gplus" id="gplus" aria-label="See every question you can ask" data-tip="Every question you can ask">${plus}</button>
       <div class="field"><div class="ghost" id="gh"></div><input id="sq" autocomplete="off" spellcheck="false" aria-label="Ask a question about Suhani"></div>
       <button type="button" class="gask" id="gask">${spark}Ask</button><div class="ac" id="ac" hidden></div></div>
     <div class="gcards">${CARDS.map(c => `<button class="gcard" data-ask="${esc(c[0])}">${fav(c[2])}<span><b>${c[0]}</b><small>${c[1]}</small></span></button>`).join('')}</div>
+    <button class="src" data-go-built style="font-family:var(--mono)">How I built it: ${fmt(D.meta.search_page_loads)} raw search logs → ${fmt(D.meta.searches)} searches → this page →</button>
     <div class="tiles-h">Most visited · by days opened, Oct 2025 – Oct 2026</div>
     <div class="tiles">${D.sites.slice(0, 4).map(s => `<button class="tile" data-site="${s.name}"><span class="c">${fav(s.name)}</span>${s.name}<small>${s.days} days</small></button>`).join('')}</div>
   </div>`;
@@ -568,6 +574,7 @@ VIEWS.home = () => {
   $('gplus').onclick = e => { e.stopPropagation(); inp.focus(); };
   $('page').querySelectorAll('[data-ask]').forEach(b => b.onclick = () => ask(b.dataset.ask));
   $('page').querySelectorAll('[data-site]').forEach(b => b.onclick = () => go('sites', { site: b.dataset.site }));
+  $('page').querySelector('[data-go-built]').onclick = () => go('built');
 };
 // questions typed into the empty search box, one after another
 const TYPED = ['is she a night owl?', 'what is she obsessed with?', 'how did she plan New York?', 'what is she doing at 10 PM?',
@@ -590,7 +597,7 @@ VIEWS.search = p => {
   const card = a.none ? `<div class="snip"><p style="font-size:17px;margin:0">No answer for that one in the data.${a.dym ? ` Did you mean: <button class="dym" data-q="${esc(a.dym)}">${esc(a.dym)}</button>?` : ''}</p></div>`
     : `<div class="snip"><div class="kicker">${c ? `${fav(c.icon)} from ${c.label}` : `${SFAV} overview`}</div><div class="big" style="margin-top:10px">${a.big}</div><div class="sub">${a.sub}</div>
         <p class="snipt">${a.text}</p>${a.rows ? `<div class="snrows">${a.rows.map(r => `<div class="step"><span class="t">${r[0]}</span><span class="s">${r[1]}</span></div>`).join('')}</div>` : ''}${a.note ? `<p class="sub">${a.note}</p>` : ''}
-        ${c ? `<div class="pills" style="margin-top:14px"><button class="pill go" id="open">Open ${c.label} →</button><span class="lbl">explore it yourself</span></div>` : ''}</div>`;
+        ${a.id === 'built' ? `<div class="pills" style="margin-top:14px"><button class="pill go" id="open">See how I built it →</button></div>` : ''}${c ? `<div class="pills" style="margin-top:14px"><button class="pill go" id="open">Open ${c.label} →</button><span class="lbl">explore it yourself</span></div>` : ''}</div>`;
   const asked = p.q.toLowerCase().replace(/[?.!]+$/, '').trim();
   const next = [...new Set(a.none ? GUIDES.slice(0, 5) : a.next)].filter(n => n.toLowerCase().replace(/[?.!]+$/, '').trim() !== asked);
   $('page').innerHTML = `<div class="wrap serp">
@@ -666,11 +673,33 @@ VIEWS.hours = (p = {}) => {
   draw(); dots(); new ResizeObserver(dots).observe(cv);
 };
 
+// ----------------------------------------------------------------- HOW IT'S BUILT: the pipeline behind every number
+VIEWS.built = () => {
+  const M = D.meta, ev = 108079, kb = 444;
+  const STEPS = [
+    ['Extract', '2', 'Google Takeout exports', 'My personal and UT accounts: Chrome history, YouTube, Maps reviews, Drive file titles and dates, calendar times. Never file contents.'],
+    ['Clean', fmt(M.search_page_loads - M.searches), 'duplicate searches removed', `Chrome re-logs a results page every time you go back to it. ${fmt(M.search_page_loads)} logged search pages became ${fmt(M.searches)} real searches, all in Austin time.`],
+    ['Model', fmt(ev), 'events in a star schema', `SQLite: one fact table of events, with dimensions for dates, ${fmt(9949)} distinct queries, ${fmt(M.sessions)} sessions (a new one after 30 quiet minutes) and ${fmt(M.questions)} question threads.`],
+    ['Analyze', '13', 'topic rules, plus a 439-place gazetteer', 'Rule-based topic tagging, each hour compared with my usual day, an Obsession Index, place and title matching with misspellings merged, never shown.'],
+    ['Review', '100%', 'of what you see, approved by me', 'Every place, title and quoted search was approved by hand. Private topics are blocked in the pipeline, and the export fails if a quoted search isn\'t word for word in my data.'],
+    ['Ship', `${kb} KB`, 'one data.json, no framework', 'Plain JavaScript, Canvas and SVG, with d3 only for the world map. Rerun the pipeline and the whole site updates.'],
+  ];
+  $('page').innerHTML = `<div class="wrap"><div class="kicker">${fav('github.com')} How I built it</div><h1 class="q">From two Google exports to this page</h1>
+    <p class="lede">Every answer on this site comes from a pipeline I wrote in Python and SQLite. It runs on my laptop next to the raw data; only its small, hand-approved output is published.</p>
+    <div class="steps">${STEPS.map(([t, n, u, d], i) => `<div class="stp"><div class="kicker">${i + 1} · ${t}</div><div class="big" style="margin-top:8px">${n}</div><div class="sub" style="color:var(--ink)">${u}</div><p class="sub" style="margin-top:8px;line-height:1.45">${d}</p></div>`).join('')}</div>
+    <div class="two" style="margin-top:22px"><div class="panel"><div class="kicker">the stack</div>
+        ${[['Pipeline', 'Python, SQLite, regular expressions'], ['Analysis', 'lift against her usual day, sessions and threads, an Obsession Index'], ['Front end', 'HTML, CSS, vanilla JavaScript, Canvas, SVG, d3-geo'], ['Hosting', 'GitHub Pages, one static data file']].map(([a, b]) => `<div class="row" style="grid-template-columns:110px minmax(0,1fr)"><b style="font-weight:600">${a}</b><span>${b}</span></div>`).join('')}</div>
+      <div class="panel"><div class="kicker">the guardrails</div>
+        ${['No search text unless I approved it word for word', 'No health, religion, politics or relationship topics', 'No professors or private people; no addresses', 'Misspellings counted under the right word, never shown', 'Shares count every search, not only the ones with a topic'].map(t => `<div class="row" style="grid-template-columns:18px minmax(0,1fr)"><span>✓</span><span>${t}</span></div>`).join('')}</div></div>
+    <p style="margin-top:22px"><a class="src" href="https://github.com/suhxnitiwari/search-history#readme" target="_blank" rel="noopener">Read the full write-up on GitHub →</a></p></div>`;
+};
+
 // ----------------------------------------------------------------- DAYS: one favicon per day
 VIEWS.days = (p = {}) => {
   const c = CH.find(x => x.id === 'days');
   const lead = Object.entries(owned).sort((a, b) => b[1] - a[1]);
-  $('page').innerHTML = `<div class="wrap">${head(c, `365 days, one favicon each: the site I opened most that day. Hover any day; click a site below to see only the days it owned.`)}
+  $('page').innerHTML = `<div class="wrap">${head(c, `365 days. See which site owned each day, or how busy each day was. Hover any day; click a site below to see only the days it owned.`)}
+    <div class="pills" style="margin-bottom:12px"><span class="lbl">show</span><button class="pill" data-mode="own" aria-pressed="${p.mode !== 'busy'}">who owned each day</button><button class="pill" data-mode="busy" aria-pressed="${p.mode === 'busy'}">how busy each day was</button><span class="lbl" id="heatkey" hidden style="margin-left:8px">less ${[1, 2, 3, 4, 5].map(k => `<i style="display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;background:color-mix(in srgb, var(--rose) ${k * 20}%, var(--surface))"></i>`).join(' ')} more</span></div>
     <div class="panel"><div class="calwrap"><div class="months" id="mo"></div><div class="cal" id="cal"></div></div>
     <div class="dayinfo" id="di" style="margin-top:12px"></div></div>
     <div class="kicker" style="margin:20px 0 8px">who owned the most days</div>
@@ -681,7 +710,15 @@ VIEWS.days = (p = {}) => {
   let mo = '', last = -1; const wk = Math.ceil((pad + 365) / 7);
   for (let w = 0; w < wk; w++) { const d = dayDate(w * 7 - pad), m = d.getMonth(); mo += `<span style="width:17px">${m !== last && w * 7 - pad >= -6 ? d.toLocaleDateString('en-US', { month: 'short' }) : ''}</span>`; last = m; }
   $('mo').innerHTML = mo; $('mo').style.gridTemplateColumns = `repeat(${wk}, 17px)`;
-  const info = i => { const m = D.mosaic[i]; $('di').innerHTML = m ? `<div class="row" style="grid-template-columns:22px minmax(0,1fr) auto">${fav(m[0])}<div><b>${mdy(dayDate(i))}</b> · ${m[0]} owned the day with ${m[1]} visits</div><span class="v">${m[2]} visits to these sites</span></div>` : ''; };
+  const DB = D.busy.days, srt = DB.slice().sort((a, b) => a - b), q5 = [.2, .4, .6, .8].map(f => srt[Math.floor(f * srt.length)]), lvl = n => 1 + q5.filter(t => n > t).length;
+  let mode = p.mode === 'busy' ? 'busy' : 'own';
+  const paint = () => { $('heatkey').hidden = mode !== 'busy';
+    $('cal').querySelectorAll('[data-d]').forEach(x => { const i = +x.dataset.d, m = D.mosaic[i];
+      if (mode === 'busy') { x.innerHTML = ''; x.disabled = false; x.style.background = `color-mix(in srgb, var(--rose) ${lvl(DB[i]) * 20}%, var(--surface))`; }
+      else { x.style.background = ''; x.innerHTML = m ? fav(m[0]) : ''; x.disabled = !m; } }); };
+  const info = i => { const m = D.mosaic[i]; $('di').innerHTML = `<div class="row" style="grid-template-columns:22px minmax(0,1fr) auto">${m ? fav(m[0]) : '<span></span>'}<div><b>${mdy(dayDate(i))}</b> · ${fmt(DB[i])} searches, page visits and videos${m ? ` · ${m[0]} owned the day` : ''}</div><span class="v">${DB[i] === Math.max(...DB) ? 'busiest day of the year' : `busier than ${Math.round(100 * srt.filter(x => x < DB[i]).length / srt.length)}% of days`}</span></div>`; };
+  $('page').querySelectorAll('[data-mode]').forEach(b => b.onclick = () => { mode = b.dataset.mode; $('page').querySelectorAll('[data-mode]').forEach(x => x.setAttribute('aria-pressed', x === b)); paint(); });
+  paint();
   $('cal').addEventListener('pointerover', e => { const b = e.target.closest('[data-d]'); if (b) info(+b.dataset.d); });
   info(p.day ?? D.mosaic.length - 1 - [...D.mosaic].reverse().findIndex(m => m));
   $('page').querySelectorAll('[data-own]').forEach(b => b.onclick = () => {
