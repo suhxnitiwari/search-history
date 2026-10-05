@@ -49,7 +49,9 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .tab { display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 12px; border-radius: 9px 9px 0 0; font-size: 13px; flex: 0 0 auto; }
 .tab.on { background: var(--bar); width: 210px; }
 .tab.on .t { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-.tab.mini { padding: 0 8px; position: relative; }
+.tab.mini { padding: 0 10px; position: relative; flex: 1 1 0; min-width: 36px; max-width: 180px; justify-content: center; container-type: inline-size; }
+.tab.mini .t { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: var(--muted); }
+@container (max-width: 84px) { .tab.mini .t { display: none; } }
 .tab.mini::after { content: ""; position: absolute; right: -1px; top: 10px; bottom: 10px; width: 1px; background: var(--frame-2); }
 .tab.mini:hover { background: var(--frame-2); }
 .count { margin-left: auto; flex: 0 0 auto; align-self: center; margin-bottom: 4px; font-size: 12.5px; color: var(--muted); padding: 5px 10px; border-radius: 999px; background: var(--frame-2); white-space: nowrap; }
@@ -98,17 +100,17 @@ h1.q em { font-style: italic; color: var(--rose); }
 .row img { width: 20px; height: 20px; }
 
 /* home */
-.home { min-height: 100%; display: flex; flex-direction: column; align-items: center; gap: 24px; padding: clamp(36px, 9vh, 96px) 16px 80px; box-sizing: border-box; }
-.mark { font-family: var(--serif); font-weight: 400; font-size: clamp(64px, 10vw, 108px); letter-spacing: -.04em; line-height: .9; margin: 0; }
+.home { min-height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 30px; padding: 40px 16px 56px; box-sizing: border-box; }
+.mark { font-family: var(--serif); font-weight: 400; font-size: clamp(76px, 13vw, 168px); letter-spacing: -.04em; line-height: .9; margin: 0; }
 .mark em { color: var(--rose); }
-.sbox { width: min(820px, 100%); height: 68px; display: flex; align-items: center; gap: 12px; padding: 0 8px 0 22px; box-sizing: border-box; border-radius: 999px; background: var(--surface); border: 1px solid var(--rule); box-shadow: 0 2px 10px rgba(43, 33, 28, .07); position: relative; }
-.sbox input { flex: 1; min-width: 0; border: 0; outline: none; background: transparent; font: 21px var(--ui); color: var(--ink); }
+.sbox { width: min(980px, 100%); height: 84px; display: flex; align-items: center; gap: 12px; padding: 0 8px 0 22px; box-sizing: border-box; border-radius: 999px; background: var(--surface); border: 1px solid var(--rule); box-shadow: 0 2px 10px rgba(43, 33, 28, .07); position: relative; }
+.sbox input { flex: 1; min-width: 0; border: 0; outline: none; background: transparent; font: 25px var(--ui); color: var(--ink); }
 .sbox input::placeholder { color: var(--muted); }
 .ac { position: absolute; top: 100%; left: 0; right: 0; margin-top: 6px; background: var(--surface); border: 1px solid var(--rule); border-radius: 16px; padding: 6px 0; box-shadow: 0 10px 30px rgba(43, 33, 28, .1); z-index: 5; }
 .ac button { display: flex; gap: 12px; align-items: center; width: 100%; padding: 9px 18px; text-align: left; font-size: 15px; }
 .ac button:hover, .ac button[aria-selected="true"] { background: var(--omni); }
 .ac small { margin-left: auto; color: var(--muted); font-size: 12px; }
-.tiles { display: grid; grid-template-columns: repeat(8, 96px); gap: 14px 8px; margin-top: 8px; }
+.tiles { display: grid; grid-template-columns: repeat(4, 110px); gap: 14px 24px; margin-top: 8px; }
 .tile { display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: 13px; text-align: center; }
 .tile .c { width: 54px; height: 54px; border-radius: 50%; background: var(--omni); display: grid; place-items: center; transition: transform .15s; }
 .tile .c img { width: 26px; height: 26px; }
@@ -195,8 +197,8 @@ h1.q em { font-style: italic; color: var(--rose); }
 .bm.askbm:hover, .bm.askbm[aria-current="page"] { background: var(--ink); color: var(--on-sel); }
 .bm.askbm[aria-current="page"]::after { display: none; }
 .bm.askbm .ai { width: 22px; height: 22px; border-radius: 50%; background: var(--on-sel); color: var(--ink); display: grid; place-items: center; font-size: 14px; line-height: 1; }
-.asks { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; width: min(820px, 100%); }
-.askq { padding: 9px 15px; border-radius: 999px; border: 1px solid var(--rule); background: var(--surface); font: 15px var(--ui); color: var(--ink); cursor: pointer; }
+.asks { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; width: min(980px, 100%); }
+.askq { padding: 12px 20px; border-radius: 999px; border: 1px solid var(--rule); background: var(--surface); font: 17px var(--ui); color: var(--ink); cursor: pointer; }
 .askq:hover { border-color: var(--ink); }
 .snrows { margin-top: 14px; }
 .snrows .s { font-size: 17px; }
@@ -213,10 +215,10 @@ h1.q em { font-style: italic; color: var(--rose); }
 .menu button:hover { background: var(--omni); }
 .menu small { display: block; color: var(--muted); font-size: 12px; }
 .menu em { font-style: normal; font-size: 12px; color: var(--muted); }
-.hint { margin: -8px 0 0; font-family: var(--serif); font-size: 18px; color: var(--muted); text-align: center; }
+.hint { margin: -8px 0 0; font-family: var(--serif); font-size: clamp(19px, 1.8vw, 24px); color: var(--muted); text-align: center; }
 .field { position: relative; flex: 1; min-width: 0; display: flex; }
 .field input { position: relative; z-index: 1; }
-.ghost { position: absolute; inset: 0; display: flex; align-items: center; white-space: pre; overflow: hidden; color: var(--muted); opacity: .6; pointer-events: none; font: 18px var(--ui); }
+.ghost { position: absolute; inset: 0; display: flex; align-items: center; white-space: pre; overflow: hidden; color: var(--muted); opacity: .6; pointer-events: none; font: 25px var(--ui); }
 .sbox.small .ghost, .sbox.small input { font-size: 16px; }
 .ghost kbd { font: 10.5px var(--mono); border: 1px solid var(--rule); border-radius: 4px; padding: 1px 5px; margin-left: 8px; opacity: .9; }
 .ac .ach { padding: 6px 18px 4px; font-size: 12px; color: var(--muted); }
@@ -326,7 +328,7 @@ function chrome() {
   const title = cur === 'search' ? `${curP.q} · Search` : c ? c.q : 'New Tab';
   $('strip').innerHTML = `<div class="lights" aria-hidden="true"><i></i><i></i><i></i></div>
     <div class="tab on">${c ? fav(c.icon) : cur === 'search' ? fav('@search') : SFAV}<span class="t">${esc(title)}</span><span style="opacity:.5">✕</span></div>
-    ${D.sites.slice(0, 26).map(s => `<div class="tab mini" data-tip="${s.name} · opened on ${s.days} days">${fav(s.name)}</div>`).join('')}
+    ${D.sites.slice(0, 12).map(s => `<div class="tab mini" data-tip="${s.name} · opened on ${s.days} days">${fav(s.name)}<span class="t">${s.name}</span></div>`).join('')}
     <span class="count"><b>473</b> tabs open</span>`;
   $('bms').innerHTML = `<button data-go="home" ${cur === 'home' || cur === 'search' ? 'aria-current="page"' : ''} data-tip="Ask anything about Suhani · press /" class="bm askbm"><span class="ai" aria-hidden="true">⌕</span>Ask about Suhani</button><span class="sep"></span>` +
     CH.map((x, i) => `<button class="bm${seen.has(x.id) ? ' seen' : ''}" data-go="${x.id}" ${x.id === cur ? 'aria-current="page"' : ''} data-tip="<b>${x.q}</b><br>${x.hint} · key ${(i + 1) % 10}">${fav(x.icon)}${x.label}</button>`).join('') +
@@ -529,7 +531,7 @@ VIEWS.home = () => {
     <div class="sbox"><span style="color:var(--muted)">⌕</span><div class="field"><div class="ghost" id="gh"></div><input id="sq" placeholder="Ask a question about Suhani" autocomplete="off" spellcheck="false" aria-label="Ask a question about Suhani"></div><div class="ac" id="ac" hidden></div></div>
     <div class="asks">${STARTERS.map(q => `<button class="askq" data-ask="${esc(q)}">${q}</button>`).join('')}</div>
     <div class="tiles-h">Most visited · by days opened, Oct 2025 – Oct 2026</div>
-    <div class="tiles">${D.sites.slice(0, 8).map(s => `<button class="tile" data-site="${s.name}"><span class="c">${fav(s.name)}</span>${s.name}<small>${s.days} days</small></button>`).join('')}</div>
+    <div class="tiles">${D.sites.slice(0, 4).map(s => `<button class="tile" data-site="${s.name}"><span class="c">${fav(s.name)}</span>${s.name}<small>${s.days} days</small></button>`).join('')}</div>
   </div>`;
   guideBox($('sq'), $('ac'), $('gh'), ask);
   $('page').querySelectorAll('[data-ask]').forEach(b => b.onclick = () => ask(b.dataset.ask));
