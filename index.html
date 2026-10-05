@@ -422,7 +422,7 @@ const label = t => t === "popculture" || t === "pop culture" ? "pop culture" : t
 const QUESTIONS = [
   ["browser", "What's on my browser?", "02", "bookmarks tabs extensions apps chrome pink theme favorites"],
   ["attention", "What gets my attention?", "02", "obsession index love favorite most searched nyc dresses coffee"],
-  ["curious", "How do I get curious?", "03", "follow ups chain rewrite questions typos chicago skirt"],
+  ["curious", "How do I get curious?", "03", "follow ups chain rewrite questions chicago"],
   ["deep", "How deep is deep?", "04", "rabbit hole longest session midnight tabs"],
   ["when", "When am I me?", "05", "sleep bedtime night owl hour 3 am time day week"],
   ["roles", "Can search history identify my roles?", "06", "student builder marketer planner baker artist fan who"],
@@ -444,8 +444,8 @@ const EP = {
     cast: "Google searches (personal account)", genres: "Text normalization, n-grams, geometric mean of log-scaled features", mood: "Revealing, Repetitive, A little obsessive",
     rating: "PG", why: "Words that describe where I live are excluded, and only hand-approved terms are shown.", like: ["curious", "vocab", "change"] },
   curious: { c: "#5E62B0", log: "How does one question become many? I grouped back-to-back searches about the same thing into “questions” and measured what happens when the first search isn't enough.",
-    cast: "Google searches, pages visited between them", genres: "Sessionization, question threading, reformulation analysis", mood: "Funny, Typo-filled, Surprisingly efficient",
-    rating: "PG", why: "Only two real chains are shown, both approved. No names, prices or brands.", like: ["deep", "vocab", "prove"] },
+    cast: "Google searches, pages visited between them", genres: "Sessionization, question threading, reformulation analysis", mood: "Funny, Surprisingly efficient",
+    rating: "PG", why: "Only one real chain is shown, and it's approved. No names, prices or brands.", like: ["deep", "vocab", "prove"] },
   deep: { c: "#D2603A", log: "The longest night of the year, stacked in ten-minute slices: a build day that started at 4:23 PM and ended at 2:17 AM.",
     cast: "Google searches, page visits, YouTube watches", genres: "Session ranking, topic tagging, time bucketing", mood: "Chaotic, Productive, Past midnight",
     rating: "PG", why: "The opening search names a real person, so it's hidden. Brand searches are left out.", like: ["learn", "when", "curious"] },
@@ -471,7 +471,7 @@ const EP = {
     cast: "Every event, grouped by month and day", genres: "Jensen–Shannon divergence, z-score anomaly detection", mood: "Big picture, Uncanny",
     rating: "PG", why: "Only topic shares and dates are shown.", like: ["learn", "escaped", "when"] },
   prove: { c: "#C98A00", log: "You've seen my patterns. Real searches, real next searches: can you guess what I typed?",
-    cast: "Two approved question chains", genres: "Quiz", mood: "Playful, Harder than it looks",
+    cast: "One approved question chain", genres: "Quiz", mood: "Playful, Harder than it looks",
     rating: "G", why: "Wrong answers were written by me; right answers are real.", like: ["curious", "roles", "end"] },
 };
 QUESTIONS.forEach((x, i) => x[2] = String(i + 2).padStart(2, "0"));
@@ -592,7 +592,7 @@ function build(D) {
       <ol class="chain" id="chain"></ol>
       <div class="chain-meta" id="chainmeta"></div>
     </div>
-    <p class="note rv">Real searches, in order, typos included. My longest single question took ${C.longest} different searches.</p>
+    <p class="note rv">Real searches, in order. My longest single question took ${C.longest} different searches.</p>
     <p class="bridge rv">Most questions end fast. The ones that don't become rabbit holes.</p>`));
 
   // 04 ------------------------------------------------------------
@@ -758,7 +758,7 @@ function build(D) {
   // 12 ------------------------------------------------------------
   parts.push(chapter("prove", "12", "You think you know me? Prove it.", `
     <h2 class="rv">What did I search <em>next</em>?</h2>
-    <p class="lede rv">Real searches, real next searches. The typos are a hint.</p>
+    <p class="lede rv">Real searches, real next searches.</p>
     <div class="quiz">${D.quiz.map((z, i) => {
       const opts = [...z.options]; opts.splice((i * 2 + 1) % 4, 0, z.answer);
       return `<div class="card qz rv" data-answer="${z.answer.replace(/"/g, "&quot;")}">
