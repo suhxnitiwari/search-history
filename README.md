@@ -1,31 +1,25 @@
-# 8,730 Questions
+# Search History
 
-*If all you had was my search history, could you figure out who I am?* **An attempt to reconstruct one person from the questions she asked the internet.**
+*A year of my Google searches, inside my own browser. Ask it anything about me.*
 
 **Live:** [suhxnitiwari.github.io/search-history](https://suhxnitiwari.github.io/search-history/)
 
-**8,730 questions · 12,460 searches · 85,443 pages · 2,047 videos · 297 files I made · two Google accounts · Oct 2025 – Oct 2026**
+**12,460 searches · 85,443 pages · 2,047 videos · 297 files I made · two Google accounts · Oct 2025 – Oct 2026**
 
 The follow-up to [Heavy Rotation](https://suhxnitiwari.github.io/listening-galaxy/), my Spotify galaxy.
 
-## The investigation
+## How it works
 
-Fourteen questions, each one earning the next. Every chapter has a **More info** panel with its data sources, methods and a privacy rating.
+The page is my Chrome window. You type the questions; the data answers them. The bookmark bar is the navigation, and each bookmark wears the favicon of the site whose data drives it.
 
-1. **The interrogation:** the evidence, and a search bar that takes you to any question
-2. **What's on my browser?** My pink theme (decoded from Chrome settings), 473 open tabs, a bookmark bar built from my data, and the apps I favorite vs. the ones I use
-3. **What gets my attention?** An Obsession Index, not a top-10 list
-4. **How do I get curious?** Real question chains, typos included
-5. **How deep is deep?** Anatomy of a 9h 54m rabbit hole
-6. **When am I me?** Guess my bedtime, then watch my day hour by hour
-7. **Can search history identify my roles?** Evidence boards you can vote on
-8. **What would Google get wrong?** Real mistakes made while analyzing this data
-9. **So what does a search reveal?** My search vocabulary
-10. **Can you watch me learn?** From my first Python notebook to my own projects
-11. **Which searches escaped the browser?** A summer at Oracle, five trips and a map of eleven I only searched flights for
-12. **Can Google watch someone change?** Month by month, and life events found without being told
-13. **You think you know me? Prove it.** What did I search next?
-14. **So… could you?**
+1. **Hours:** every search of the year on one clock you can drag: what I search at each hour, when I search most (9 PM) and when I'm offline
+2. **Days:** 365 days, one favicon each, for the site that owned the day
+3. **Most visited:** sites sized by how many days I opened them, with when I open each one
+4. **Places:** five trips found from airport and "near me" searches, plus the cities I only searched
+5. **Rabbit hole:** replay a 9h 54m session from the night I built a site
+6. **Learning:** my UT account's file trail, from a first Python notebook to React and a backend
+7. **Career:** how a search for Oracle internships became an internship
+8. **Building:** visits to sites I built myself, month by month
 
 ## The data engineering
 
@@ -39,12 +33,13 @@ The pipeline lives on my laptop with the raw data; only its small output, `data.
 
 ## How it's built
 
-- **A search bar that answers questions.** The box filters the investigation's questions by title and keywords as you type, so "sleep" or "oracle" finds the right chapter.
-- **"Did you mean…?"** When nothing matches, the query is compared to every question and keyword with a Levenshtein edit-distance function (dynamic programming), and the closest one is offered if it's within two edits. Misspell "oracle" and it still finds you.
-- **Accessible combobox.** Arrow keys, Enter and Escape drive the suggestion list, with `aria-expanded`, `aria-activedescendant` and `aria-selected` kept in sync. Chart bars and hour columns are focusable and labeled for screen readers, and every More info panel is a native `<dialog>`.
-- **Data-driven page.** Every chapter is rendered from `data.json`, so rerunning the pipeline updates the whole site.
-- **Motion with care.** Numbers count up with `requestAnimationFrame`, charts grow in as they scroll into view, question chains type themselves out and the trip arcs draw themselves; all of it turns off under `prefers-reduced-motion`.
-- **No framework.** HTML, CSS and plain JavaScript in `index.html`, with the charts and the map built from plain HTML, CSS and SVG.
+- **A search bar that answers in plain English.** It reads times ("3 AM", "midnight"), dates ("Oct 26"), nights of the week, cities, any site name and topics like Oracle or React, then answers with a featured-snippet card that opens the chapter at that exact point: the clock hand on 3 AM, Oct 26 lit up in the Days grid, the Chicago trip selected.
+- **It guides, it never types for you.** Suggestions filter as you type, Tab accepts an inline completion, and "People also ask" offers next questions.
+- **"Did you mean…?"** When nothing matches, each word is compared to the vocabulary with a Levenshtein edit-distance function, so "chikago" still finds Chicago.
+- **The clock.** 12,460 searches drawn on a canvas as a spiral (midnight at the top, the year growing outward), topic bars around it in SVG, and the favicon most typical of each hour on the rim (its share of that hour divided by its share of the year).
+- **Data-driven page.** Everything renders from `data.json`, so rerunning the pipeline updates the whole site. Favicons are embedded in it, so the page makes no third-party requests for them.
+- **Browser-like navigation.** Back, forward and reload work inside the page, chapters you've opened turn grey, keys 1–8 jump between chapters and `/` focuses the address bar.
+- **No framework.** HTML, CSS and plain JavaScript in `index.html`, with charts in Canvas, SVG and CSS.
 
 ## Data and privacy
 
@@ -52,9 +47,9 @@ Nothing is shown unless it was approved by hand: no names of real people, nothin
 
 ## Design choices
 
-- **The interface is the metaphor.** The data came from a search engine, so the investigation opens on a search bar, and the browser chapter is drawn in my own pink Chrome theme.
-- **An investigation, not a dashboard.** Each chapter answers a smaller question that earns the next one, and the story breaks its own model in "What would Google get wrong?" before it reaches a conclusion.
-- **Episodes.** The navigation and the More info panels borrow the shape of a streaming app's episode pages: what it's about, who's in it (the data), what genre it is (the methods) and its rating (what it keeps private).
+- **The interface is the metaphor.** The data came from my browser, so the site is my browser: tab strip, address bar, bookmark bar and new-tab page.
+- **Favicons are the color.** The frame stays quiet ivory and walnut; the real favicons of the sites I use bring the color.
+- **The visitor asks.** Nothing plays on its own: every chapter is something to drag, step through or click.
 
 ## Tech stack
 
