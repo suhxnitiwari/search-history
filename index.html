@@ -101,8 +101,8 @@ h1.q em { font-style: italic; color: var(--rose); }
 .home { min-height: 100%; display: flex; flex-direction: column; align-items: center; gap: 24px; padding: clamp(36px, 9vh, 96px) 16px 80px; box-sizing: border-box; }
 .mark { font-family: var(--serif); font-weight: 400; font-size: clamp(64px, 10vw, 108px); letter-spacing: -.04em; line-height: .9; margin: 0; }
 .mark em { color: var(--rose); }
-.sbox { width: min(720px, 100%); height: 56px; display: flex; align-items: center; gap: 12px; padding: 0 8px 0 22px; box-sizing: border-box; border-radius: 999px; background: var(--surface); border: 1px solid var(--rule); box-shadow: 0 2px 10px rgba(43, 33, 28, .07); position: relative; }
-.sbox input { flex: 1; min-width: 0; border: 0; outline: none; background: transparent; font: 18px var(--ui); color: var(--ink); }
+.sbox { width: min(820px, 100%); height: 68px; display: flex; align-items: center; gap: 12px; padding: 0 8px 0 22px; box-sizing: border-box; border-radius: 999px; background: var(--surface); border: 1px solid var(--rule); box-shadow: 0 2px 10px rgba(43, 33, 28, .07); position: relative; }
+.sbox input { flex: 1; min-width: 0; border: 0; outline: none; background: transparent; font: 21px var(--ui); color: var(--ink); }
 .sbox input::placeholder { color: var(--muted); }
 .ac { position: absolute; top: 100%; left: 0; right: 0; margin-top: 6px; background: var(--surface); border: 1px solid var(--rule); border-radius: 16px; padding: 6px 0; box-shadow: 0 10px 30px rgba(43, 33, 28, .1); z-index: 5; }
 .ac button { display: flex; gap: 12px; align-items: center; width: 100%; padding: 9px 18px; text-align: left; font-size: 15px; }
@@ -191,6 +191,19 @@ h1.q em { font-style: italic; color: var(--rose); }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 
 .bm.seen { color: var(--muted); }
+.bm.askbm { background: var(--ink); color: var(--on-sel); font-size: 15px; font-weight: 600; padding: 8px 18px 8px 10px; gap: 9px; }
+.bm.askbm:hover, .bm.askbm[aria-current="page"] { background: var(--ink); color: var(--on-sel); }
+.bm.askbm[aria-current="page"]::after { display: none; }
+.bm.askbm .ai { width: 22px; height: 22px; border-radius: 50%; background: var(--on-sel); color: var(--ink); display: grid; place-items: center; font-size: 14px; line-height: 1; }
+.asks { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; width: min(820px, 100%); }
+.askq { padding: 9px 15px; border-radius: 999px; border: 1px solid var(--rule); background: var(--surface); font: 15px var(--ui); color: var(--ink); cursor: pointer; }
+.askq:hover { border-color: var(--ink); }
+.snrows { margin-top: 14px; }
+.snrows .s { font-size: 17px; }
+.askmore { margin-top: 48px; padding: 26px; border-radius: 22px; background: var(--omni); }
+.askmore h3 { margin: 0 0 14px; font: 400 clamp(24px, 3vw, 32px)/1.1 var(--serif); }
+.askmore .sbox { width: 100%; }
+.askmore .asks { justify-content: flex-start; width: 100%; margin-top: 14px; }
 .bm.seen[aria-current="page"] { color: var(--ink); }
 .bmfill { flex: 1 0 8px; }
 .progress { font-size: 12px; color: var(--muted); white-space: nowrap; padding: 0 4px; }
@@ -229,7 +242,7 @@ h1.q em { font-style: italic; color: var(--rose); }
   <div class="strip" id="strip"></div>
   <div class="toolbar">
     <button class="tb" id="back" aria-label="Back">←</button><button class="tb" id="fwd" aria-label="Forward">→</button><button class="tb" id="reload" aria-label="Reload">↻</button>
-    <label class="omni" for="omniIn"><span id="omniFav"></span><span class="path">suhani.search/</span><input id="omniIn" autocomplete="off" spellcheck="false" placeholder="ask about Suhani"></label>
+    <label class="omni" for="omniIn"><span id="omniFav"></span><span class="path">suhani.search/</span><input id="omniIn" autocomplete="off" spellcheck="false" placeholder="Ask anything about Suhani (press /)"></label>
     <span class="who" id="who"></span><span class="avatar" aria-hidden="true">S</span>
   </div>
   <nav class="bms" id="bms" aria-label="Chapters"></nav>
@@ -315,7 +328,7 @@ function chrome() {
     <div class="tab on">${c ? fav(c.icon) : cur === 'search' ? fav('@search') : SFAV}<span class="t">${esc(title)}</span><span style="opacity:.5">✕</span></div>
     ${D.sites.slice(0, 26).map(s => `<div class="tab mini" data-tip="${s.name} · opened on ${s.days} days">${fav(s.name)}</div>`).join('')}
     <span class="count"><b>473</b> tabs open</span>`;
-  $('bms').innerHTML = `<button class="bm" data-go="home" ${cur === 'home' || cur === 'search' ? 'aria-current="page"' : ''} data-tip="Ask a question · suhani.search">${SFAV}Ask</button><span class="sep"></span>` +
+  $('bms').innerHTML = `<button data-go="home" ${cur === 'home' || cur === 'search' ? 'aria-current="page"' : ''} data-tip="Ask anything about Suhani · press /" class="bm askbm"><span class="ai" aria-hidden="true">⌕</span>Ask about Suhani</button><span class="sep"></span>` +
     CH.map((x, i) => `<button class="bm${seen.has(x.id) ? ' seen' : ''}" data-go="${x.id}" ${x.id === cur ? 'aria-current="page"' : ''} data-tip="<b>${x.q}</b><br>${x.hint} · key ${(i + 1) % 10}">${fav(x.icon)}${x.label}</button>`).join('') +
     `<span class="bmfill"></span><span class="progress">${seen.size} of ${CH.length} opened</span><span class="sep"></span>
     <div class="folder"><button class="bm" id="allb" aria-expanded="false"><svg class="fv" viewBox="0 0 16 16" aria-hidden="true"><path d="M1.5 4.5a1 1 0 0 1 1-1h3.6l1.4 1.5h6a1 1 0 0 1 1 1v6.5a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1z" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>All bookmarks</button>
@@ -339,7 +352,7 @@ function go(id, p = {}, push = true) {
   if (push) { hist = hist.slice(0, hpos + 1); hist.push({ id, p }); hpos = hist.length - 1; }
   cur = id; curP = p; if (CH.some(c => c.id === id)) seen.add(id);
   $('ev').hidden = true; hideTip(); chrome();
-  VIEWS[id](p); $('page').scrollTop = 0;
+  VIEWS[id](p); const ch = CH.find(c => c.id === id); if (ch) askMore(ch); $('page').scrollTop = 0;
   try { history.replaceState(null, '', '#' + (id === 'search' ? 'home' : id)); } catch (e) {}
 }
 $('back').onclick = () => { if (hpos > 0) { const h = hist[--hpos]; go(h.id, h.p, false); } };
@@ -370,7 +383,7 @@ const GUIDE_GROUPS = [
   ['Travel', ['where in the world is she looking?', 'has she searched Zurich?', 'is India in her searches?', 'where did she go in December?', 'was she in Chicago?', 'was she in New York?', 'was she home in Dallas?', 'did she go to Denver?', 'did she go to Miami?',
     'where did she want to go?', 'did she plan a trip to Tokyo?', 'did she plan a trip to Paris?', 'did she plan a trip to Barcelona?', 'did she plan a trip to Seattle?',
     'did she plan a trip to Honolulu?', 'did she plan a trip to Los Angeles?', 'did she plan a trip to Singapore?', 'did she plan a trip to Istanbul?']],
-  ['Rabbit hole', ['where does one search lead?', 'how did she plan New York?', 'where could she live after graduation?']],
+  ['Rabbit hole', ['how did she plan New York?', 'where could she live after graduation?', 'did she find the French toast?', 'where would she study abroad?', 'what did Wuthering Heights lead to?', 'do cats have empathy?']],
   ['Learning', ['when did she pitch ClipCurator?', 'when did she start Python?', 'when did she learn loops?', 'when did she learn functions?', 'when did she learn dictionaries?',
     'when did she learn lambdas?', 'when did she learn pandas?', 'when was her Python final?', 'when did she learn JavaScript?', 'when did she write her first product brief?',
     'when did she learn the DOM?', 'how did she learn React?', 'when did she write product requirements?', 'when did she write backend routes?', 'when did she learn TypeScript?',
@@ -406,8 +419,14 @@ function answer(raw) {
   const q = raw.toLowerCase().replace(/[’']/g, "'");
   const norm = x => x.toLowerCase().replace(/[’']/g, "'").replace(/[?.!]+$/, '').trim();
   const fact = D.facts.find(f => norm(f.q) === norm(q)) || D.facts.find(f => f.keys.some(k => q.includes(k)));
-  if (fact) return { id: fact.chapter, p: {}, big: fact.big, sub: fact.sub, text: fact.text,
-    next: D.facts.filter(f => f.group === fact.group && f !== fact).slice(0, 3).map(f => f.q).concat(D.facts.filter(f => f.group === 'Ending' && f !== fact).map(f => f.q)).slice(0, 3) };
+  if (fact) return { id: fact.chapter, p: {}, big: fact.big, sub: fact.sub, text: fact.text, rows: fact.rows,
+    next: fact.next || D.facts.filter(f => f.group === fact.group && f !== fact).slice(0, 3).map(f => f.q).concat(D.facts.filter(f => f.group === 'Ending' && f !== fact).map(f => f.q)).slice(0, 3) };
+  const HOLE_KEYS = [/plan(ned)? new york|december in new york|cities you must/, /after graduat|live after|three cities/, /french toast/, /barcelona|london|study abroad|dance class/, /wuthering|red skirt/, /mascot|cats?\b|empathy/];
+  const hi = HOLE_KEYS.findIndex(r => r.test(q));
+  if (hi >= 0 || /rabbit|how deep|one search lead|where does one search/.test(q)) { const ri = Math.max(0, hi), R = D.rabbit_holes[ri];
+    return { id: 'hole', p: { i: ri }, big: R.label, sub: `${R.minutes} minutes · ${R.searches} searches · ${new Date(R.date + 'T12:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`,
+      text: `It started with “${R.searches_shown[0].q}” and ended with “${R.searches_shown.at(-1).q}”. ${R.after}`,
+      next: [1, 2, 3].map(k => (ri + k) % D.rabbit_holes.length).map(k => ['how did she plan New York?', 'where could she live after graduation?', 'did she find the French toast?', 'where would she study abroad?', 'what did Wuthering Heights lead to?', 'do cats have empathy?'][k]) }; }
   const H = parseHour(q), day = parseDay(q);
   const site = D.sites.find(s => q.includes(s.name.toLowerCase()) && s.name.length > 2);
   const trip = D.trips.went.findIndex(t => q.includes(t.name.toLowerCase()) || (t.name === 'New York' && /\bnyc\b/.test(q)));
@@ -418,11 +437,11 @@ function answer(raw) {
   if (/sleep|bed|asleep|wake|night owl|late|offline/.test(q) || (wd >= 0 && /night/.test(q))) { const n = wd >= 0 ? S.by_night.find(x => x.day.toLowerCase() === DAYS[wd]) : null;
     return { id: 'hours', p: { hour: (n ? n.bed : BED) + .01, night: n ? n.day : 'typical' }, big: hr(n ? n.bed : BED), sub: n ? `typical last search on ${n.day} nights` : 'median last search of the night',
       text: n ? `On ${n.day} nights her last search usually comes around <b>${hr(n.bed)}</b>.` : `Her last search of the night usually comes around <b>${hr(BED)}</b>. ${Math.round(S.share_past_3am * 100)}% of nights go past 3 AM. Thursday nights end earliest (${hr(S.by_night[3].bed)}), Saturday nights latest (${hr(S.by_night[5].bed)}).`,
-      note: 'The last search is the last activity on laptop or phone each night, which is close to bedtime but not the same thing.', next: ['what does she search at 1 AM?', 'what does she search on Saturday nights?', 'when is she busiest?'] }; }
+      note: 'The last search is the last activity on laptop or phone each night, which is close to bedtime but not the same thing.', next: ['what is she searching for at 1:56 AM?', 'what keeps her up past midnight?', 'what does an all-nighter look like in her browser?'] }; }
   if (/busiest|most active|peak|search the most|most searches/.test(q)) { const B = D.busy, bh = B.hours.indexOf(Math.max(...B.hours)), mlabel = new Date(B.month_top[0] + '-15').toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
     return { id: 'hours', p: { hour: bh + .5 }, big: hs(bh), sub: `her busiest hour, across ${fmt(B.total)} searches, page visits and videos`,
       text: `${Math.round(B.evening_share * 100)}% of everything she does online happens between 6 PM and midnight. Searches alone peak an hour earlier, at ${hs(PEAK)}. Her busiest weekday is ${B.weekday_top[0]} (about ${fmt(B.weekday_top[1])} things a day), her quietest ${B.weekday_low[0]}. Busiest month: ${mlabel}, recruiting season. Busiest single day: ${md(new Date(B.day_top[0] + 'T12:00'))}, the build sprint (${fmt(B.day_top[1])}).`,
-      next: ['when does she sleep?', 'what does she search at 9 PM?', 'what were her eras this year?'] }; }
+      next: ['what is she doing at 10 PM?', 'what platform does she use most for school?', 'what does an all-nighter look like in her browser?'] }; }
   if (day !== null) { const m = D.mosaic[day];
     return { id: 'days', p: { day }, big: mdy(dayDate(day)), sub: `${dayCount[day]} searches that day`, text: m ? `${fav(m[0])} <b>${m[0]}</b> owned the day with ${m[1]} visits.${day === 23 ? ' She was in Chicago, looking for somewhere to eat.' : ''}` : 'A quiet day in the sites shown here.',
       next: ['which site owned the most days?', 'where did she go in December?', 'when is she busiest?'] }; }
@@ -454,8 +473,6 @@ function answer(raw) {
   const top = D.learning.map(l => [l, stepScore(l)]).sort((x, y) => y[1] - x[1])[0], step = top[1] ? top[0] : null;
   if (step || /\blearn|study|class|python|coding\b/.test(q)) { const st = step || D.learning[1], i = D.learning.indexOf(st);
     return { id: 'learning', p: { step: i }, big: st.step, sub: new Date(st.date + 'T12:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }), text: `Step ${i + 1} of ${D.learning.length} in the file trail of her UT account, from a first Python notebook to a backend and a build sprint.`, next: ['how did she get the Oracle internship?'] }; }
-  if (/rabbit|deep|longest|session|lead|plan new york|after graduation|live after/.test(q)) { const ri = /graduat|live after/.test(q) ? 1 : 0, R = D.rabbit_holes[ri];
-    return { id: 'hole', p: { i: ri }, big: `${R.minutes} min`, sub: `${R.searches} searches · ${new Date(R.date + 'T12:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`, text: `It started with “${R.searches_shown[0].q}” and ended with “${R.searches_shown.at(-1).q}”. ${R.after}`, next: ['where in the world is she looking?', 'when does she sleep?'] }; }
   if (/\bshop/.test(q)) { const fh = HT.map(r => r[0]), pk = fh.indexOf(Math.max(...fh));
     return { id: 'hours', p: { group: 'fashion', hour: pk + .5 }, big: hs(pk), sub: `when her fashion searches peak: ${fmt(fh[pk])} of them`, text: `Fashion searches run all evening and peak at <b>${hs(pk)}</b>. After midnight they give way to beauty.`, next: ['what does she search at 3 AM?', 'what is she obsessed with?'] }; }
   const topic = ['fashion', 'beauty', 'food', 'places'].find(t => q.includes(t));
@@ -492,6 +509,17 @@ function guideBox(inp, list, ghost, onSubmit) {
   inp.addEventListener('blur', () => setTimeout(() => list.hidden = true, 120));
 }
 const ask = q => go('search', { q });
+const STARTERS = ['when does she sleep?', 'what is she obsessed with?', 'how did she plan New York?', 'what does she search at 3 AM?', 'where in the world is she looking?', 'what does she watch?'];
+// every chapter ends with an Ask box: the main way around the site
+function askMore(c) {
+  const w = $('page').querySelector('.wrap'); if (!w) return;
+  const g = GUIDE_GROUPS.find(x => x[0] === c.label), qs = (g ? g[1] : STARTERS).slice(0, 4);
+  w.insertAdjacentHTML('beforeend', `<section class="askmore" aria-label="Ask about Suhani"><h3>Ask anything else about her</h3>
+    <div class="sbox"><span style="color:var(--muted)">⌕</span><div class="field"><div class="ghost" id="gh2"></div><input id="sq2" placeholder="Ask a question about Suhani" autocomplete="off" spellcheck="false" aria-label="Ask a question about Suhani"></div><div class="ac" id="ac2" hidden></div></div>
+    <div class="asks">${qs.map(q => `<button class="askq" data-ask="${esc(q)}">${q}</button>`).join('')}</div></section>`);
+  guideBox($('sq2'), $('ac2'), $('gh2'), ask);
+  w.querySelectorAll('.askmore [data-ask]').forEach(b => b.onclick = () => ask(b.dataset.ask));
+}
 $('omniIn').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.value.trim()) { const v = e.target.value.trim(), c = CH.find(x => x.id === v.toLowerCase()); c ? go(c.id) : ask(v); } });
 
 VIEWS.home = () => {
@@ -499,19 +527,22 @@ VIEWS.home = () => {
     <h1 class="mark">Suhani<em>.</em></h1>
     <p class="hint">A year of my Google searches. Ask it anything about me.</p>
     <div class="sbox"><span style="color:var(--muted)">⌕</span><div class="field"><div class="ghost" id="gh"></div><input id="sq" placeholder="Ask a question about Suhani" autocomplete="off" spellcheck="false" aria-label="Ask a question about Suhani"></div><div class="ac" id="ac" hidden></div></div>
+    <div class="asks">${STARTERS.map(q => `<button class="askq" data-ask="${esc(q)}">${q}</button>`).join('')}</div>
     <div class="tiles-h">Most visited · by days opened, Oct 2025 – Oct 2026</div>
     <div class="tiles">${D.sites.slice(0, 8).map(s => `<button class="tile" data-site="${s.name}"><span class="c">${fav(s.name)}</span>${s.name}<small>${s.days} days</small></button>`).join('')}</div>
   </div>`;
   guideBox($('sq'), $('ac'), $('gh'), ask);
+  $('page').querySelectorAll('[data-ask]').forEach(b => b.onclick = () => ask(b.dataset.ask));
   $('page').querySelectorAll('[data-site]').forEach(b => b.onclick = () => go('sites', { site: b.dataset.site }));
 };
 VIEWS.search = p => {
   const a = answer(p.q), c = a.id ? CH.find(x => x.id === a.id) : null;
   const card = a.none ? `<div class="snip"><p style="font-size:17px;margin:0">No answer for that one in the data.${a.dym ? ` Did you mean: <button class="dym" data-q="${esc(a.dym)}">${esc(a.dym)}</button>?` : ''}</p></div>`
     : `<div class="snip"><div class="kicker">${c ? `${fav(c.icon)} from ${c.label}` : `${SFAV} overview`}</div><div class="big" style="margin-top:10px">${a.big}</div><div class="sub">${a.sub}</div>
-        <p class="snipt">${a.text}</p>${a.note ? `<p class="sub">${a.note}</p>` : ''}
+        <p class="snipt">${a.text}</p>${a.rows ? `<div class="snrows">${a.rows.map(r => `<div class="step"><span class="t">${r[0]}</span><span class="s">${r[1]}</span></div>`).join('')}</div>` : ''}${a.note ? `<p class="sub">${a.note}</p>` : ''}
         ${c ? `<div class="pills" style="margin-top:14px"><button class="pill go" id="open">Open ${c.label} →</button><span class="lbl">explore it yourself</span></div>` : ''}</div>`;
-  const next = a.none ? GUIDES.slice(0, 5) : a.next;
+  const asked = p.q.toLowerCase().replace(/[?.!]+$/, '').trim();
+  const next = [...new Set(a.none ? GUIDES.slice(0, 5) : a.next)].filter(n => n.toLowerCase().replace(/[?.!]+$/, '').trim() !== asked);
   $('page').innerHTML = `<div class="wrap serp">
     <div class="sbox small"><span style="color:var(--muted)">⌕</span><div class="field"><div class="ghost" id="gh"></div><input id="sq" value="${esc(p.q)}" autocomplete="off" spellcheck="false" aria-label="Ask another question"></div><div class="ac" id="ac" hidden></div></div>
     <div class="sub" style="margin:12px 0 18px">Answered from ${fmt(D.meta.searches)} searches and ${fmt(D.meta.pages)} page visits</div>
@@ -730,7 +761,7 @@ VIEWS.hole = (p = {}) => {
   const day = new Date(RH.date + 'T12:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
   $('page').innerHTML = `<div class="wrap">${head(c, `One search turns into the next, and the next. Pick one and press play.`)}
     <div class="pills" style="margin-bottom:14px">${HS.map((h, i) => `<button class="pill" data-h="${i}" aria-pressed="${i === idx}">${h.label}</button>`).join('')}</div>
-    <div class="panel"><div class="kicker">${day} · ${RH.minutes} minutes · ${RH.searches} searches · every 5 minutes</div>
+    <div class="panel"><div class="kicker">${day} · ${RH.minutes} minutes · ${RH.searches} searches · each bar ${RH.bucket === 1 ? 'one minute' : RH.bucket + ' minutes'}</div>
       <div class="strip2">${per.map(p => `<div>${p.map(s => `<i style="height:${s[2] / pmax * 66}px;background:var(--t-${col(s[1])})"></i>`).join('')}</div>`).join('')}</div>
       <div style="display:flex;justify-content:space-between" class="sub"><span>${at(0)}</span><span>${at(RH.minutes)}</span></div>
       <div class="pills" style="margin-top:12px"><button class="pill go" id="rp">▶ Replay</button><span class="lbl" id="rclock"></span></div>
