@@ -210,6 +210,10 @@ h1.q em { font-style: italic; color: var(--rose); }
 .stp { background: var(--surface); border: 1px solid var(--rule); border-radius: 16px; padding: 18px; }
 @media (max-width: 900px) { .steps { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
 @media (max-width: 560px) { .steps { grid-template-columns: minmax(0, 1fr); } }
+.terms { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+.term { background: var(--surface); border: 1px solid var(--rule); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 7px; }
+.course { font-family: var(--serif); font-size: 16px; line-height: 1.25; }
+.course.code { font-family: var(--mono); font-size: 12.5px; color: var(--muted); }
 .tip { position: fixed; z-index: 9; pointer-events: none; background: var(--ink); color: var(--on-sel); font-size: 12.5px; line-height: 1.45; padding: 8px 11px; border-radius: 8px; max-width: 240px; transform: translate(12px, 12px); }
 
 @media (max-width: 900px) { .two { grid-template-columns: minmax(0, 1fr); } .tiles { grid-template-columns: repeat(4, 84px); } }
@@ -343,8 +347,8 @@ const CH = [
   { id: 'watch', label: 'Watchlist', icon: 'netflix.com', q: 'What does she watch?', hint: 'shows, movies and books she looked up' },
   { id: 'hole', label: 'Rabbit hole', icon: 'Wikipedia', q: 'How deep does she go?', hint: 'where one search leads' },
   { id: 'mind', label: 'Mind', icon: 'youtube.com', q: 'What is she trying to understand?', hint: 'psychology and the self-help she watches' },
-  { id: 'learning', label: 'Learning', icon: '@colab', q: 'How did she learn to build?', hint: 'her UT files, in order' },
-  { id: 'career', label: 'Career', icon: 'LinkedIn', q: 'How did a search become a job?', hint: 'Oracle, month by month' },
+  { id: 'learning', label: 'Learning', icon: '@colab', q: 'What did she study?', hint: 'her courses by semester, and how she learned to build' },
+  { id: 'career', label: 'Career', icon: 'LinkedIn', q: 'How does she hunt for what\'s next?', hint: 'her LinkedIn waves, roles and companies' },
 ];
 const SFAV = '<svg class="fv slogo" viewBox="0 0 100 100" fill="none" stroke-width="17"><path d="M65.3 17.1A20 20 0 1 0 50 50A20 20 0 1 1 34.7 82.9" pathLength="100" stroke="var(--pk1)" stroke-dasharray="25.4 100" stroke-dashoffset="0"/><path d="M65.3 17.1A20 20 0 1 0 50 50A20 20 0 1 1 34.7 82.9" pathLength="100" stroke="var(--pk2)" stroke-dasharray="25.4 100" stroke-dashoffset="-25"/><path d="M65.3 17.1A20 20 0 1 0 50 50A20 20 0 1 1 34.7 82.9" pathLength="100" stroke="var(--pk3)" stroke-dasharray="25.4 100" stroke-dashoffset="-50"/><path d="M65.3 17.1A20 20 0 1 0 50 50A20 20 0 1 1 34.7 82.9" pathLength="100" stroke="var(--pk4)" stroke-dasharray="25.4 100" stroke-dashoffset="-75"/></svg>';
 let cur = 'home', curP = {}, hist = [{ id: 'home', p: {} }], hpos = 0;
@@ -446,6 +450,10 @@ const dayCount = (() => { const c = new Array(366).fill(0); for (const [d] of D.
 function answer(raw) {
   const q = raw.toLowerCase().replace(/[’']/g, "'");
   if (/how (is|was|did) (this|it|she|you) (built|build|made|make)|pipeline|data engineering|tech stack|how it works/.test(q)) return { id: 'built', p: {}, big: `${fmt(D.meta.search_page_loads)} → ${fmt(D.meta.searches)}`, sub: 'raw search logs to real searches', text: 'A Python and SQLite pipeline I wrote: two Google exports, duplicates removed, a star schema of 108,079 events, rule-based analysis, every quote approved by hand, and one small data file behind this page.', next: ['when is she busiest?', 'what were her eras this year?'] };
+  if (/what (did|does) she study|her (classes|courses)|which (classes|courses)|what classes|what courses|her major/.test(q)) { const fa = D.courses.filter(x => x.term === 'Fall 2026');
+    return { id: 'learning', p: {}, big: `${D.courses.length} courses`, sub: 'that her browser saw, Fall 2024 to Fall 2026', text: `This fall: ${fa.map(x => x.name).join(', ')}. Before that: Full-Stack Web App Development, Database Management, Strategic Product Management and more.`, next: ['how did she learn React?', 'when did she start Python?'] }; }
+  if (/network|linkedin profiles|what (roles|jobs)|which companies|companies (is she|did she)|job hunt|recruit/.test(q)) { const K = D.career;
+    return { id: 'career', p: {}, big: `${fmt(K.kinds.people)} profiles`, sub: `vs ${fmt(K.kinds.jobs)} job postings on LinkedIn`, text: `She studies people about ${Math.round(K.kinds.people / K.kinds.jobs)}× more than postings, in three waves (November, January, July). Most-opened roles: ${K.families.slice(0, 3).map(f => f[0].toLowerCase()).join(', ')}. Companies she came back to: ${K.companies.slice(0, 5).map(x => x.name).join(', ')}.`, next: ['how did she get the Oracle internship?', 'what site does she open the most?'] }; }
   const norm = x => x.toLowerCase().replace(/[’']/g, "'").replace(/[?.!]+$/, '').trim();
   const fact = D.facts.find(f => norm(f.q) === norm(q)) || D.facts.find(f => f.keys.some(k => q.includes(k)));
   if (fact) return { id: fact.chapter, p: {}, big: fact.big, sub: fact.sub, text: fact.text, rows: fact.rows,
@@ -867,16 +875,21 @@ VIEWS.hole = (p = {}) => {
 
 // ----------------------------------------------------------------- CAREER: from a search to a job
 VIEWS.career = () => {
-  const c = CH.find(x => x.id === 'career'), O = D.escaped, months = Object.entries(O.oracle_by_month), mx = Math.max(...months.map(m => m[1]));
-  $('page').innerHTML = `<div class="wrap">${head(c, `Oracle shows up in my history months before the internship did. Click a month.`)}
-    <div class="two"><div class="panel"><div class="kicker">${fav('Oracle')} requests touching Oracle, by month</div>
-      <div class="bars" style="margin-top:14px">${months.map(([m, v], i) => `<button data-m="${i}" aria-pressed="${i === 0}"><i style="height:${v / mx * 100}%"></i>${new Date(m + '-15').toLocaleDateString('en-US', { month: 'short' })}</button>`).join('')}</div></div>
-      <div class="panel" id="cp2"></div></div></div>`;
-  const pick = i => { const [m, v] = months[i], st = O.oracle_steps.filter(s => s.date.slice(0, 7) === m);
-    $('page').querySelectorAll('[data-m]').forEach(b => b.setAttribute('aria-pressed', +b.dataset.m === i));
-    $('cp2').innerHTML = `<div class="kicker">${new Date(m + '-15').toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</div><div class="big" style="margin-top:8px">${v}</div><div class="sub">Oracle requests</div>
-      ${st.map(s => `<div class="step"><span class="t">${s.date.length > 7 ? md(new Date(s.date + 'T12:00')) : ''}</span><span class="s" style="font-size:16px">${s.what}</span></div>`).join('') || '<p class="sub" style="margin-top:12px">No single moment stands out this month.</p>'}`; };
-  $('page').querySelectorAll('[data-m]').forEach(b => b.onclick = () => pick(+b.dataset.m)); pick(0);
+  const c = CH.find(x => x.id === 'career'), K = D.career, ms = Object.entries(K.months), O = D.escaped;
+  const SER = [['people', 'profiles she looked at', 'var(--rose)'], ['jobs', 'job postings', 'var(--t-food)'], ['companies', 'company pages', 'var(--t-places)'], ['messages', 'messages', 'var(--t-rest)']];
+  const mx = Math.max(...ms.map(([, v]) => SER.reduce((a, [k]) => a + v[k], 0))), fm = K.families[0][1];
+  $('page').innerHTML = `<div class="wrap">${head(c, `${fmt(K.total)} LinkedIn visits in a year. I study people about ${Math.round(K.kinds.people / K.kinds.jobs)}× more than job postings, and I hunt in waves. Which people, never shown; the roles and companies, yes.`)}
+    <div class="panel"><div class="pills" style="margin-bottom:10px">${SER.map(([k, n, col]) => `<span class="pill" style="--c:${col}"><i></i>${n} <span style="color:var(--muted)">${fmt(K.kinds[k])}</span></span>`).join('')}</div>
+      <div class="bars" style="height:200px">${ms.map(([m, v]) => `<button data-tipv="${new Date(m + '-15').toLocaleDateString('en-US', { month: 'long', year: 'numeric' })} · ${SER.map(([k, n]) => `${fmt(v[k])} ${n}`).join(' · ')}" style="justify-content:flex-end"><span style="display:flex;flex-direction:column-reverse;width:100%;height:${SER.reduce((a, [k]) => a + v[k], 0) / mx * 100}%;gap:1px">${SER.map(([k, , col]) => `<i style="height:${v[k] / Math.max(1, SER.reduce((a, [kk]) => a + v[kk], 0)) * 100}%;background:${col};border-radius:2px;min-height:0;opacity:1"></i>`).join('')}</span>${new Date(m + '-15').toLocaleDateString('en-US', { month: 'short' })}</button>`).join('')}</div>
+      <p class="sub" style="margin-top:10px">Three waves: November, January and July. Hover a month.</p></div>
+    <div class="two" style="margin-top:22px"><div class="panel"><div class="kicker">${fav('LinkedIn')} the roles she opened</div>
+        ${K.families.map(([n, v]) => `<div class="row"><span></span><div>${n}<div class="track"><b style="width:${v / fm * 100}%"></b></div></div><span class="v">${v}</span></div>`).join('')}
+        <p class="sub" style="margin-top:10px">Job postings she opened, grouped by title.</p></div>
+      <div class="panel"><div class="kicker">companies she researched</div><p class="sub" style="margin:4px 0 12px">${K.company_pages} company pages; the ones she came back to most:</p>
+        <div class="pills">${K.companies.map(x => `<span class="pill">${x.name} <span style="color:var(--muted)">${x.days}d</span></span>`).join('')}</div></div></div>
+    <div class="panel" style="margin-top:22px"><div class="kicker">${fav('Oracle')} one search that became a job</div>
+      ${O.oracle_steps.map(s => `<div class="step"><span class="t">${s.date.length > 7 ? md(new Date(s.date + 'T12:00')) : new Date(s.date + '-15').toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span><span class="s" style="font-size:16px">${s.what}</span></div>`).join('')}</div></div>`;
+  $('page').querySelectorAll('[data-tipv]').forEach(b => { b.onpointerenter = e => showTip(e, b.dataset.tipv); b.onpointerleave = hideTip; });
 };
 
 // ----------------------------------------------------------------- LEARNING: the UT account's files
@@ -884,7 +897,10 @@ VIEWS.learning = (p = {}) => {
   const c = CH.find(x => x.id === 'learning'), L = D.learning, t0 = new Date(L[0].date), t1 = new Date(L.at(-1).date), x = d => (new Date(d) - t0) / (t1 - t0) * 100;
   const icon = { python: 'colab.research.google.com', web: 'github.com', product: 'docs.google.com', pitch: 'youtube.com', build: 'github.com' };
   const colr = { python: 'var(--t-food)', web: 'var(--t-places)', product: 'var(--t-beauty)', pitch: 'var(--t-fashion)', build: 'var(--rose)' };
-  $('page').innerHTML = `<div class="wrap">${head(c, `From my UT account, which mostly makes files: their titles and dates, never their contents. Lined up, they trace how I learned to build. Click a step, or use ← →.`)}
+  $('page').innerHTML = `<div class="wrap">${head(c, `${D.courses.length} courses my browser saw, semester by semester, and the file trail of how I learned to build. Classes leave few traces in a browser, so this is the floor of what I studied, not the whole of it.`)}
+    <div class="terms">${[...new Set(D.courses.map(x => x.term))].map(t => `<div class="term"><div class="kicker">${t}</div>${D.courses.filter(x => x.term === t).map(x => `<div class="course${x.from === 'Canvas' ? '' : ' code'}" title="${x.from === 'Canvas' ? `on Canvas on ${x.days} ${x.days === 1 ? 'day' : 'days'}` : 'from her file names'}">${x.name}</div>`).join('')}</div>`).join('')}</div>
+    <p class="sub" style="margin:8px 0 22px">Course names come from Canvas page titles; the course numbers come from her UT file names. Never grades or contents.</p>
+    <div class="kicker" style="margin-bottom:8px">${fav('@colab')} how she learned to build · click a step, or use ← →</div>
     <div class="panel"><div class="line">${L.map((l, i) => `<button data-l="${i}" style="left:${x(l.date)}%;--c:${colr[l.track]}" aria-label="${l.step}">${fav(icon[l.track])}</button>`).join('')}
       ${['2025-09-01', '2025-12-01', '2026-03-01', '2026-06-01', '2026-09-01'].map(d => `<span class="m" style="left:${x(d)}%">${new Date(d + 'T12:00').toLocaleDateString('en-US', { month: 'short', year: '2-digit' })}</span>`).join('')}</div>
       <div id="lp" style="margin-top:18px"></div></div></div>`;
