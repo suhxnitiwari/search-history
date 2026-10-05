@@ -367,10 +367,10 @@ const GUIDE_GROUPS = [
   ['Building', ['does she build things?', 'how many visits did her own sites get?', 'how much did she build in September?', 'did she change this year?']],
   ['Overall', ['who is Suhani?', 'what is she obsessed with?']],
 ];
-const FACT_ORDER = ['Taste', 'Beauty', 'Coffee and food', 'Curiosity', 'Decisions'];
+const FACT_ORDER = ['Taste', 'Beauty', 'Coffee and food', 'Standards', 'Five versions of her', 'Eras', 'Curiosity', 'Decisions', 'Both things are true', 'What survived'];
 GUIDE_GROUPS.splice(GUIDE_GROUPS.findIndex(g => g[0] === 'Rabbit hole'), 0, ...FACT_ORDER.map(name => [name, D.facts.filter(f => f.group === name).map(f => f.q)]));
 GUIDE_GROUPS.push(['The ending', D.facts.filter(f => f.group === 'Ending').map(f => f.q)]);
-const GROUP_ICON = { Taste: 'aritzia.com', Beauty: 'sephora.com', 'Coffee and food': 'opentable.com', Curiosity: 'wikipedia.org', Decisions: '@search', 'The ending': '@search', Overall: '@search' };
+const GROUP_ICON = { Taste: 'aritzia.com', Beauty: 'sephora.com', 'Coffee and food': 'opentable.com', Standards: 'louisvuitton.com', 'Five versions of her': '@search', Eras: '@calendar', Curiosity: 'wikipedia.org', Decisions: '@search', 'Both things are true': '@search', 'What survived': '@search', 'The ending': '@search', Overall: '@search' };
 const GUIDES = GUIDE_GROUPS.flatMap(g => g[1]);
 const tripNote = t => t.name === 'Dallas' ? 'Home for winter break, between the New York and Denver trips.' : 'Found from her searches there, which stay private.';
 const MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
