@@ -566,47 +566,50 @@ function askMore(c) {
 }
 $('omniIn').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.value.trim()) { const v = e.target.value.trim(), c = CH.find(x => x.id === v.toLowerCase()); c ? go(c.id) : ask(v); } });
 
-// ----------------------------------------------------------------- THE SUHANI DOODLE: 365 days, one favicon each, flying in to spell her name
-// Each day's favicon is the site that owned that day. They land left to right in date order (October to September), hold, then the wordmark returns.
+// ----------------------------------------------------------------- THE SUHANI DOODLE: her year, one pink dot per day, drifting in to spell her name
+// Each dot is a day (October on the left, September on the right), sized by how busy that day was and colored like the letter it lands in.
+// They settle, then melt into the wordmark. Hover a dot for its day; click the wordmark to replay.
 let doodled = false;
 function doodle(auto) {
   const h1 = $('page').querySelector('.mark'), cv = $('dood'), cap = $('dcap'); if (!h1 || !cv) return;
-  const days = D.mosaic.map((m, i) => m && F(SITE[m[0]]?.fav || m[0]) ? { i, site: m[0], src: F(SITE[m[0]]?.fav || m[0]) } : null).filter(Boolean);
+  const DB = D.busy.days, srt = DB.slice().sort((a, b) => a - b), q = f => srt[Math.floor(f * (srt.length - 1))], lvl = n => [.2, .4, .6, .8].filter(f => n > q(f)).length;
   let raf = 0, hits = [], phase = 'idle';
   const play = () => {
     cancelAnimationFrame(raf);
-    const box = h1.getBoundingClientRect(); if (box.width < 40 || box.height < 20 || !days.length) return;
-    const pad = 60, W = Math.round(box.width + pad * 2), H = Math.round(box.height + pad * 2), dpr = Math.min(2, devicePixelRatio || 1);
-    Object.assign(cv.style, { left: -pad + 'px', top: -pad + 'px', width: W + 'px', height: H + 'px' }); cv.width = W * dpr; cv.height = H * dpr;
+    const box = h1.getBoundingClientRect(); if (box.width < 40 || box.height < 20) return;
+    const pad = 70, W = Math.round(box.width + pad * 2), H = Math.round(box.height + pad * 2), dpr = Math.min(2, devicePixelRatio || 1);
+    Object.assign(cv.style, { left: -pad + 'px', top: -pad + 'px', width: W + 'px', height: H + 'px', transition: 'none', opacity: '1' }); cv.width = W * dpr; cv.height = H * dpr;
     const x = cv.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0);
-    // the letters, drawn off screen where the real ones sit
-    const off = document.createElement('canvas'); off.width = W; off.height = H; const o = off.getContext('2d');
-    const cs = getComputedStyle(h1); o.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`; o.textBaseline = 'alphabetic'; o.fillStyle = '#000';
-    for (const sp of h1.querySelectorAll('span')) { const r = sp.getBoundingClientRect(), mt = o.measureText(sp.textContent);
-      o.fillText(sp.textContent, r.left - box.left + pad + (r.width - mt.width) / 2, r.top - box.top + pad + (r.height + mt.fontBoundingBoxAscent - mt.fontBoundingBoxDescent) / 2); }
-    const px = o.getImageData(0, 0, W, H).data, inside = (a, b) => px[(Math.round(b) * W + Math.round(a)) * 4 + 3] > 128;
-    let step = 14, pts = [];
-    for (let k = 0; k < 12; k++) { step = Math.max(3, Math.min(48, step || 14)); pts = []; for (let yy = step / 2; yy < H; yy += step) for (let xx = step / 2; xx < W; xx += step) if (inside(xx, yy)) pts.push([xx, yy]);
-      if (!pts.length) return; if (pts.length >= days.length && pts.length < days.length * 1.25) break; step *= Math.sqrt(pts.length / (days.length * 1.1)); }
-    if (pts.length < days.length / 2) return;
+    // draw each letter off screen in its own marker color, so every dot knows which letter (and pink) it belongs to
+    const off = document.createElement('canvas'); off.width = W; off.height = H; const o = off.getContext('2d', { willReadFrequently: true });
+    const cs = getComputedStyle(h1), spans = [...h1.querySelectorAll('span')], cols = spans.map(sp => getComputedStyle(sp).color);
+    o.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`; o.textBaseline = 'alphabetic';
+    spans.forEach((sp, j) => { const r = sp.getBoundingClientRect(), mt = o.measureText(sp.textContent); o.fillStyle = `rgb(${(j + 1) * 40},0,0)`;
+      o.fillText(sp.textContent, r.left - box.left + pad + (r.width - mt.width) / 2, r.top - box.top + pad + (r.height + mt.fontBoundingBoxAscent - mt.fontBoundingBoxDescent) / 2); });
+    const px = o.getImageData(0, 0, W, H).data, at = (a, b) => { const k = (Math.round(b) * W + Math.round(a)) * 4; return px[k + 3] > 160 ? Math.round(px[k] / 40) - 1 : -1; };
+    let step = 10, pts = [];
+    for (let k = 0; k < 14; k++) { step = Math.max(3, Math.min(40, step || 10)); pts = [];
+      for (let yy = step / 2; yy < H; yy += step) for (let xx = step / 2; xx < W; xx += step) { const j = at(xx, yy); if (j >= 0) pts.push([xx, yy, j]); }
+      if (!pts.length) return; if (pts.length >= DB.length && pts.length < DB.length * 1.2) break; step *= Math.sqrt(pts.length / (DB.length * 1.1)); }
+    if (pts.length < DB.length / 2) return;
     pts.sort((a, b) => a[0] - b[0] || a[1] - b[1]);
-    const pick = days.map((_, j) => pts[Math.floor(j * pts.length / days.length)]), size = Math.max(7, Math.min(18, step * .92));
-    const imgs = {}; days.forEach(d => { if (!imgs[d.src]) { const im = new Image(); im.src = d.src; imgs[d.src] = im; } });
-    const fly = days.map((d, j) => { const a = Math.random() * Math.PI * 2, r = Math.max(W, H) * (.6 + Math.random() * .4); return { d, from: [W / 2 + Math.cos(a) * r, H / 2 + Math.sin(a) * r], to: pick[j], delay: j * 6 + Math.random() * 120 }; });
-    hits = fly.map(f => ({ x: f.to[0] - pad, y: f.to[1] - pad, d: f.d }));
-    const ease = t => 1 + 2.2 * Math.pow(t - 1, 3) + 1.2 * Math.pow(t - 1, 2), T0 = performance.now(), flyMs = 900, last = fly.at(-1).delay + flyMs, hold = 1800, fadeMs = 700;
-    phase = 'flying'; h1.style.transition = 'opacity .5s'; h1.style.opacity = '.14'; cv.style.opacity = '1';
-    cap.textContent = `${days.length} days, one favicon each: the site that owned the day. Hover one.`; cap.classList.add('on');
+    const R = step * .5, dots = DB.map((n, i) => { const p = pts[Math.floor(i * pts.length / DB.length)], a = -Math.PI / 2 + (Math.random() - .5) * 2.4, dist = H * (.5 + Math.random() * .5);
+      return { i, n, to: [p[0], p[1]], col: cols[p[2]] || cols[0], r: R * (.45 + .55 * (lvl(n) + 1) / 5), from: [p[0] + Math.cos(a) * dist * .6, p[1] + Math.sin(a) * dist], delay: i * 4.5 + Math.random() * 160 }; });
+    hits = dots.map(d => ({ x: d.to[0] - pad, y: d.to[1] - pad, d }));
+    const ease = t => 1 - Math.pow(1 - t, 3), T0 = performance.now(), flyMs = 1100, last = dots.at(-1).delay + flyMs, hold = 1400, melt = 900;
+    phase = 'flying'; h1.style.transition = 'opacity .6s'; h1.style.opacity = '0';
+    cap.textContent = `${DB.length} days, one dot each, sized by how busy the day was. Hover one.`; cap.classList.add('on');
     const frame = now => { const t = now - T0; x.clearRect(0, 0, W, H);
-      for (const f of fly) { const k = Math.max(0, Math.min(1, (t - f.delay) / flyMs)); if (!k) continue; const e = k < 1 ? ease(k) : 1;
-        const cx = f.from[0] + (f.to[0] - f.from[0]) * e, cy = f.from[1] + (f.to[1] - f.from[1]) * e, im = imgs[f.d.src];
-        x.globalAlpha = Math.min(1, k * 2); if (im.complete && im.naturalWidth) x.drawImage(im, cx - size / 2, cy - size / 2, size, size); }
-      if (t < last + hold) raf = requestAnimationFrame(frame);
-      else { phase = 'done'; cv.style.transition = `opacity ${fadeMs}ms`; cv.style.opacity = '0'; h1.style.opacity = '1'; setTimeout(() => cap.classList.remove('on'), fadeMs); } };
+      const m = Math.max(0, Math.min(1, (t - last - hold) / melt)); // 0 → 1 as the dots melt into the wordmark
+      if (m > 0 && h1.style.opacity === '0') h1.style.opacity = '1';
+      for (const d of dots) { const k = Math.max(0, Math.min(1, (t - d.delay) / flyMs)); if (!k) continue; const e = ease(k);
+        const cx = d.from[0] + (d.to[0] - d.from[0]) * e, cy = d.from[1] + (d.to[1] - d.from[1]) * e;
+        x.globalAlpha = Math.min(1, k * 1.6) * (1 - m); x.fillStyle = d.col; x.beginPath(); x.arc(cx, cy, d.r * (1 + m * .6), 0, Math.PI * 2); x.fill(); }
+      if (m < 1) raf = requestAnimationFrame(frame); else { phase = 'done'; x.clearRect(0, 0, W, H); cap.classList.remove('on'); } };
     raf = requestAnimationFrame(frame); };
-  cv.onpointermove = e => { if (phase !== 'flying') return; const r = cv.getBoundingClientRect(), pad = 60, mx = e.clientX - r.left - pad, my = e.clientY - r.top - pad;
-    const h = hits.reduce((b, p) => { const dd = (p.x - mx) ** 2 + (p.y - my) ** 2; return dd < b[0] ? [dd, p] : b; }, [400, null])[1];
-    h ? showTip(e, `${md(dayDate(h.d.i))} · ${h.d.site}`) : hideTip(); };
+  cv.onpointermove = e => { if (phase !== 'flying') return; const r = cv.getBoundingClientRect(), mx = e.clientX - r.left - 70, my = e.clientY - r.top - 70;
+    const h = hits.reduce((b, p) => { const dd = (p.x - mx) ** 2 + (p.y - my) ** 2; return dd < b[0] ? [dd, p] : b; }, [200, null])[1];
+    h ? showTip(e, `${md(dayDate(h.d.i))} · ${fmt(h.d.n)} searches, pages and videos`) : hideTip(); };
   cv.onpointerleave = hideTip;
   h1.onclick = cv.onclick = () => { if (!reduce) play(); };
   if (auto && !reduce) (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => setTimeout(play, 250));
