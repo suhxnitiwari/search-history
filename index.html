@@ -292,7 +292,7 @@ function evidence(path, note, cols, rows) {
 $('evX').onclick = () => $('ev').hidden = true;
 
 // ----------------------------------------------------------------- the bookmark bar is the navigation
-// Order follows the story: when → each day → what → where → how deep → how I learned → the job → what changed.
+// Order follows the story: when → each day → what → where → how deep → how I learned → the job.
 // Each bookmark wears the favicon of the data behind it.
 const CH = [
   { id: 'hours', label: 'Hours', icon: '@search', q: 'When is she online?', hint: 'searches by time of day' },
@@ -304,7 +304,6 @@ const CH = [
   { id: 'mind', label: 'Mind', icon: 'youtube.com', q: 'What is she trying to understand?', hint: 'psychology and the self-help she watches' },
   { id: 'learning', label: 'Learning', icon: '@colab', q: 'How did she learn to build?', hint: 'her UT files, in order' },
   { id: 'career', label: 'Career', icon: 'LinkedIn', q: 'How did a search become a job?', hint: 'Oracle, month by month' },
-  { id: 'building', label: 'Building', icon: 'github.com', q: 'Did she change?', hint: 'visits to her own sites' },
 ];
 const SFAV = '<span class="fv l">S</span>';
 let cur = 'home', curP = {}, hist = [{ id: 'home', p: {} }], hpos = 0;
@@ -377,7 +376,6 @@ const GUIDE_GROUPS = [
     'when did she learn the DOM?', 'how did she learn React?', 'when did she write product requirements?', 'when did she write backend routes?', 'when did she learn TypeScript?',
     'when did she make a prototype?', 'when did she build her MVP?']],
   ['Career', ['how did she get the Oracle internship?', 'when did she first search for Oracle?', 'what does she do at Oracle?']],
-  ['Building', ['does she build things?', 'how many visits did her own sites get?', 'how much did she build in September?', 'did she change this year?']],
   ['Overall', ['who is Suhani?', 'what is she obsessed with?']],
 ];
 const FACT_ORDER = ['Taste', 'Beauty', 'Coffee and food', 'Standards', 'Five versions of her', 'Eras', 'Curiosity', 'Decisions', 'Both things are true', 'What survived'];
@@ -438,7 +436,7 @@ function answer(raw) {
       next: ['was she in Chicago?', 'where did she want to go?', 'what did she do on Oct 26?'] }; }
   if (/where did she want|dream|wish|never went/.test(q)) return { id: 'places', p: {}, big: `${D.trips.dreamed.length} cities`, sub: 'searched for, never visited (yet)', text: D.trips.dreamed.map(d => d.name).join(', ') + '.', next: ['where did she go in December?', 'was she in Chicago?'] };
   if (/oracle|intern|job|career|recruit|hired/.test(q)) { const tot = Object.values(D.escaped.oracle_by_month).reduce((a, b) => a + b, 0);
-    return { id: 'career', p: {}, big: 'Oracle', sub: `${tot} requests, Nov 2025 → Jul 2026`, text: `It starts with a search for Oracle PM internships in November and an application finished overnight. By May she was an ERP Consultant Intern there.`, next: ['how often does she open LinkedIn?', 'how did she learn React?', 'does she build things?'] }; }
+    return { id: 'career', p: {}, big: 'Oracle', sub: `${tot} requests, Nov 2025 → Jul 2026`, text: `It starts with a search for Oracle PM internships in November and an application finished overnight. By May she was an ERP Consultant Intern there.`, next: ['how often does she open LinkedIn?', 'how did she learn React?'] }; }
   const place = D.travel.find(t => new RegExp(`\\b${t.name.toLowerCase()}\\b`).test(q) && !(t.name === 'Austin' && /ut austin/.test(q)));
   if (place && !site) { const gname = { home: 'home', went: 'a trip she took', 'study abroad': 'a place she looked at for study abroad', searched: 'a place she searched' }[place.group];
     return { id: 'places', p: { place: place.name }, big: place.name, sub: `${place.searches} ${place.searches === 1 ? 'search' : 'searches'}${place.travel ? `, ${place.travel} about travel` : ''}`, text: `${place.name} is ${gname}. It shows up in her searches from ${new Date(place.first + '-15').toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}${place.last !== place.first ? ` to ${new Date(place.last + '-15').toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}` : ''}.`, next: ['where in the world is she looking?', 'where did she go in December?', 'where did she want to go?'] }; }
@@ -455,11 +453,9 @@ function answer(raw) {
   const stepScore = l => l.step.toLowerCase().split(/[^a-z]+/).filter(w => w.length > 2 && !STOP.has(w) && new RegExp(`\\b${w}`).test(q)).length + (/clipcurator/.test(q) && /clipcurator/i.test(l.step) ? 1 : 0);
   const top = D.learning.map(l => [l, stepScore(l)]).sort((x, y) => y[1] - x[1])[0], step = top[1] ? top[0] : null;
   if (step || /\blearn|study|class|python|coding\b/.test(q)) { const st = step || D.learning[1], i = D.learning.indexOf(st);
-    return { id: 'learning', p: { step: i }, big: st.step, sub: new Date(st.date + 'T12:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }), text: `Step ${i + 1} of ${D.learning.length} in the file trail of her UT account, from a first Python notebook to a backend and a build sprint.`, next: ['does she build things?', 'how did she get the Oracle internship?'] }; }
-  if (/\bbuild|github|website|her own site|project|\bchange/.test(q)) { const B = D.build_by_month;
-    return { id: 'building', p: {}, big: `${B['2025-10']} → ${fmt(B['2026-09'])}`, sub: 'visits to her own sites, Oct 2025 vs Sep 2026', text: 'For most of the year she visited the internet. In September she started adding to it: the build sprint, Sep 28–30.', next: ['what was her longest rabbit hole?', 'how did she learn React?'] }; }
+    return { id: 'learning', p: { step: i }, big: st.step, sub: new Date(st.date + 'T12:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }), text: `Step ${i + 1} of ${D.learning.length} in the file trail of her UT account, from a first Python notebook to a backend and a build sprint.`, next: ['how did she get the Oracle internship?'] }; }
   if (/rabbit|deep|longest|session/.test(q)) { const R = D.rabbit_hole;
-    return { id: 'hole', p: {}, big: `${Math.floor(R.minutes / 60)}h ${R.minutes % 60}m`, sub: `${R.searches} searches · ${fmt(R.pages)} pages · Sep 30`, text: `It started at ${hr(+R.start_time.slice(0, 2) + +R.start_time.slice(3) / 60)} and ran past 2 AM, while she built her What's in My Bag site.`, next: ['does she build things?', 'when does she sleep?'] }; }
+    return { id: 'hole', p: {}, big: `${Math.floor(R.minutes / 60)}h ${R.minutes % 60}m`, sub: `${R.searches} searches · ${fmt(R.pages)} pages · Sep 30`, text: `It started at ${hr(+R.start_time.slice(0, 2) + +R.start_time.slice(3) / 60)} and ran past 2 AM, while she built her What's in My Bag site.`, next: ['when does she sleep?'] }; }
   if (/\bshop/.test(q)) { const fh = HT.map(r => r[0]), pk = fh.indexOf(Math.max(...fh));
     return { id: 'hours', p: { group: 'fashion', hour: pk + .5 }, big: hs(pk), sub: `when her fashion searches peak: ${fmt(fh[pk])} of them`, text: `Fashion searches run all evening and peak at <b>${hs(pk)}</b>. After midnight they give way to beauty.`, next: ['what does she search at 3 AM?', 'what is she obsessed with?'] }; }
   const topic = ['fashion', 'beauty', 'food', 'places'].find(t => q.includes(t));
@@ -467,7 +463,7 @@ function answer(raw) {
     return { id: 'hours', p: { group: topic, hour: pk + .5 }, big: hs(pk), sub: `when her ${topic} searches peak: ${fmt(th[pk])} of them`, text: `${topic[0].toUpperCase() + topic.slice(1)} makes up ${Math.round(share(pk, topic) * 100)}% of her searches at ${hs(pk)}, its busiest hour.`, next: ['when does she shop?', 'what does she search at 3 AM?', 'when is she busiest?'] }; }
   if (/obsess|dress|fashion|beauty|shop|food/.test(q)) { const o = D.obsessions[0];
     return { id: 'hours', p: { group: /beauty/.test(q) ? 'beauty' : /food/.test(q) ? 'food' : 'fashion', hour: PEAK + .5 }, big: o.term, sub: `${o.searches} searches on ${o.days} days`, text: `Her top obsession by the Obsession Index. Fashion leads her evenings; after midnight beauty takes over.`, next: ['what does she search at 3 AM?', 'when is she busiest?'] }; }
-  if (/who is|who's|about her|suhani/.test(q)) return { id: null, big: 'Suhani', sub: `${fmt(D.meta.searches)} searches · ${fmt(D.meta.pages)} pages · 365 days`, text: 'A student in Austin who searches most at 9 PM, is usually offline by 2 AM, and by the end of the year is building the sites she visits. Every chapter above is one way in.', next: ['when does she sleep?', 'where did she go in December?', 'does she build things?'] };
+  if (/who is|who's|about her|suhani/.test(q)) return { id: null, big: 'Suhani', sub: `${fmt(D.meta.searches)} searches · ${fmt(D.meta.pages)} pages · 365 days`, text: 'A student in Austin who searches most at 9 PM, is usually offline by 2 AM, and spends her evenings on fashion. Every chapter above is one way in.', next: ['when does she sleep?', 'where did she go in December?'] };
   // no match: did you mean
   const words = q.split(/\W+/).filter(w => w.length > 3); let best = null, bd = 3;
   for (const w of words) for (const v of VOCAB) { const d = lev(w, v); if (d < bd) { bd = d; best = [w, v]; } }
@@ -777,22 +773,6 @@ VIEWS.learning = (p = {}) => {
   $('page').querySelectorAll('[data-l]').forEach(b => b.onclick = () => pick(+b.dataset.l)); pick(p.step ?? 0);
   const key = e => { if (cur !== 'learning') return removeEventListener('keydown', key); if (e.key === 'ArrowRight') pick(i + 1); if (e.key === 'ArrowLeft') pick(i - 1); };
   addEventListener('keydown', key);
-};
-
-// ----------------------------------------------------------------- BUILDING: visits to my own sites
-VIEWS.building = () => {
-  const c = CH.find(x => x.id === 'building'), B = Object.entries(D.build_by_month).filter(([m]) => m < '2026-10'), mx = Math.max(...B.map(b => b[1]));
-  $('page').innerHTML = `<div class="wrap">${head(c, `Visits to sites I built and host myself, month by month. For most of the year I only visited the internet. Then I started adding to it.`)}
-    <div class="two"><div class="panel"><div class="bars">${B.map(([m, v], i) => `<button data-b="${i}" aria-pressed="${i === B.length - 1}"><i style="height:${Math.max(1, v / mx * 100)}%"></i>${new Date(m + '-15').toLocaleDateString('en-US', { month: 'short' })}</button>`).join('')}</div>
-      <div class="pills" style="margin-top:12px"><span class="lbl">scale</span><button class="pill" id="lin" aria-pressed="true">actual</button><button class="pill" id="log" aria-pressed="false">log, to see the early months</button></div></div>
-      <div class="panel" id="bp"></div></div></div>`;
-  const pick = i => { const [m, v] = B[i]; $('page').querySelectorAll('[data-b]').forEach(b => b.setAttribute('aria-pressed', +b.dataset.b === i));
-    $('bp').innerHTML = `<div class="kicker">${fav('github.com')} ${new Date(m + '-15').toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</div><div class="big" style="margin-top:8px">${fmt(v)}</div><div class="sub">visits to my own sites</div>
-      <p class="sub" style="margin-top:12px">${i === B.length - 1 ? `The build sprint, Sep 28–30. ${Math.round(v / Math.max(1, B[0][1]))}× October 2025.` : `${Math.round(100 * v / B.at(-1)[1] * 10) / 10}% of September 2026.`}</p>`; };
-  $('page').querySelectorAll('[data-b]').forEach(b => b.onclick = () => pick(+b.dataset.b)); pick(B.length - 1);
-  const scale = lg => { $('lin').setAttribute('aria-pressed', !lg); $('log').setAttribute('aria-pressed', lg);
-    $('page').querySelectorAll('[data-b] i').forEach((el, i) => el.style.height = (lg ? Math.log10(B[i][1] + 1) / Math.log10(mx + 1) : Math.max(.01, B[i][1] / mx)) * 100 + '%'); };
-  $('lin').onclick = () => scale(false); $('log').onclick = () => scale(true);
 };
 
 addEventListener('keydown', e => { if (!/INPUT|TEXTAREA/.test(document.activeElement.tagName) && /^[0-9]$/.test(e.key) && !e.metaKey && !e.ctrlKey && CH[(+e.key + 9) % 10]) go(CH[(+e.key + 9) % 10].id); if (e.key === 'Escape') { $('ev').hidden = true; } if (e.key === '/' && document.activeElement.tagName !== 'INPUT') { e.preventDefault(); $('omniIn').focus(); $('omniIn').select(); } });

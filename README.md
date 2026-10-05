@@ -21,7 +21,6 @@ The page is my Chrome window. You type the questions; the data answers them. The
 7. **Mind:** psychology as a possible interest, and the 202 self-help videos I watched, as themes and counts only
 8. **Learning:** my UT account's file trail, from a first Python notebook to React and a backend
 9. **Career:** how a search for Oracle internships became an internship
-10. **Building:** visits to sites I built myself, month by month
 
 ## The data engineering
 
@@ -41,7 +40,7 @@ The pipeline lives on my laptop with the raw data; only its small output, `data.
 - **"Did you mean…?"** When nothing matches, each word is compared to the vocabulary with a Levenshtein edit-distance function, so "chikago" still finds Chicago.
 - **The clock.** 12,460 searches drawn on a canvas as a spiral (midnight at the top, the year growing outward), topic bars around it in SVG, and the favicon most typical of each hour on the rim (its share of that hour divided by its share of the year).
 - **Data-driven page.** Everything renders from `data.json`, so rerunning the pipeline updates the whole site. Favicons are embedded in it, so the page makes no third-party requests for them.
-- **Browser-like navigation.** Back, forward and reload work inside the page, chapters you've opened turn grey, keys 1–9 and 0 jump between chapters and `/` focuses the address bar.
+- **Browser-like navigation.** Back, forward and reload work inside the page, chapters you've opened turn grey, keys 1–9 jump between chapters and `/` focuses the address bar.
 - **No framework.** HTML, CSS and plain JavaScript in `index.html`, with charts in Canvas, SVG and CSS.
 
 ## Data and privacy
