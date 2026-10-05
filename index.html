@@ -214,6 +214,7 @@ h1.q em { font-style: italic; color: var(--rose); }
 .term { background: var(--surface); border: 1px solid var(--rule); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 7px; }
 .course { font-family: var(--serif); font-size: 16px; line-height: 1.25; }
 .course.code { font-family: var(--mono); font-size: 12.5px; color: var(--muted); }
+.badge { font: 600 11.5px var(--ui); padding: 3px 8px; border-radius: 999px; background: var(--rose-soft); color: var(--rose); white-space: nowrap; }
 .tip { position: fixed; z-index: 9; pointer-events: none; background: var(--ink); color: var(--on-sel); font-size: 12.5px; line-height: 1.45; padding: 8px 11px; border-radius: 8px; max-width: 240px; transform: translate(12px, 12px); }
 
 @media (max-width: 900px) { .two { grid-template-columns: minmax(0, 1fr); } .tiles { grid-template-columns: repeat(4, 84px); } }
@@ -624,10 +625,10 @@ VIEWS.search = p => {
 // ----------------------------------------------------------------- HOURS: a clock you can drag
 VIEWS.hours = (p = {}) => {
   const c = CH.find(x => x.id === 'hours');
-  $('page').innerHTML = `<div class="wrap">${head(c, `Every search I made this year, on one clock: midnight at the top, the year spiraling outward. Around the rim, the favicon of the site that is most typical of each hour. <b>Drag the hand</b> to move through the day.`)}
+  $('page').innerHTML = `<div class="wrap">${head(c, `Every search I made this year, on one clock: midnight at the top, October at the center and September at the edge. Around the rim, the favicon of the site that is most typical of each hour. <b>Drag the hand</b> to move through the day.`)}
     <div class="two"><div><div class="clock" id="clk"><canvas></canvas><svg viewBox="0 0 460 460" role="img" aria-label="Searches by hour of the day"></svg><div class="read" id="rd"></div></div>
-      <div class="pills" style="margin-top:14px;justify-content:center"><span class="lbl">show</span>${['all', 'fashion', 'beauty', 'food', 'places'].map(g => `<button class="pill" data-g="${g}" aria-pressed="${g === 'all'}" style="--c:var(--t-${g === 'all' ? 'rest' : g})">${g === 'all' ? '' : '<i></i>'}${g}</button>`).join('')}</div>
-      <div class="pills" style="margin-top:6px;justify-content:center"><span class="lbl">night</span>${['typical', ...S.by_night.map(n => n.day)].map(d => `<button class="pill" data-n="${d}" aria-pressed="${d === 'typical'}">${d}</button>`).join('')}<button class="pill go" id="play">▶ Play my day</button></div></div>
+      <div class="pills" style="margin-top:14px;justify-content:center"><span class="lbl">topic</span>${['all', 'fashion', 'beauty', 'food', 'places'].map(g => `<button class="pill" data-g="${g}" aria-pressed="${g === 'all'}" style="--c:var(--t-${g === 'all' ? 'rest' : g})">${g === 'all' ? '' : '<i></i>'}${g}</button>`).join('')}</div>
+      <div class="pills" style="margin-top:6px;justify-content:center"><span class="lbl">last search on</span>${['typical', ...S.by_night.map(n => n.day)].map(d => `<button class="pill" data-n="${d}" aria-pressed="${d === 'typical'}">${d}</button>`).join('')}<button class="pill go" id="play">▶ Play my day</button></div></div>
       <div class="panel" id="hp"></div></div></div>`;
   const svg = $('clk').querySelector('svg'), cv = $('clk').querySelector('canvas');
   const C = 230, R0 = 54, R1 = 128, B0 = 136, B1 = 190, ang = h => h / 24 * Math.PI * 2 - Math.PI / 2, pt = (h, r) => [C + Math.cos(ang(h)) * r, C + Math.sin(ang(h)) * r];
@@ -639,12 +640,16 @@ VIEWS.hours = (p = {}) => {
   function draw() {
     const H = Math.floor(hour) % 24, nb = night === 'typical' ? { bed: BED } : S.by_night.find(n => n.day === night);
     let s = '';
+    for (let h = 0; h < 24; h += 3) { const [x0, y0] = pt(h, R0 - 12), [x1, y1] = pt(h, B1 + 4); s += `<line x1="${x0}" y1="${y0}" x2="${x1}" y2="${y1}" stroke="var(--rule)" stroke-width="1"/>`; }
+    [['Oct', 0], ['Jan', 90], ['Apr', 181], ['Jul', 272], ['Sep', 364]].forEach(([m, d], i) => { const rr = R0 + d / 365 * (R1 - R0);
+      s += `<circle cx="${C}" cy="${C}" r="${rr}" fill="none" stroke="var(--rule)" stroke-width="${i === 0 || i === 4 ? 1 : .7}" stroke-dasharray="${i === 0 || i === 4 ? '' : '2 3'}"/>`;
+      if (i < 4) s += `<text x="${C + 3}" y="${C - rr - 2}" font-size="8.5" fill="var(--muted)">${m}</text>`; });
     const vals = HT.map((row, h) => { const known = row.slice(0, 11).reduce((a, b) => a + b, 0) || 1; return group === 'all' ? GROUPS.map(([n, ts]) => [n, HTOT[h] * ts.reduce((a, t) => a + row[t], 0) / known]) : [[group, GROUPS.find(x => x[0] === group)[1].reduce((a, t) => a + row[t], 0)]]; });
     const mx2 = Math.max(...vals.map(v => v.reduce((a, b) => a + b[1], 0)));
     for (let h = 0; h < 24; h++) { let r = B0; for (const [n, v] of vals[h]) { if (!v) continue; const dr = v / mx2 * (B1 - B0); s += `<path d="${arc(h + .07, h + .93, r, r + dr)}" fill="var(--t-${n})" opacity="${h === H ? 1 : .55}"/>`; r += dr; } }
     for (let h = 0; h < 24; h++) { const [x, y] = pt(h + .5, B1 + 22), si = sig[h];
-      s += si ? `<image href="${F(si.fav) || ''}" x="${x - 9}" y="${y - 9}" width="18" height="18" opacity="${h === H ? 1 : .8}"><title>${hs(h)} · ${si.name}</title></image>` : '';
-      if (h % 6 === 0) { const [lx, ly] = pt(h, B1 + 44); s += `<text x="${lx}" y="${ly + 4}" text-anchor="middle" font-size="11.5" font-weight="700" fill="var(--ink)">${hs(h)}</text>`; } }
+      s += si && F(si.fav) ? `<circle cx="${x}" cy="${y}" r="12.5" fill="var(--surface)" stroke="${h === H ? 'var(--ink)' : 'var(--rule)'}" stroke-width="1"/><image href="${F(si.fav) || ''}" x="${x - 8}" y="${y - 8}" width="16" height="16" opacity="${h === H ? 1 : .85}"><title>${hs(h)} · ${si.name}</title></image>` : '';
+      if (h % 3 === 0) { const [lx, ly] = pt(h, B1 + 46); s += `<text x="${lx}" y="${ly + 4}" text-anchor="middle" font-size="${h % 6 ? 10 : 11.5}" font-weight="${h % 6 ? 500 : 700}" fill="${h % 6 ? 'var(--muted)' : 'var(--ink)'}">${hs(h)}</text>`; } }
     const [b0x, b0y] = pt(nb.bed, R0 - 10), [b1x, b1y] = pt(nb.bed, B1 + 4), [lx2, ly2] = pt(nb.bed, R0 + 18);
     s += `<line x1="${b0x}" y1="${b0y}" x2="${b1x}" y2="${b1y}" stroke="var(--rose)" stroke-width="1.5" stroke-dasharray="3 3"/>`;
     s += `<text x="${lx2}" y="${ly2 - 4}" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--rose)">last search</text><text x="${lx2}" y="${ly2 + 9}" text-anchor="middle" font-size="10.5" fill="var(--muted)">${hr(nb.bed)}</text>`;
@@ -658,11 +663,12 @@ VIEWS.hours = (p = {}) => {
       <div class="big" style="margin-top:8px">${fmt(HTOT[H])}</div><div class="sub">searches started in this hour · ${rd.level}${H >= 3 && H < 6 ? ' · usually offline by now' : ''}</div>
       <p style="font-size:14.5px;line-height:1.5;margin:12px 0 0">${rd.text}</p>
       <div style="margin:16px 0 6px" class="kicker">share of all her searches at ${hs(H)}</div>
-      ${parts.map(([n, v]) => `<div class="row"><i style="width:10px;height:10px;border-radius:50%;background:var(--t-${n})"></i><div>${GNAME[n]}<div class="track"><b style="width:${v * 100}%;background:var(--t-${n})"></b></div></div><span class="v">${Math.round(v * 100)}%</span></div>`).join('')}
+      ${parts.map(([n, v]) => `<div class="row" data-pg="${n}" role="button" tabindex="0" title="highlight ${GNAME[n]} on the clock" style="cursor:pointer${group === n ? ';font-weight:600' : ''}"><i style="width:10px;height:10px;border-radius:50%;background:var(--t-${n})"></i><div>${GNAME[n]}<div class="track"><b style="width:${v * 100}%;background:var(--t-${n})"></b></div></div><span class="v">${Math.round(v * 100)}%</span></div>`).join('')}
       <p class="sub" style="margin:6px 0 0">The other ${Math.round((1 - parts.reduce((a, p) => a + p[1], 0)) * 100)}% are about everything else, or no clear topic.</p>
       ${top.length ? `<div style="margin:16px 0 6px" class="kicker">sites most typical of ${hs(H)}</div>
-      ${top.map(([s2, k]) => `<div class="row">${fav(s2.name)}<div>${s2.name}<div class="track"><b style="width:${k / tmax * 100}%"></b></div></div><span class="v">${k.toFixed(1)}×</span></div>`).join('')}` : ''}
+      ${top.map(([s2, k]) => `<div class="row">${fav(s2.name)}<div>${s2.name}<div class="track"><b style="width:${k / tmax * 100}%"></b></div></div><span class="badge">${k.toFixed(1)}× usual</span></div>`).join('')}` : ''}
       <p style="margin:14px 0 0"><button class="src" id="hev">view-source: this hour →</button></p>`;
+    $('hp').querySelectorAll('[data-pg]').forEach(r => r.onclick = () => { const b = $('page').querySelector(`[data-g="${group === r.dataset.pg ? 'all' : r.dataset.pg}"]`); if (b) b.click(); });
     $('hev').onclick = () => evidence(`warehouse.db · hour ${H}`, 'Searches and page visits that started in this hour of the day, all year. Topic shares are out of every search in the hour, including ones with no clear topic.', ['measure', 'value'],
       [['searches', HTOT[H]], ...GROUPS.map(([n, ts]) => [n, ts.reduce((a, t) => a + HT[H][t], 0)]), ['unclassified', HT[H][11]], ...top.map(([s2]) => [s2.name + ' visits', s2.h[H]])]);
   }
