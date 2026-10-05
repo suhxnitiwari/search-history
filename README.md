@@ -15,7 +15,7 @@ The page is my Chrome window. You type the questions; the data answers them. The
 1. **Hours:** every search of the year on one clock you can drag: what I search at each hour, when I search most (9 PM) and when my last search of the night comes
 2. **Days:** 365 days, one favicon each, for the site that owned the day
 3. **Most visited:** sites sized by how many days I opened them, with when I open each one
-4. **Places:** five trips found from airport and "near me" searches, plus the cities I only searched
+4. **Travel:** a world map of 107 places I searched (home, the trips I took, where I might study abroad, everywhere else), with the trips found from airport and "near me" searches
 5. **Rabbit hole:** replay a 9h 54m session from the night I built a site
 6. **Learning:** my UT account's file trail, from a first Python notebook to React and a backend
 7. **Career:** how a search for Oracle internships became an internship
@@ -33,6 +33,7 @@ The pipeline lives on my laptop with the raw data; only its small output, `data.
 
 ## How it's built
 
+- **104 suggested questions,** grouped by chapter, every one checked to land on a real answer.
 - **A search bar that answers in plain English.** It reads times ("3 AM", "midnight"), dates ("Oct 26"), nights of the week, cities, any site name and topics like Oracle or React, then answers with a featured-snippet card that opens the chapter at that exact point: the clock hand on 3 AM, Oct 26 lit up in the Days grid, the Chicago trip selected.
 - **It guides, it never types for you.** Suggestions filter as you type, Tab accepts an inline completion, and "People also ask" offers next questions.
 - **"Did you mean…?"** When nothing matches, each word is compared to the vocabulary with a Levenshtein edit-distance function, so "chikago" still finds Chicago.

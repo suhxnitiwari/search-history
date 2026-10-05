@@ -207,6 +207,9 @@ h1.q em { font-style: italic; color: var(--rose); }
 .sbox.small .ghost, .sbox.small input { font-size: 16px; }
 .ghost kbd { font: 10.5px var(--mono); border: 1px solid var(--rule); border-radius: 4px; padding: 1px 5px; margin-left: 8px; opacity: .9; }
 .ac .ach { padding: 6px 18px 4px; font-size: 12px; color: var(--muted); }
+.ac { max-height: min(60vh, 520px); overflow-y: auto; overscroll-behavior: contain; }
+.ac .acg { display: flex; align-items: center; gap: 8px; padding: 12px 18px 4px; font: 600 11px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); border-top: 1px solid var(--rule); margin-top: 4px; }
+.ac .acg:first-of-type { border-top: 0; margin-top: 0; }
 .ac .mag { color: var(--muted); width: 16px; }
 .serp { max-width: 760px; }
 .sbox.small { width: 100%; height: 48px; }
@@ -284,7 +287,7 @@ const CH = [
   { id: 'hours', label: 'Hours', icon: '@search', q: 'When is she online?', hint: 'searches by time of day' },
   { id: 'days', label: 'Days', icon: '@calendar', q: 'Which site owned each day?', hint: 'one favicon per day' },
   { id: 'sites', label: 'Most visited', icon: 'Instagram', q: 'Where does her attention go?', hint: 'sites by days opened' },
-  { id: 'places', label: 'Places', icon: '@maps', q: 'Where did she go?', hint: 'trips found from searches' },
+  { id: 'places', label: 'Travel', icon: '@maps', q: 'Where in the world is she looking?', hint: 'every place she searched, and the trips she took' },
   { id: 'hole', label: 'Rabbit hole', icon: 'Wikipedia', q: 'How deep does she go?', hint: 'one 9-hour session' },
   { id: 'learning', label: 'Learning', icon: '@colab', q: 'How did she learn to build?', hint: 'her UT files, in order' },
   { id: 'career', label: 'Career', icon: 'LinkedIn', q: 'How did a search become a job?', hint: 'Oracle, month by month' },
@@ -332,15 +335,39 @@ $('fwd').onclick = () => { if (hpos < hist.length - 1) { const h = hist[++hpos];
 $('reload').onclick = () => go(cur, curP, false);
 const head = (c, lede) => `<div class="kicker">${fav(c.icon)} ${c.label}</div><h1 class="q">${c.q}</h1><p class="lede">${lede}</p>`;
 const VIEWS = {};
+let worldP = null;
+const script = src => new Promise((ok, no) => { const el = document.createElement('script'); el.src = src; el.onload = ok; el.onerror = no; document.head.appendChild(el); });
+const loadWorld = () => worldP ||= Promise.all([window.d3 ? 0 : script('https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js'), script('https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js')])
+  .then(() => fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/land-110m.json')).then(r => r.json()).then(t => topojson.feature(t, t.objects.land));
 
 // ----------------------------------------------------------------- the search: the visitor asks, the data answers
 // I only guide: suggestions while typing, an inline completion (Tab accepts), and questions to try next.
-const GUIDES = [
-  'when does she sleep?', 'what does she search at 3 AM?', 'when is she busiest?', 'what does she search on Saturday nights?',
-  'which site owned the most days?', 'how often does she open LinkedIn?', 'what did she do on Oct 26?', 'where did she go in December?',
-  'was she in Chicago?', 'what was her longest rabbit hole?', 'how did she learn React?', 'how did she get the Oracle internship?',
-  'does she build things?', 'what is she obsessed with?', 'when does she shop?', 'who is Suhani?',
+const GUIDE_GROUPS = [
+  ['Hours', ['when does she sleep?', 'when is she busiest?', 'is she a night owl?', 'what does she search at 10 AM?', 'what does she search at noon?', 'what does she search at 5 PM?',
+    'what does she search at 9 PM?', 'what does she search at midnight?', 'what does she search at 2 AM?', 'what does she search at 3 AM?', 'what does she search on Saturday nights?',
+    'what time does she go to bed on Mondays?', 'what time does she go to bed on Tuesdays?', 'what time does she go to bed on Wednesdays?', 'what time does she go to bed on Thursdays?',
+    'what time does she go to bed on Fridays?', 'what time does she go to bed on Sundays?', 'when does she shop?', 'when does she search about beauty?', 'when does she search about food?',
+    'when does she search about places?']],
+  ['Days', ['which site owned the most days?', 'what did she do on Oct 24?', 'what did she do on Oct 26?', 'what happened on Nov 16?', 'what happened on Nov 17?', 'what did she do on Nov 21?',
+    'what happened on Jan 15?', 'what happened on Feb 1?', 'what happened on Sep 28?', 'what happened on Sep 30?']],
+  ['Most visited', ['how often does she open LinkedIn?', 'how often does she open Instagram?', 'when does she check Gmail?', 'how often is she on UT Austin sites?', 'how often does she use Docs?',
+    'how often does she open Calendar?', 'how often does she shop at Aritzia?', 'does she read Wikipedia?', 'how much does she use YouTube?', 'how often does she shop on Amazon?',
+    'how often does she shop at Nordstrom?', 'when does she open Sephora?', 'how often does she shop at Revolve?', 'does she watch Netflix?', 'how often does she go to Ulta?',
+    'does she shop at Louis Vuitton?', 'does she shop at Anthropologie?', 'does she watch Disney+?', 'does she check RateMyProfessors?', 'does she shop at Reformation?',
+    'does she shop at LoveShackFancy?', 'does she book on OpenTable?', 'does she shop at Westman Atelier?', 'how often does she open Expedia?', 'does she design on Canva?', 'does she shop at Tory Burch?']],
+  ['Travel', ['where in the world is she looking?', 'has she searched Zurich?', 'is India in her searches?', 'where did she go in December?', 'was she in Chicago?', 'was she in New York?', 'was she home in Dallas?', 'did she go to Denver?', 'did she go to Miami?',
+    'where did she want to go?', 'did she plan a trip to Tokyo?', 'did she plan a trip to Paris?', 'did she plan a trip to Barcelona?', 'did she plan a trip to Seattle?',
+    'did she plan a trip to Honolulu?', 'did she plan a trip to Los Angeles?', 'did she plan a trip to Singapore?', 'did she plan a trip to Istanbul?']],
+  ['Rabbit hole', ['what was her longest rabbit hole?', 'how deep does she go?', 'how long was her longest session?']],
+  ['Learning', ['when did she pitch ClipCurator?', 'when did she start Python?', 'when did she learn loops?', 'when did she learn functions?', 'when did she learn dictionaries?',
+    'when did she learn lambdas?', 'when did she learn pandas?', 'when was her Python final?', 'when did she learn JavaScript?', 'when did she write her first product brief?',
+    'when did she learn the DOM?', 'how did she learn React?', 'when did she write product requirements?', 'when did she write backend routes?', 'when did she learn TypeScript?',
+    'when did she make a prototype?', 'when did she build her MVP?']],
+  ['Career', ['how did she get the Oracle internship?', 'when did she first search for Oracle?', 'what does she do at Oracle?']],
+  ['Building', ['does she build things?', 'how many visits did her own sites get?', 'how much did she build in September?', 'did she change this year?']],
+  ['Overall', ['who is Suhani?', 'what is she obsessed with?']],
 ];
+const GUIDES = GUIDE_GROUPS.flatMap(g => g[1]);
 const tripNote = t => t.name === 'Dallas' ? 'Home for winter break, between the New York and Denver trips.' : 'Found from her searches there, which stay private.';
 const MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
 const DAYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
@@ -379,6 +406,10 @@ function answer(raw) {
   if (day !== null) { const m = D.mosaic[day];
     return { id: 'days', p: { day }, big: mdy(dayDate(day)), sub: `${dayCount[day]} searches that day`, text: m ? `${fav(m[0])} <b>${m[0]}</b> owned the day with ${m[1]} visits.${day === 23 ? ' She was in Chicago, looking for somewhere to eat.' : ''}` : 'A quiet day in the sites shown here.',
       next: ['which site owned the most days?', 'where did she go in December?', 'when is she busiest?'] }; }
+  if (/where in the world|how many places|every ?where|all the places/.test(q)) { const n = D.travel.length, abroad = D.travel.filter(t => t.group === 'study abroad').map(t => t.name);
+    return { id: 'places', p: {}, big: `${n} places`, sub: 'in her searches, Oct 2025 – Oct 2026', text: `${(([f, ...r]) => `${f.name} leads after home, then ${r.slice(0, 2).map(t => t.name).join(', ')} and ${r[2].name}`)(D.travel.filter(t => t.group !== 'home'))}. For study abroad she looked at ${abroad.slice(0, -1).join(', ')} and ${abroad.at(-1)}.`, next: ['where did she go in December?', 'did she plan a trip to Tokyo?', 'was she in Chicago?'] }; }
+  const dream = D.trips.dreamed.find(d => q.includes(d.name.toLowerCase()));
+  if (dream) return { id: 'places', p: {}, big: dream.name, sub: 'searched for, never visited (yet)', text: `She first searched it on ${md(new Date(dream.first + 'T12:00'))}. No airport or “near me” searches followed, so it stayed a plan.`, next: ['where did she want to go?', 'where did she go in December?', 'was she in Chicago?'] };
   if (trip >= 0 || /\btrip|travel|where did she go|vacation|went\b/.test(q) || (/where/.test(q) && MONTHS.some(mm => q.includes(mm)))) {
     const i = trip >= 0 ? trip : /dec/.test(q) ? 1 : 0, t = D.trips.went[i];
     return { id: 'places', p: { trip: i }, big: t.name, sub: t.when, text: t.evidence.length ? `Nothing in the data says where she went, but her searches give it away: ${t.evidence.map(e => `“${e[1]}”`).join(', ')}.` : tripNote(t),
@@ -386,12 +417,16 @@ function answer(raw) {
   if (/where did she want|dream|wish|never went/.test(q)) return { id: 'places', p: {}, big: `${D.trips.dreamed.length} cities`, sub: 'searched for, never visited (yet)', text: D.trips.dreamed.map(d => d.name).join(', ') + '.', next: ['where did she go in December?', 'was she in Chicago?'] };
   if (/oracle|intern|job|career|recruit|hired/.test(q)) { const tot = Object.values(D.escaped.oracle_by_month).reduce((a, b) => a + b, 0);
     return { id: 'career', p: {}, big: 'Oracle', sub: `${tot} requests, Nov 2025 → Jul 2026`, text: `It starts with a search for Oracle PM internships in November and an application finished overnight. By May she was an ERP Consultant Intern there.`, next: ['how often does she open LinkedIn?', 'how did she learn React?', 'does she build things?'] }; }
+  const place = D.travel.find(t => new RegExp(`\\b${t.name.toLowerCase()}\\b`).test(q) && !(t.name === 'Austin' && /ut austin/.test(q)));
+  if (place && !site) { const gname = { home: 'home', went: 'a trip she took', 'study abroad': 'a place she looked at for study abroad', searched: 'a place she searched' }[place.group];
+    return { id: 'places', p: { place: place.name }, big: place.name, sub: `${place.searches} ${place.searches === 1 ? 'search' : 'searches'}${place.travel ? `, ${place.travel} about travel` : ''}`, text: `${place.name} is ${gname}. It shows up in her searches from ${new Date(place.first + '-15').toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}${place.last !== place.first ? ` to ${new Date(place.last + '-15').toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}` : ''}.`, next: ['where in the world is she looking?', 'where did she go in December?', 'where did she want to go?'] }; }
   if (site) { const hmax = Math.max(...site.h);
-    return { id: 'sites', p: { site: site.name }, big: `${site.days} days`, sub: `${fmt(site.n)} visits · ${site.name}`, text: `${fav(site.name)} ${site.name}: opened on ${site.days} of 365 days, busiest at ${hs(site.h.indexOf(hmax))}${owned[site.name] ? `, and it owned ${owned[site.name]} days outright` : ''}.`, next: ['which site owned the most days?', `when does she open ${site.name}?`, 'what is she obsessed with?'] }; }
+    return { id: 'sites', p: { site: site.name }, big: `${site.days} days`, sub: `${fmt(site.n)} visits · ${site.name}`, text: `${fav(site.name)} ${site.name}: opened on ${site.days} of 365 days, busiest at ${hs(site.h.indexOf(hmax))}${owned[site.name] ? `, and it owned ${owned[site.name]} ${owned[site.name] === 1 ? "day" : "days"} outright` : ''}.`, next: ['which site owned the most days?', `when does she open ${site.name}?`, 'what is she obsessed with?'] }; }
   if (/owned|most days|every day|which site|most visited|attention/.test(q) && !site) { const [n, k] = Object.entries(owned).sort((a, b) => b[1] - a[1])[0];
     return { id: 'days', p: { own: n }, big: n, sub: `owned ${k} of 365 days`, text: `${fav(n)} ${n} was the site she opened most on ${k} days. Then ${Object.entries(owned).sort((a, b) => b[1] - a[1]).slice(1, 4).map(e => e[0]).join(', ')}.`, next: ['how often does she open LinkedIn?', 'what did she do on Oct 26?'] }; }
-  const TECH = ['python', 'loops', 'functions', 'dictionaries', 'lambdas', 'pandas', 'javascript', 'dom', 'react', 'backend', 'typescript', 'prototype', 'mvp'];
-  const tw = TECH.find(w => new RegExp(`\\b${w}\\b`).test(q)), step = tw && D.learning.find(l => l.step.toLowerCase().includes(tw === 'javascript' ? 'javascript' : tw));
+  const STOP = new Set(['first', 'the', 'days', 'sep', 'build', 'pitched']);
+  const stepScore = l => l.step.toLowerCase().split(/[^a-z]+/).filter(w => w.length > 2 && !STOP.has(w) && new RegExp(`\\b${w}`).test(q)).length + (/clipcurator/.test(q) && /clipcurator/i.test(l.step) ? 1 : 0);
+  const top = D.learning.map(l => [l, stepScore(l)]).sort((x, y) => y[1] - x[1])[0], step = top[1] ? top[0] : null;
   if (step || /\blearn|study|class|python|coding\b/.test(q)) { const st = step || D.learning[1], i = D.learning.indexOf(st);
     return { id: 'learning', p: { step: i }, big: st.step, sub: new Date(st.date + 'T12:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }), text: `Step ${i + 1} of ${D.learning.length} in the file trail of her UT account, from a first Python notebook to a backend and a build sprint.`, next: ['does she build things?', 'how did she get the Oracle internship?'] }; }
   if (/\bbuild|github|website|her own site|project|\bchange/.test(q)) { const B = D.build_by_month;
@@ -400,6 +435,9 @@ function answer(raw) {
     return { id: 'hole', p: {}, big: `${Math.floor(R.minutes / 60)}h ${R.minutes % 60}m`, sub: `${R.searches} searches · ${fmt(R.pages)} pages · Sep 30`, text: `It started at ${hr(+R.start_time.slice(0, 2) + +R.start_time.slice(3) / 60)} and ran past 2 AM, while she built her What's in My Bag site.`, next: ['does she build things?', 'when does she sleep?'] }; }
   if (/\bshop/.test(q)) { const fh = HT.map(r => r[0]), pk = fh.indexOf(Math.max(...fh));
     return { id: 'hours', p: { group: 'fashion', hour: pk + .5 }, big: hs(pk), sub: `when her fashion searches peak: ${fmt(fh[pk])} of them`, text: `Fashion searches run all evening and peak at <b>${hs(pk)}</b>. After midnight they give way to beauty.`, next: ['what does she search at 3 AM?', 'what is she obsessed with?'] }; }
+  const topic = ['fashion', 'beauty', 'food', 'places'].find(t => q.includes(t));
+  if (topic && /\bwhen\b|what time/.test(q)) { const g = GROUPS.find(x => x[0] === topic)[1], th = HT.map(r => g.reduce((a, t) => a + r[t], 0)), pk = th.indexOf(Math.max(...th));
+    return { id: 'hours', p: { group: topic, hour: pk + .5 }, big: hs(pk), sub: `when her ${topic} searches peak: ${fmt(th[pk])} of them`, text: `${topic[0].toUpperCase() + topic.slice(1)} makes up ${Math.round(share(pk, topic) * 100)}% of her searches at ${hs(pk)}, its busiest hour.`, next: ['when does she shop?', 'what does she search at 3 AM?', 'when is she busiest?'] }; }
   if (/obsess|dress|fashion|beauty|shop|food/.test(q)) { const o = D.obsessions[0];
     return { id: 'hours', p: { group: /beauty/.test(q) ? 'beauty' : /food/.test(q) ? 'food' : 'fashion', hour: PEAK + .5 }, big: o.term, sub: `${o.searches} searches on ${o.days} days`, text: `Her top obsession by the Obsession Index. Fashion leads her evenings; after midnight beauty takes over.`, next: ['what does she search at 3 AM?', 'when is she busiest?'] }; }
   if (/who is|who's|about her|suhani/.test(q)) return { id: null, big: 'Suhani', sub: `${fmt(D.meta.searches)} searches · ${fmt(D.meta.pages)} pages · 365 days`, text: 'A student in Austin who searches most at 9 PM, is usually offline by 2 AM, and by the end of the year is building the sites she visits. Every chapter above is one way in.', next: ['when does she sleep?', 'where did she go in December?', 'does she build things?'] };
@@ -412,8 +450,11 @@ function answer(raw) {
 function guideBox(inp, list, ghost, onSubmit) {
   let sel = -1, items = [];
   const render = () => { const v = inp.value.trim().toLowerCase();
-    items = (v ? GUIDES.filter(g => g.toLowerCase().includes(v) || v.split(/\s+/).every(w => g.toLowerCase().includes(w))) : GUIDES.slice(0, 6)).slice(0, 7);
-    list.innerHTML = (v ? '' : '<div class="ach">Try asking</div>') + items.map((g, i) => `<button type="button" data-i="${i}" aria-selected="${i === sel}"><span class="mag">⌕</span><span>${v ? g.replace(new RegExp(`(${v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'i'), '<b>$1</b>') : g}</span></button>`).join('');
+    items = v ? GUIDES.filter(g => g.toLowerCase().includes(v) || v.split(/\s+/).every(w => g.toLowerCase().includes(w))).slice(0, 10) : GUIDES;
+    const btn = (g, i) => `<button type="button" data-i="${i}" aria-selected="${i === sel}"><span class="mag">⌕</span><span>${v ? g.replace(new RegExp(`(${v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'i'), '<b>$1</b>') : g}</span></button>`;
+    let n = 0;
+    list.innerHTML = v ? items.map(btn).join('') : `<div class="ach">Try asking · ${GUIDES.length} questions</div>` + GUIDE_GROUPS.map(([name, qs]) => `<div class="acg">${fav(CH.find(c => c.label === name)?.icon || '@search')}${name}</div>` + qs.map(g => btn(g, n++)).join('')).join('');
+    const on = list.querySelector('[aria-selected="true"]'); if (on) on.scrollIntoView({ block: 'nearest' });
     list.hidden = !items.length;
     const first = items.find(g => g.toLowerCase().startsWith(v));
     ghost.innerHTML = v && first ? `<span style="visibility:hidden">${esc(inp.value)}</span>${esc(first.slice(inp.value.length))}<kbd>tab</kbd>` : ''; };
@@ -550,12 +591,42 @@ VIEWS.days = (p = {}) => {
 
 // ----------------------------------------------------------------- PLACES: trips found from searches
 VIEWS.places = (p = {}) => {
-  const c = CH.find(x => x.id === 'places'), T = D.trips;
-  $('page').innerHTML = `<div class="wrap">${head(c, `Nobody told the data where I went. Airport searches, “near me” searches and a new city's restaurants give each trip away. Pick a trip.`)}
-    <div class="trips">${T.went.map((t, i) => `<button class="trip" data-t="${i}" aria-pressed="${i === 0}"><b>${t.name}</b><span>${t.when}</span></button>`).join('')}</div>
-    <div class="two" style="margin-top:22px"><div class="panel" id="tp"></div><div class="panel" id="chi"></div></div>
-    <div class="kicker" style="margin:24px 0 6px">searched, never went (yet)</div>
-    <div class="dream">${T.dreamed.map(d => `<span class="pill">${d.name} <span style="color:var(--muted)">${md(new Date(d.first + 'T12:00'))}</span></span>`).join('')}</div></div>`;
+  const c = CH.find(x => x.id === 'places'), T = D.trips, TR = D.travel;
+  const G = [['home', 'Home', 'var(--ink)'], ['went', 'Went', 'var(--rose)'], ['study abroad', 'Study abroad', 'var(--t-places)'], ['searched', 'Searched', 'var(--t-food)']];
+  const gcol = g => G.find(x => x[0] === g)[2], cnt = g => TR.filter(t => t.group === g).length;
+  $('page').innerHTML = `<div class="wrap">${head(c, `${TR.length} places turn up in my searches this year, from Austin to Zanzibar. Each dot is one, sized by how often I searched it: home, the trips I took, where I might study abroad, and everywhere else I looked up.`)}
+    <div class="pills" style="margin-bottom:10px"><span class="lbl">show</span><button class="pill" data-tg="all" aria-pressed="true">all ${TR.length}</button>${G.map(([g, n, col]) => `<button class="pill" data-tg="${g}" aria-pressed="false" style="--c:${col}"><i></i>${n} ${cnt(g)}</button>`).join('')}
+      <span class="lbl" style="margin-left:10px">zoom</span>${['World', 'US', 'Europe', 'India'].map((r, i) => `<button class="pill" data-rg="${r}" aria-pressed="${i === 0}">${r}</button>`).join('')}</div>
+    <div class="two"><div class="panel" style="padding:10px"><svg id="wmap" viewBox="0 0 960 520" role="img" aria-label="World map of ${TR.length} places she searched" style="width:100%;height:auto;display:block"></svg></div><div class="panel" id="tvp"></div></div>
+    <div class="kicker" style="margin:30px 0 8px">${fav('maps.google.com')} the trips · found from airport and “near me” searches</div>
+    <div class="trips">${T.went.map((t, i) => `<button class="trip" data-t="${i}" aria-pressed="${i === (p.trip ?? 0)}"><b>${t.name}</b><span>${t.when}</span></button>`).join('')}</div>
+    <div class="two" style="margin-top:22px"><div class="panel" id="tp"></div><div class="panel" id="chi"></div></div></div>`;
+  let tg = 'all', rg = 'World', sel = p.place || null;
+  const BOX = { World: [[-170, -48], [178, 72]], US: [[-125, 24], [-66, 50]], Europe: [[-11, 35], [30, 60]], India: [[68, 7], [92, 35]] };
+  const panel = () => { const t = TR.find(x => x.name === sel);
+    if (t) { $('tvp').innerHTML = `<div class="kicker"><i style="width:10px;height:10px;border-radius:50%;background:${gcol(t.group)};display:inline-block"></i> ${G.find(x => x[0] === t.group)[1]}</div>
+      <div class="big" style="margin-top:8px;font-family:var(--serif);font-weight:400">${t.name}</div><div class="sub">${t.searches} ${t.searches === 1 ? 'search' : 'searches'}${t.travel ? ` · ${t.travel} about travel` : ''}</div>
+      <p class="sub" style="margin-top:10px">${mon(t.first)}${t.last !== t.first ? ` → ${mon(t.last)}` : ''}</p><p style="margin-top:14px"><button class="src" id="tvall">← all places</button></p>`;
+      $('tvall').onclick = () => { sel = null; draw(); panel(); }; return; }
+    const list = TR.filter(x => (tg === 'all' || x.group === tg) && inRg(x)).slice(0, 12), mx = list[0]?.searches || 1;
+    $('tvp').innerHTML = `<div class="kicker">${tg === 'all' ? 'most searched' : G.find(x => x[0] === tg)[1]}${rg === 'World' ? '' : ` · ${rg}`}</div>` + list.map(x => `<div class="row" style="cursor:pointer" data-pl="${esc(x.name)}"><i style="width:10px;height:10px;border-radius:50%;background:${gcol(x.group)}"></i><div>${x.name}<div class="track"><b style="width:${x.searches / mx * 100}%;background:${gcol(x.group)}"></b></div></div><span class="v">${x.searches}</span></div>`).join('');
+    $('tvp').querySelectorAll('[data-pl]').forEach(r => r.onclick = () => { sel = r.dataset.pl; draw(); panel(); }); };
+  const inRg = t => { if (rg === 'World') return true; const [[x0, y0], [x1, y1]] = BOX[rg]; return t.lon >= x0 - 4 && t.lon <= x1 + 4 && t.lat >= y0 - 4 && t.lat <= y1 + 4; };
+  const mon = m => new Date(m + '-15').toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+  let world = null;
+  const draw = () => { const svg = $('wmap'); if (!svg) return;
+    if (!world || !window.d3) { svg.innerHTML = '<text x="480" y="260" text-anchor="middle" fill="var(--muted)" font-size="14">Loading the map…</text>'; return; }
+    const proj = d3.geoNaturalEarth1().fitExtent([[10, 10], [950, 510]], { type: 'MultiPoint', coordinates: BOX[rg] }), path = d3.geoPath(proj);
+    const r = n => (rg === 'World' ? 1 : 1.6) * (2.6 + Math.log2(n + 1) * 1.55);
+    const dots = TR.filter(t => tg === 'all' || t.group === tg).slice().sort((a, b) => b.searches - a.searches);
+    svg.innerHTML = `<path d="${path(world)}" fill="var(--omni)" stroke="var(--rule)" stroke-width=".6"/>` + dots.map(t => { const [x, y] = proj([t.lon, t.lat]);
+      return x < -20 || x > 980 || y < -20 || y > 540 ? '' : `<circle cx="${x}" cy="${y}" r="${r(t.searches)}" fill="${gcol(t.group)}" fill-opacity="${sel && sel !== t.name ? .25 : .7}" stroke="var(--surface)" stroke-width="${sel === t.name ? 2.5 : 1}" data-pl="${esc(t.name)}" style="cursor:pointer"><title>${t.name} · ${t.searches} ${t.searches === 1 ? 'search' : 'searches'}</title></circle>${rg !== 'World' && (t.searches >= 3 || sel === t.name) && t.kind !== 'country' && t.kind !== 'us state' ? `<text x="${x}" y="${y - r(t.searches) - 4}" text-anchor="middle" font-size="12" fill="var(--ink)" pointer-events="none">${t.name}</text>` : ''}`; }).join('');
+    svg.querySelectorAll('[data-pl]').forEach(el => el.onclick = () => { sel = el.dataset.pl; draw(); panel(); }); };
+  $('page').querySelectorAll('[data-tg]').forEach(b => b.onclick = () => { tg = b.dataset.tg; sel = null; $('page').querySelectorAll('[data-tg]').forEach(x => x.setAttribute('aria-pressed', x === b)); draw(); panel(); });
+  $('page').querySelectorAll('[data-rg]').forEach(b => b.onclick = () => { rg = b.dataset.rg; $('page').querySelectorAll('[data-rg]').forEach(x => x.setAttribute('aria-pressed', x === b)); draw(); panel(); });
+  if (sel) { const t = TR.find(x => x.name === sel); if (t && /^(US|Europe|India)$/.test(p.region || '')) rg = p.region; }
+  panel(); draw();
+  loadWorld().then(w => { world = w; draw(); }).catch(() => { $('wmap').innerHTML = '<text x="480" y="260" text-anchor="middle" fill="var(--muted)" font-size="14">The map could not load. The list on the right still works.</text>'; });
   const pick = i => { const t = T.went[i]; $('page').querySelectorAll('[data-t]').forEach(b => b.setAttribute('aria-pressed', +b.dataset.t === i));
     $('tp').innerHTML = `<div class="kicker">${fav('maps.google.com')} ${t.name}</div><div class="big" style="margin-top:8px;font-family:var(--serif);font-weight:400">${t.when}</div>
       ${t.evidence.length ? `<div style="margin-top:14px">${t.evidence.map(([d, q]) => `<div class="step"><span class="t">${d}</span><span class="s">${q}</span></div>`).join('')}</div>` : `<p class="sub" style="margin-top:12px">${tripNote(t)}</p>`}`; };
@@ -578,7 +649,7 @@ VIEWS.sites = (p = {}) => {
       ${list.map(s => { const z = 18 + Math.sqrt(s.days / mx) * 50; return `<button data-s="${s.name}" title="${s.name}" style="width:${z + 14}px;height:${z + 14}px;border-radius:50%;display:grid;place-items:center;background:var(--omni)">${(() => { const u = F(s.fav); return u ? `<img src="${u}" alt="${s.name}" style="width:${z}px;height:${z}px">` : `<span class="fv l" style="width:${z}px;height:${z}px;font-size:${z / 2}px">${s.name[0]}</span>`; })()}</button>`; }).join('')}
     </div><div class="panel" id="sp"></div></div></div>`;
   pickSite = name => { const s = SITE[name]; if (!s || !$('sp')) return; const hmax = Math.max(...s.h);
-    $('sp').innerHTML = `<div class="kicker">${fav(s.name)} ${s.name}</div><div class="big" style="margin-top:8px">${s.days} days</div><div class="sub">${fmt(s.n)} visits · owned ${owned[s.name] || 0} days outright</div>
+    $('sp').innerHTML = `<div class="kicker">${fav(s.name)} ${s.name}</div><div class="big" style="margin-top:8px">${s.days} days</div><div class="sub">${fmt(s.n)} visits · owned ${owned[s.name] || 0} ${owned[s.name] === 1 ? "day" : "days"} outright</div>
       <div class="kicker" style="margin:16px 0 6px">when I open it</div>
       <div class="bars" style="height:120px;gap:2px">${s.h.map((v, h) => `<button aria-label="${hs(h)}: ${v}" data-tipv="${hs(h)} · ${v} visits"><i style="height:${v / hmax * 100}%"></i>${h % 6 ? '' : hs(h)}</button>`).join('')}</div>
       <p class="sub" style="margin-top:10px">Busiest at ${hs(s.h.indexOf(hmax))}.</p>`;
