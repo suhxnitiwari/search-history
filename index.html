@@ -300,7 +300,7 @@ const CH = [
   { id: 'sites', label: 'Most visited', icon: 'Instagram', q: 'Where does her attention go?', hint: 'sites by days opened' },
   { id: 'places', label: 'Travel', icon: '@maps', q: 'Where in the world is she looking?', hint: 'every place she searched, and the trips she took' },
   { id: 'watch', label: 'Watchlist', icon: 'netflix.com', q: 'What does she watch?', hint: 'shows, movies and books she looked up' },
-  { id: 'hole', label: 'Rabbit hole', icon: 'Wikipedia', q: 'How deep does she go?', hint: 'one 9-hour session' },
+  { id: 'hole', label: 'Rabbit hole', icon: 'Wikipedia', q: 'How deep does she go?', hint: 'where one search leads' },
   { id: 'mind', label: 'Mind', icon: 'youtube.com', q: 'What is she trying to understand?', hint: 'psychology and the self-help she watches' },
   { id: 'learning', label: 'Learning', icon: '@colab', q: 'How did she learn to build?', hint: 'her UT files, in order' },
   { id: 'career', label: 'Career', icon: 'LinkedIn', q: 'How did a search become a job?', hint: 'Oracle, month by month' },
@@ -370,7 +370,7 @@ const GUIDE_GROUPS = [
   ['Travel', ['where in the world is she looking?', 'has she searched Zurich?', 'is India in her searches?', 'where did she go in December?', 'was she in Chicago?', 'was she in New York?', 'was she home in Dallas?', 'did she go to Denver?', 'did she go to Miami?',
     'where did she want to go?', 'did she plan a trip to Tokyo?', 'did she plan a trip to Paris?', 'did she plan a trip to Barcelona?', 'did she plan a trip to Seattle?',
     'did she plan a trip to Honolulu?', 'did she plan a trip to Los Angeles?', 'did she plan a trip to Singapore?', 'did she plan a trip to Istanbul?']],
-  ['Rabbit hole', ['what was her longest rabbit hole?', 'how deep does she go?', 'how long was her longest session?']],
+  ['Rabbit hole', ['where does one search lead?', 'how did she plan New York?', 'where could she live after graduation?']],
   ['Learning', ['when did she pitch ClipCurator?', 'when did she start Python?', 'when did she learn loops?', 'when did she learn functions?', 'when did she learn dictionaries?',
     'when did she learn lambdas?', 'when did she learn pandas?', 'when was her Python final?', 'when did she learn JavaScript?', 'when did she write her first product brief?',
     'when did she learn the DOM?', 'how did she learn React?', 'when did she write product requirements?', 'when did she write backend routes?', 'when did she learn TypeScript?',
@@ -454,8 +454,8 @@ function answer(raw) {
   const top = D.learning.map(l => [l, stepScore(l)]).sort((x, y) => y[1] - x[1])[0], step = top[1] ? top[0] : null;
   if (step || /\blearn|study|class|python|coding\b/.test(q)) { const st = step || D.learning[1], i = D.learning.indexOf(st);
     return { id: 'learning', p: { step: i }, big: st.step, sub: new Date(st.date + 'T12:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }), text: `Step ${i + 1} of ${D.learning.length} in the file trail of her UT account, from a first Python notebook to a backend and a build sprint.`, next: ['how did she get the Oracle internship?'] }; }
-  if (/rabbit|deep|longest|session/.test(q)) { const R = D.rabbit_hole;
-    return { id: 'hole', p: {}, big: `${Math.floor(R.minutes / 60)}h ${R.minutes % 60}m`, sub: `${R.searches} searches · ${fmt(R.pages)} pages · Sep 30`, text: `It started at ${hr(+R.start_time.slice(0, 2) + +R.start_time.slice(3) / 60)} and ran past 2 AM, while she built her What's in My Bag site.`, next: ['when does she sleep?'] }; }
+  if (/rabbit|deep|longest|session|lead|plan new york|after graduation|live after/.test(q)) { const ri = /graduat|live after/.test(q) ? 1 : 0, R = D.rabbit_holes[ri];
+    return { id: 'hole', p: { i: ri }, big: `${R.minutes} min`, sub: `${R.searches} searches · ${new Date(R.date + 'T12:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`, text: `It started with “${R.searches_shown[0].q}” and ended with “${R.searches_shown.at(-1).q}”. ${R.after}`, next: ['where in the world is she looking?', 'when does she sleep?'] }; }
   if (/\bshop/.test(q)) { const fh = HT.map(r => r[0]), pk = fh.indexOf(Math.max(...fh));
     return { id: 'hours', p: { group: 'fashion', hour: pk + .5 }, big: hs(pk), sub: `when her fashion searches peak: ${fmt(fh[pk])} of them`, text: `Fashion searches run all evening and peak at <b>${hs(pk)}</b>. After midnight they give way to beauty.`, next: ['what does she search at 3 AM?', 'what is she obsessed with?'] }; }
   const topic = ['fashion', 'beauty', 'food', 'places'].find(t => q.includes(t));
@@ -722,24 +722,29 @@ VIEWS.mind = () => {
 };
 
 // ----------------------------------------------------------------- RABBIT HOLE: replay a session
-VIEWS.hole = () => {
-  const c = CH.find(x => x.id === 'hole'), RH = D.rabbit_hole, [h0, m0] = RH.start_time.split(':').map(Number), t0 = h0 * 60 + m0;
-  const at = x => hr(((t0 + x) % 1440) / 60);
-  const bins = Math.max(...RH.strip.map(s => s[0])) + 1, col = t => ({ code: 'rest', career: 'places', beauty: 'beauty', fashion: 'fashion', food: 'food' }[t] || 'none');
+VIEWS.hole = (p = {}) => {
+  const c = CH.find(x => x.id === 'hole'), HS = D.rabbit_holes, idx = Math.min(HS.length - 1, +p.i || 0), RH = HS[idx];
+  const [h0, m0] = RH.start_time.split(':').map(Number), t0 = h0 * 60 + m0, at = x => hr(((t0 + x) % 1440) / 60);
+  const bins = Math.max(...RH.strip.map(s => s[0])) + 1, col = t => ({ nyc: 'places', places: 'places', career: 'places', beauty: 'beauty', fashion: 'fashion', food: 'food' }[t] || 'none');
   const per = Array.from({ length: bins }, (_, i) => RH.strip.filter(s => s[0] === i)), pmax = Math.max(...per.map(p => p.reduce((a, s) => a + s[2], 0)));
-  $('page').innerHTML = `<div class="wrap">${head(c, `Sep 30. One session, ${Math.floor(RH.minutes / 60)} hours ${RH.minutes % 60} minutes long: ${RH.searches} searches and ${fmt(RH.pages)} pages while I built a site. Press play.`)}
-    <div class="panel"><div class="kicker">activity across the session, every ${Math.round(RH.minutes / bins)} minutes</div>
+  const day = new Date(RH.date + 'T12:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+  $('page').innerHTML = `<div class="wrap">${head(c, `One search turns into the next, and the next. Pick one and press play.`)}
+    <div class="pills" style="margin-bottom:14px">${HS.map((h, i) => `<button class="pill" data-h="${i}" aria-pressed="${i === idx}">${h.label}</button>`).join('')}</div>
+    <div class="panel"><div class="kicker">${day} · ${RH.minutes} minutes · ${RH.searches} searches · every 5 minutes</div>
       <div class="strip2">${per.map(p => `<div>${p.map(s => `<i style="height:${s[2] / pmax * 66}px;background:var(--t-${col(s[1])})"></i>`).join('')}</div>`).join('')}</div>
       <div style="display:flex;justify-content:space-between" class="sub"><span>${at(0)}</span><span>${at(RH.minutes)}</span></div>
       <div class="pills" style="margin-top:12px"><button class="pill go" id="rp">▶ Replay</button><span class="lbl" id="rclock"></span></div>
-      <div id="rs" style="margin-top:8px"></div></div></div>`;
-  const shown = RH.searches_shown;
+      <div id="rs" style="margin-top:8px"></div>
+      <p class="sub" id="rafter" style="margin-top:14px"></p></div></div>`;
+  $('page').querySelectorAll('[data-h]').forEach(b => b.onclick = () => go('hole', { i: +b.dataset.h }));
+  const shown = RH.searches_shown, hidden = RH.searches - shown.length;
+  const run = VIEWS.hole.run = (VIEWS.hole.run || 0) + 1;   // a replay stops when you switch rabbit holes
   let k = shown.length - 1;
   const draw = () => { $('rs').innerHTML = shown.map((s, i) => `<div class="step ${i > k ? 'dim' : ''} ${i === k ? 'cur' : ''}"><span class="t">${at(s.min)}</span><span class="s">${s.q}</span></div>`).join('') +
-    `<div class="step"><span class="t">…</span><span class="s" style="font-size:15px;color:var(--muted)"><span class="lock"></span> ${RH.searches - shown.length} more searches stay private</span></div>`;
-    $('rclock').textContent = k >= 0 ? `+${shown[k].min} min` : ''; };
+    (hidden > 0 ? `<div class="step"><span class="t">…</span><span class="s" style="font-size:15px;color:var(--muted)"><span class="lock"></span> ${hidden} more ${hidden === 1 ? 'search stays' : 'searches stay'} private</span></div>` : '');
+    $('rclock').textContent = k >= 0 ? `+${shown[k].min} min` : ''; $('rafter').textContent = k === shown.length - 1 ? RH.after : ''; };
   draw();
-  $('rp').onclick = () => { k = -1; draw(); const tick = () => { if (cur !== 'hole') return; k++; draw(); if (k < shown.length - 1) setTimeout(tick, reduce ? 0 : 900); }; setTimeout(tick, 300); };
+  $('rp').onclick = () => { k = -1; draw(); const tick = () => { if (cur !== 'hole' || run !== VIEWS.hole.run) return; k++; draw(); if (k < shown.length - 1) setTimeout(tick, reduce ? 0 : 900); }; setTimeout(tick, 300); };
 };
 
 // ----------------------------------------------------------------- CAREER: from a search to a job

@@ -17,7 +17,7 @@ The page is my Chrome window. You type the questions; the data answers them. The
 3. **Most visited:** sites sized by how many days I opened them, with when I open each one
 4. **Travel:** a world map of 107 places I searched (home, the trips I took, where I might study abroad, everywhere else), with the trips found from airport and "near me" searches
 5. **Watchlist:** 37 shows, movies and books I looked up, from searches and streaming history (Netflix never names titles, so only searched ones appear)
-6. **Rabbit hole:** replay a 9h 54m session from the night I built a site
+6. **Rabbit hole:** replay two sittings where one search led somewhere else: planning December in New York, and pricing life after graduation in three cities
 7. **Mind:** psychology as a possible interest, and the 202 self-help videos I watched, as themes and counts only
 8. **Learning:** my UT account's file trail, from a first Python notebook to React and a backend
 9. **Career:** how a search for Oracle internships became an internship
