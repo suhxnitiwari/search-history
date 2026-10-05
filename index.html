@@ -219,7 +219,7 @@ h1.q em { font-style: italic; color: var(--rose); }
 .ld { width: 100%; height: auto; overflow: visible; }
 .ld .ld-spine { font: 600 7.4px var(--ui); letter-spacing: .06em; fill: var(--cream); }
 .ld-sw { animation: ld-sw 3s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 0; }
-@keyframes ld-sw { 50% { transform: rotate(5deg); } }
+@keyframes ld-sw { 0%, 100% { transform: rotate(-2.5deg); } 50% { transform: rotate(2.5deg); } }
 .ld-sc { animation: ld-sc 3s linear infinite; } @keyframes ld-sc { to { stroke-dashoffset: -60; } }
 .ld-bob { animation: ld-bob2 2.8s ease-in-out infinite; transform-box: fill-box; transform-origin: center; } @keyframes ld-bob2 { 50% { transform: translateY(-4px); } }
 .ld-tw { animation: ld-tw 2.2s ease-in-out infinite; } .ld-tw:nth-of-type(2n) { animation-delay: -1.1s; } @keyframes ld-tw { 50% { opacity: .45; } }
@@ -618,7 +618,7 @@ const ARCH = 'M500,186 L500,130 C500,80 590,80 590,130 L590,186';
       <linearGradient id="ng${u}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--pk2)"/><stop offset=".5" stop-color="var(--pk1)"/><stop offset="1" stop-color="var(--pk3)"/></linearGradient></defs>
       <path d="${U_PATH}" fill="none" stroke="var(--gold)" stroke-width="2" stroke-dasharray="3 1.6"/>${st}
       <path d="M144,96 q6,-8 12,0 M224,96 q6,-8 12,0" fill="none" stroke="var(--gold)" stroke-width="2.4"/>
-      <g class="ld-sw" style="transform-origin:190px 172px"><circle cx="190" cy="176" r="3.5" fill="none" stroke="var(--gold)" stroke-width="2"/>
+      <g class="ld-sw" style="transform-box:view-box;transform-origin:190px 172px"><circle cx="190" cy="176" r="3.5" fill="none" stroke="var(--gold)" stroke-width="2"/>
         <path d="M190,180 C176,186 176,206 190,212 C204,206 204,186 190,180 Z" fill="var(--gold)" stroke="var(--ink)" stroke-width="1.2"/>
         <path d="M190,185 C180,190 180,203 190,207 C200,203 200,190 190,185 Z" fill="url(#ng${u})"/>
         <path d="M184,192 L190,186 L196,192 L190,205 Z" fill="none" stroke="var(--blush)" stroke-width=".9"/>
