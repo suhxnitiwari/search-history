@@ -33,7 +33,7 @@ The pipeline lives on my laptop with the raw data; only its small output, `data.
 
 ## How it's built
 
-- **104 suggested questions,** grouped by chapter, every one checked to land on a real answer.
+- **133 suggested questions,** grouped by chapter, every one checked to land on a real answer: when and where, plus what kind of person the data shows (taste, beauty, coffee, curiosity, decisions), ending on what Google would predict next.
 - **A search bar that answers in plain English.** It reads times ("3 AM", "midnight"), dates ("Oct 26"), nights of the week, cities, any site name and topics like Oracle or React, then answers with a featured-snippet card that opens the chapter at that exact point: the clock hand on 3 AM, Oct 26 lit up in the Days grid, the Chicago trip selected.
 - **It guides, it never types for you.** Suggestions filter as you type, Tab accepts an inline completion, and "People also ask" offers next questions.
 - **"Did you mean…?"** When nothing matches, each word is compared to the vocabulary with a Levenshtein edit-distance function, so "chikago" still finds Chicago.

@@ -367,6 +367,10 @@ const GUIDE_GROUPS = [
   ['Building', ['does she build things?', 'how many visits did her own sites get?', 'how much did she build in September?', 'did she change this year?']],
   ['Overall', ['who is Suhani?', 'what is she obsessed with?']],
 ];
+const FACT_ORDER = ['Taste', 'Beauty', 'Coffee and food', 'Curiosity', 'Decisions'];
+GUIDE_GROUPS.splice(GUIDE_GROUPS.findIndex(g => g[0] === 'Rabbit hole'), 0, ...FACT_ORDER.map(name => [name, D.facts.filter(f => f.group === name).map(f => f.q)]));
+GUIDE_GROUPS.push(['The ending', D.facts.filter(f => f.group === 'Ending').map(f => f.q)]);
+const GROUP_ICON = { Taste: 'aritzia.com', Beauty: 'sephora.com', 'Coffee and food': 'opentable.com', Curiosity: 'wikipedia.org', Decisions: '@search', 'The ending': '@search', Overall: '@search' };
 const GUIDES = GUIDE_GROUPS.flatMap(g => g[1]);
 const tripNote = t => t.name === 'Dallas' ? 'Home for winter break, between the New York and Denver trips.' : 'Found from her searches there, which stay private.';
 const MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
@@ -389,6 +393,10 @@ function parseDay(q) {
 const dayCount = (() => { const c = new Array(366).fill(0); for (const [d] of D.spiral) c[d]++; return c; })();
 function answer(raw) {
   const q = raw.toLowerCase().replace(/[’']/g, "'");
+  const norm = x => x.toLowerCase().replace(/[’']/g, "'").replace(/[?.!]+$/, '').trim();
+  const fact = D.facts.find(f => norm(f.q) === norm(q)) || D.facts.find(f => f.keys.some(k => q.includes(k)));
+  if (fact) return { id: fact.chapter, p: {}, big: fact.big, sub: fact.sub, text: fact.text,
+    next: D.facts.filter(f => f.group === fact.group && f !== fact).slice(0, 3).map(f => f.q).concat(D.facts.filter(f => f.group === 'Ending' && f !== fact).map(f => f.q)).slice(0, 3) };
   const H = parseHour(q), day = parseDay(q);
   const site = D.sites.find(s => q.includes(s.name.toLowerCase()) && s.name.length > 2);
   const trip = D.trips.went.findIndex(t => q.includes(t.name.toLowerCase()) || (t.name === 'New York' && /\bnyc\b/.test(q)));
@@ -453,7 +461,7 @@ function guideBox(inp, list, ghost, onSubmit) {
     items = v ? GUIDES.filter(g => g.toLowerCase().includes(v) || v.split(/\s+/).every(w => g.toLowerCase().includes(w))).slice(0, 10) : GUIDES;
     const btn = (g, i) => `<button type="button" data-i="${i}" aria-selected="${i === sel}"><span class="mag">⌕</span><span>${v ? g.replace(new RegExp(`(${v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'i'), '<b>$1</b>') : g}</span></button>`;
     let n = 0;
-    list.innerHTML = v ? items.map(btn).join('') : `<div class="ach">Try asking · ${GUIDES.length} questions</div>` + GUIDE_GROUPS.map(([name, qs]) => `<div class="acg">${fav(CH.find(c => c.label === name)?.icon || '@search')}${name}</div>` + qs.map(g => btn(g, n++)).join('')).join('');
+    list.innerHTML = v ? items.map(btn).join('') : `<div class="ach">Try asking · ${GUIDES.length} questions</div>` + GUIDE_GROUPS.map(([name, qs]) => `<div class="acg">${fav(CH.find(c => c.label === name)?.icon || GROUP_ICON[name] || '@search')}${name}</div>` + qs.map(g => btn(g, n++)).join('')).join('');
     const on = list.querySelector('[aria-selected="true"]'); if (on) on.scrollIntoView({ block: 'nearest' });
     list.hidden = !items.length;
     const first = items.find(g => g.toLowerCase().startsWith(v));
