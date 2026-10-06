@@ -368,7 +368,7 @@ $('evX').onclick = () => $('ev').hidden = true;
 const CH = [
   { id: 'hours', label: 'Hours', icon: '@search', q: 'When is she online?', hint: 'searches by time of day' },
   { id: 'days', label: 'Days', icon: '@calendar', q: 'Which site owned each day?', hint: 'one favicon per day' },
-  { id: 'sites', label: 'Most visited', icon: 'Instagram', q: 'Where does her attention go?', hint: 'sites by days opened' },
+  { id: 'sites', label: 'Most visited', icon: 'Gmail', q: 'Where does her attention go?', hint: 'sites by days opened' },
   { id: 'places', label: 'Travel', icon: '@maps', q: 'Where in the world is she looking?', hint: 'every place she searched, and the trips she took' },
   { id: 'watch', label: 'Watchlist', icon: 'netflix.com', q: 'What does she watch?', hint: 'shows, movies and books she looked up' },
   { id: 'hole', label: 'Rabbit hole', icon: 'Wikipedia', q: 'How deep does she go?', hint: 'where one search leads' },
@@ -606,23 +606,21 @@ const ARCH = 'M500,186 L500,130 C500,80 590,80 590,130 L590,186';
   <path d="M250,52 h32 M250,174 h32" stroke="var(--cream)" stroke-width="1.6" opacity=".8"/>
   <text class="ld-spine" transform="translate(269,113) rotate(-90)" text-anchor="middle">WUTHERING HEIGHTS</text>
   <line x1="244" y1="188" x2="356" y2="188" class="ld-ln"/>`;
-  const LETTERS = [u => `
-  <path d="${S_PATH}" fill="none" stroke="var(--pk2)" stroke-width="24" stroke-linecap="butt" opacity=".85"/>
-  <path d="${S_PATH}" fill="none" stroke="var(--pk4)" stroke-width="24" stroke-linecap="butt" stroke-dasharray="40 3 18 2 60 3" opacity=".35"/>
-  <path d="${S_PATH}" fill="none" stroke="var(--blush)" stroke-width="2" transform="translate(0,-7)" opacity=".7"/>
-  <g transform="translate(103,60) rotate(-38)"><path d="M-9,-6 L9,-6 L5,8 L-5,8 Z" fill="var(--pk1)" stroke="var(--ink)" stroke-width="1.6"/>
-    <rect x="-11" y="-58" width="22" height="52" rx="5" fill="var(--pearl)" stroke="var(--ink)" stroke-width="1.8"/><rect x="-11" y="-30" width="22" height="7" fill="var(--pk2)"/>
-    <rect x="-12" y="-66" width="24" height="12" rx="4" fill="var(--pk1)" stroke="var(--ink)" stroke-width="1.6"/></g>`, u => {
-    const st = along(U_PATH, 7).map(([x, y], i) => i === 3 ? '' : `<circle cx="${x}" cy="${y}" r="5.4" fill="url(#np${u})" stroke="color-mix(in srgb, var(--ink) 40%, transparent)" stroke-width=".8"/>`).join('');
+  const LETTERS = [u => { const lights = along(S_PATH, 12).flatMap(([x, y, a]) => { const r = a * Math.PI / 180, nx = -Math.sin(r), ny = Math.cos(r); return [1, -1].map(k => `<circle cx="${x + nx * 15 * k}" cy="${y + ny * 15 * k}" r="2.2" fill="var(--gold2)" stroke="var(--gold)" stroke-width=".8" class="ld-tw"/>`); }).join('');
+    return `<path d="${S_PATH}" fill="none" stroke="var(--pk5)" stroke-width="26" stroke-linecap="butt"/>
+      <path d="${S_PATH}" fill="none" stroke="var(--ink)" stroke-width="26" stroke-linecap="butt" opacity=".12"/>
+      <path d="${S_PATH}" fill="none" stroke="var(--cream)" stroke-width="2.4" stroke-dasharray="8 7"/>${lights}
+      <path d="M106,58 C112,46 120,38 132,30" fill="none" stroke="var(--muted)" stroke-width="1.6" stroke-dasharray="2 4" stroke-linecap="round"/>
+      <g transform="translate(134,28) rotate(-38)"><path d="M-12,0 L10,0 M2,-1 L-4,-9 L-1,-9 L8,-1 M2,1 L-4,9 L-1,9 L8,1 M-10,0 L-13,-5 M-10,0 L-13,5" fill="none" stroke="var(--pk3)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></g>`; }, u => {
+    const st = along(U_PATH, 13).map(([x, y], i) => i === 6 ? '' : `<circle cx="${x}" cy="${y}" r="6.6" fill="url(#np${u})" stroke="color-mix(in srgb, var(--ink) 40%, transparent)" stroke-width=".8"/>`).join('');
     return `<defs><radialGradient id="np${u}" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".6" stop-color="var(--pearl)"/><stop offset="1" stop-color="var(--gold2)"/></radialGradient>
       <linearGradient id="ng${u}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--pk2)"/><stop offset=".5" stop-color="var(--pk1)"/><stop offset="1" stop-color="var(--pk3)"/></linearGradient></defs>
-      <path d="${U_PATH}" fill="none" stroke="var(--gold)" stroke-width="2" stroke-dasharray="3 1.6"/>${st}
-      <path d="M144,96 q6,-8 12,0 M224,96 q6,-8 12,0" fill="none" stroke="var(--gold)" stroke-width="2.4"/>
-      <g class="ld-sw" style="transform-box:view-box;transform-origin:190px 172px"><circle cx="190" cy="176" r="3.5" fill="none" stroke="var(--gold)" stroke-width="2"/>
-        <path d="M190,180 C176,186 176,206 190,212 C204,206 204,186 190,180 Z" fill="var(--gold)" stroke="var(--ink)" stroke-width="1.2"/>
-        <path d="M190,185 C180,190 180,203 190,207 C200,203 200,190 190,185 Z" fill="url(#ng${u})"/>
-        <path d="M184,192 L190,186 L196,192 L190,205 Z" fill="none" stroke="var(--blush)" stroke-width=".9"/>
-        <circle cx="190" cy="217" r="4" fill="url(#np${u})" stroke="color-mix(in srgb, var(--ink) 40%, transparent)" stroke-width=".8"/></g>`; }, u => BOOKS, u => `
+      <path d="${U_PATH}" fill="none" stroke="var(--gold)" stroke-width="3.6" stroke-dasharray="4.6 2" stroke-linecap="round"/>${st}
+      <path d="M143,97 q7,-9 14,0 M223,97 q7,-9 14,0" fill="none" stroke="var(--gold)" stroke-width="3.4" stroke-linecap="round"/>
+      <g class="ld-sw" style="transform-box:view-box;transform-origin:190px 174px"><circle cx="190" cy="176.5" r="2.2" fill="none" stroke="var(--gold)" stroke-width="1.6"/>
+        <path d="M190,179 C183,182.5 183,191 190,194 C197,191 197,182.5 190,179 Z" fill="var(--gold)" stroke="var(--ink)" stroke-width="1"/>
+        <path d="M190,181.5 C186,184 186,189.5 190,191.5 C194,189.5 194,184 190,181.5 Z" fill="url(#ng${u})"/>
+        <circle cx="190" cy="197" r="2.4" fill="url(#np${u})" stroke="color-mix(in srgb, var(--ink) 40%, transparent)" stroke-width=".7"/></g>`; }, u => BOOKS, u => `
       <path d="M402,122 C400,80 452,80 450,122" fill="none" stroke="var(--pk3)" stroke-width="9" stroke-linecap="round"/>
       <path d="M402,122 C400,80 452,80 450,122" fill="none" stroke="var(--blush)" stroke-width="1.6" stroke-linecap="round" opacity=".7"/>
       <path d="M404,96 c-10,-2 -16,6 -14,14 M404,96 c-4,8 -2,18 4,22" fill="none" stroke="var(--pk2)" stroke-width="4" stroke-linecap="round"/>
@@ -636,12 +634,13 @@ const ARCH = 'M500,186 L500,130 C500,80 590,80 590,130 L590,186';
       <rect x="418" y="152" width="16" height="12" rx="3" fill="var(--gold)" stroke="var(--ink)" stroke-width="1.6"/><circle cx="426" cy="158" r="2.4" fill="var(--gold2)" stroke="var(--ink)" stroke-width="1"/>
       <path d="M386,176 L466,176" stroke="var(--cream)" stroke-width="1.1" stroke-dasharray="3 3" opacity=".7"/>
       <circle cx="388" cy="190" r="2.4" fill="var(--gold)"/><circle cx="464" cy="190" r="2.4" fill="var(--gold)"/>`, u => `
-    <path d="${ARCH}" fill="none" stroke="var(--ink)" stroke-width="30" stroke-linejoin="round"/>
-    <path d="${ARCH}" fill="none" stroke="#221C2A" stroke-width="22" stroke-linejoin="round"/>
-    <path d="${ARCH}" fill="none" stroke="#F3B9C9" stroke-width="3" stroke-dasharray="10 4 6 12 14 4" class="ld-sc" transform="translate(-6,0)"/>
-    <path d="${ARCH}" fill="none" stroke="#E9CF8C" stroke-width="3" stroke-dasharray="6 6 12 4 4 14" class="ld-sc" transform="translate(0,0)" style="animation-duration:4s"/>
-    <path d="${ARCH}" fill="none" stroke="#9BB08A" stroke-width="3" stroke-dasharray="14 8 4 4 8 16" class="ld-sc" transform="translate(6,0)" style="animation-duration:3.4s"/>
-    <circle cx="545" cy="77" r="2.6" fill="var(--pk2)"/><rect x="486" y="186" width="28" height="6" rx="2" fill="var(--ink)"/><rect x="576" y="186" width="28" height="6" rx="2" fill="var(--ink)"/>`, u => {
+    <path d="M504,158 L504,130 C504,82 586,82 586,130 L586,158" fill="none" stroke="var(--ink)" stroke-width="15" stroke-linecap="round"/>
+    <path d="M504,158 L504,130 C504,82 586,82 586,130 L586,158" fill="none" stroke="var(--pk1)" stroke-width="12" stroke-linecap="round"/>
+    <path d="M512,128 C512,96 578,96 578,128" fill="none" stroke="var(--blush)" stroke-width="2.6" stroke-linecap="round" opacity=".85"/>
+    ${[502, 588].map((x, i) => `<rect x="${x - 14}" y="146" width="28" height="44" rx="12" fill="var(--pk2)" stroke="var(--ink)" stroke-width="2"/>
+      <rect x="${i ? x - 14 : x + 6}" y="150" width="8" height="36" rx="4" fill="var(--blush)"/><circle cx="${x}" cy="168" r="3.2" fill="var(--pearl)" stroke="var(--gold)" stroke-width="1.2"/>`).join('')}
+    <g transform="translate(545,84)"><path d="M0,0 C-10,-10 -18,-2 -14,4 C-10,9 -3,4 0,0 Z M0,0 C10,-10 18,-2 14,4 C10,9 3,4 0,0 Z" fill="var(--pk3)" stroke="var(--ink)" stroke-width="1.4"/>
+      <path d="M-2,2 L-7,13 M2,2 L7,13" stroke="var(--pk3)" stroke-width="3" stroke-linecap="round"/><circle r="3" fill="var(--pk5)" stroke="var(--ink)" stroke-width="1.2"/></g>`, u => {
     const w = []; for (let y = 120; y < 184; y += 9) for (const x of [622, 630, 638]) w.push(`<rect x="${x - 1.6}" y="${y}" width="3.2" height="4.5" fill="var(--cream)" class="ld-tw"/>`);
     return `<g class="ld-bob"><circle cx="634" cy="58" r="13" fill="var(--cream)"/><circle cx="640" cy="54" r="11" fill="var(--surface)"/></g>
       <path d="M629,92 L631,76 L633,92 Z" fill="var(--pk3)"/><rect x="626" y="92" width="10" height="10" fill="var(--pk3)" stroke="var(--ink)" stroke-width="1.4"/>
@@ -651,11 +650,11 @@ const ARCH = 'M500,186 L500,130 C500,80 590,80 590,130 L590,186';
 })();
 
 
-const LD = [['S', 'a highlighter swatch', 'Zebra Mildliners, searched the night she built a site'],
+const LD = [['S', 'a runway', '107 places in her searches; the plane takes off for New York, the city she searches most'],
   ['u', 'a gold chain with pearls', 'from her jewelry searches'],
   ['h', 'books', 'learning: 17 courses, a 19-step build trail, and the books she looked up'],
   ['a', 'a handbag', 'Louis Vuitton is her luxury: 52 searches, busiest at 2 AM'],
-  ['n', 'a screen of code', 'her own sites went from 24 visits to 2,543 in September'],
+  ['n', 'cute headphones', 'music: 578 music videos on YouTube, her biggest category'],
   ['i', 'the Empire State Building', 'New York: 188 searches, the city she searches most after Austin']];
 function letterDoodle() {
   const cap = $('ldcap'); if (!cap) return; const rest = cap.textContent;
@@ -669,15 +668,15 @@ VIEWS.home = () => {
   const plus = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
   const spark = `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="11" r="5.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M14.2 15.2 19 20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M18.5 2.5l.9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.9z" fill="currentColor"/></svg>`;
   $('page').innerHTML = `<div class="home">
-    <h1 class="ldwrap" aria-label="Suhani"><svg class="ld" viewBox="0 0 680 222" role="img" aria-labelledby="ldt"><title id="ldt">Suhani, drawn from her searches: a highlighter swatch, a gold chain with pearls, books, a handbag, a screen of code and the Empire State Building</title>${ldSVG()}</svg></h1><div class="ldcap" id="ldcap" aria-live="polite">Hover a letter to see where it came from.</div>
+    <h1 class="ldwrap" aria-label="Suhani"><svg class="ld" viewBox="0 0 680 222" role="img" aria-labelledby="ldt"><title id="ldt">Suhani, drawn from her searches: a runway, a gold chain with pearls, books, a handbag, pink headphones and the Empire State Building</title>${ldSVG()}</svg></h1><div class="ldcap" id="ldcap" aria-live="polite">Hover a letter to see where it came from.</div>
     <p class="hint">A year of my Google searches, run through a data pipeline I built. Ask it anything about me.</p>
     <div class="sbox gbar"><button type="button" class="gplus" id="gplus" aria-label="See every question you can ask" data-tip="Every question you can ask">${plus}</button>
       <div class="field"><div class="ghost" id="gh"></div><input id="sq" autocomplete="off" spellcheck="false" aria-label="Ask a question about Suhani"></div>
       <button type="button" class="gask" id="gask">${spark}Ask</button><div class="ac" id="ac" hidden></div></div>
     <div class="gcards">${CARDS.map(c => `<button class="gcard" data-ask="${esc(c[0])}">${fav(c[2])}<span><b>${c[0]}</b><small>${c[1]}</small></span></button>`).join('')}</div>
     <button class="src" data-go-built style="font-family:var(--mono)">How I built it: ${fmt(D.meta.search_page_loads)} raw search logs → ${fmt(D.meta.searches)} searches → this page →</button>
-    <div class="tiles-h">Most visited · by days opened, Oct 2025 – Oct 2026</div>
-    <div class="tiles">${D.sites.slice(0, 4).map(s => `<button class="tile" data-site="${s.name}"><span class="c">${fav(s.name)}</span>${s.name}<small>${s.days} days</small></button>`).join('')}</div>
+    <div class="tiles-h">Most visited for work and school · by days opened, Oct 2025 – Oct 2026</div>
+    <div class="tiles">${D.sites.filter(x => !['Instagram', 'YouTube', 'Netflix', 'TikTok', 'Pinterest', 'Reddit', 'Disney+'].includes(x.name)).slice(0, 4).map(s => `<button class="tile" data-site="${s.name}"><span class="c">${fav(s.name)}</span>${s.name}<small>${s.days} days</small></button>`).join('')}</div>
   </div>`;
   const inp = $('sq');
   guideBox(inp, $('ac'), $('gh'), ask);
