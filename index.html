@@ -593,6 +593,8 @@ const ldSVG = (() => {
   const NS = 'http://www.w3.org/2000/svg';
   const S_PATH = 'M102,62 C90,38 40,38 40,72 C40,100 102,104 104,140 C106,176 60,188 32,168';
 const U_PATH = 'M150,100 C150,198 230,198 230,100';
+const LIFT = (() => { const p = document.createElementNS(NS, 'path'); p.setAttribute('d', S_PATH); const L = p.getTotalLength(); let b = { y: 1e9 };
+  for (let i = 0; i <= 200; i++) { const q = p.getPointAtLength(L * i / 200); if (q.y < b.y) b = { x: q.x, y: q.y, t: i / 200 }; } return b; })();
 const ARCH = 'M500,186 L500,130 C500,80 590,80 590,130 L590,186';
   function along(d, n, inset = 0) { const p = document.createElementNS(NS, 'path'); p.setAttribute('d', d); const L = p.getTotalLength();
   return Array.from({ length: n }, (_, i) => { const t = inset + (i + .5) / n * (L - 2 * inset), a = p.getPointAtLength(t), b = p.getPointAtLength(Math.min(L, t + 1)); return [a.x, a.y, Math.atan2(b.y - a.y, b.x - a.x) * 180 / Math.PI, t / L]; }); }
@@ -604,16 +606,15 @@ const ARCH = 'M500,186 L500,130 C500,80 590,80 590,130 L590,186';
   <g data-b="drop@600/460"><rect x="313" y="132" width="41" height="14" rx="2" fill="var(--cream)"/><rect x="313" y="132" width="41" height="14" rx="2" class="ld-ln" stroke-width="1.8"/><path d="M317,132 v14 M350,132 v14" stroke="var(--cream)" stroke-width="1" opacity=".7"/><text class="ld-tb" x="333.5" y="141.0" text-anchor="middle" font-size="5.6" fill="var(--pk3)">DECISIONS</text></g>
   <g data-b="drop@680/460"><rect x="311" y="118" width="43" height="14" rx="2" fill="var(--pk1)"/><rect x="311" y="118" width="43" height="14" rx="2" class="ld-ln" stroke-width="1.8"/><path d="M315,118 v14 M350,118 v14" stroke="var(--cream)" stroke-width="1" opacity=".7"/><text class="ld-tb" x="332.5" y="127.0" text-anchor="middle" font-size="5.6" fill="var(--cream)">WEB + AI</text></g>
   <g data-b="drop@790/460"><rect x="286" y="102" width="72" height="16" rx="2" fill="var(--pk4)"/><rect x="286" y="102" width="72" height="16" rx="2" class="ld-ln" stroke-width="1.8"/><path d="M290,102 v16 M354,102 v16" stroke="var(--cream)" stroke-width="1" opacity=".7"/><text class="ld-tb" x="322" y="112.2" text-anchor="middle" font-size="6" fill="var(--cream)">PRODUCT MGMT</text></g>
-  <g data-b="drop@80/460"><rect x="246" y="44" width="13" height="144" rx="2" fill="var(--pk5)"/><rect x="246" y="44" width="13" height="144" rx="2" class="ld-ln" stroke-width="1.8"/><path d="M246,54 h13 M246,176 h13" stroke="var(--cream)" stroke-width="1.2" opacity=".75"/><text class="ld-tb" transform="translate(254.7,116.0) rotate(-90)" text-anchor="middle" font-size="6" fill="var(--cream)">STRATEGY</text></g>
-  <g data-b="drop@170/460"><rect x="259" y="36" width="14" height="152" rx="2" fill="var(--pk3)"/><rect x="259" y="36" width="14" height="152" rx="2" class="ld-ln" stroke-width="1.8"/><path d="M259,46 h14 M259,176 h14" stroke="var(--cream)" stroke-width="1.2" opacity=".75"/><text class="ld-tb" transform="translate(268.2,112.0) rotate(-90)" text-anchor="middle" font-size="6" fill="var(--cream)">DATABASES</text></g>
-  <g data-b="drop@260/460"><rect x="273" y="48" width="13" height="140" rx="2" fill="var(--pk1)"/><rect x="273" y="48" width="13" height="140" rx="2" class="ld-ln" stroke-width="1.8"/><path d="M273,58 h13 M273,176 h13" stroke="var(--cream)" stroke-width="1.2" opacity=".75"/><text class="ld-tb" transform="translate(281.7,118.0) rotate(-90)" text-anchor="middle" font-size="6" fill="var(--cream)">WEB DEV</text></g>
-  <line data-b="spread@0/320" x1="240" y1="188" x2="362" y2="188" class="ld-ln"/>`;
-  const LETTERS = [u => { const lights = along(S_PATH, 12).flatMap(([x, y, a, t]) => { const r = a * Math.PI / 180, nx = -Math.sin(r), ny = Math.cos(r); return [1, -1].map(k => `<circle data-b="pop@${80 + Math.round(t * 620)}/260" cx="${x + nx * 15 * k}" cy="${y + ny * 15 * k}" r="2.2" fill="var(--gold2)" stroke="var(--gold)" stroke-width=".8" class="ld-tw"/>`); }).join('');
-    return `<path data-b="draw@0/700" d="${S_PATH}" fill="none" stroke="var(--pk5)" stroke-width="26" stroke-linecap="butt"/>
-      <path data-b="draw@0/700" d="${S_PATH}" fill="none" stroke="var(--ink)" stroke-width="26" stroke-linecap="butt" opacity=".12"/>
-      <path data-b="fade@450/350" d="${S_PATH}" fill="none" stroke="var(--cream)" stroke-width="2.4" stroke-dasharray="8 7"/>${lights}
-      <path data-b="fade@760/400" d="M106,58 C112,46 120,38 132,30" fill="none" stroke="var(--muted)" stroke-width="1.6" stroke-dasharray="2 4" stroke-linecap="round"/>
-      <g data-b="fly@640/700"><g transform="translate(134,28) rotate(-38)"><path d="M-12,0 L10,0 M2,-1 L-4,-9 L-1,-9 L8,-1 M2,1 L-4,9 L-1,9 L8,1 M-10,0 L-13,-5 M-10,0 L-13,5" fill="none" stroke="var(--pk3)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></g></g>`; }, u => `
+  <g data-b="drop@80/460"><rect x="250" y="36" width="18" height="152" rx="2" fill="var(--pk3)"/><rect x="250" y="36" width="18" height="152" rx="2" class="ld-ln" stroke-width="1.8"/><path d="M250,46 h18 M250,176 h18" stroke="var(--cream)" stroke-width="1.2" opacity=".75"/><text class="ld-tb" transform="translate(261.6,112.0) rotate(-90)" text-anchor="middle" font-size="7" fill="var(--cream)">DATABASES</text></g>
+  <g data-b="drop@200/460"><rect x="268" y="48" width="18" height="140" rx="2" fill="var(--pk1)"/><rect x="268" y="48" width="18" height="140" rx="2" class="ld-ln" stroke-width="1.8"/><path d="M268,58 h18 M268,176 h18" stroke="var(--cream)" stroke-width="1.2" opacity=".75"/><text class="ld-tb" transform="translate(279.6,118.0) rotate(-90)" text-anchor="middle" font-size="7" fill="var(--cream)">WEB DEV</text></g>
+  <line data-b="spread@0/320" x1="244" y1="188" x2="362" y2="188" class="ld-ln"/>`;
+  const LETTERS = [u => { const lights = along(S_PATH, 12).flatMap(([x, y, a, t]) => { const r = a * Math.PI / 180, nx = -Math.sin(r), ny = Math.cos(r); return [1, -1].map(k => `<circle data-t="${t.toFixed(3)}" cx="${x + nx * 15 * k}" cy="${y + ny * 15 * k}" r="2.2" fill="var(--gold2)" stroke="var(--gold)" stroke-width=".8" class="ld-tw"/>`); }).join('');
+    return `<path data-run d="${S_PATH}" fill="none" stroke="var(--pk5)" stroke-width="26" stroke-linecap="butt"/>
+      <path data-run d="${S_PATH}" fill="none" stroke="var(--ink)" stroke-width="26" stroke-linecap="butt" opacity=".12"/>
+      <path data-after="roll" d="${S_PATH}" fill="none" stroke="var(--cream)" stroke-width="2.4" stroke-dasharray="8 7"/>${lights}
+      <path data-after="lift" d="M${LIFT.x.toFixed(1)},${LIFT.y.toFixed(1)} C${(LIFT.x + 20).toFixed(1)},${LIFT.y.toFixed(1)} 113,44 124.5,35.4" fill="none" stroke="var(--muted)" stroke-width="1.6" stroke-dasharray="2 4" stroke-linecap="round"/>
+      <g><g data-plane="${LIFT.t.toFixed(3)}" transform="translate(134,28) rotate(-38)"><path d="M-12,0 L10,0 M2,-1 L-4,-9 L-1,-9 L8,-1 M2,1 L-4,9 L-1,9 L8,1 M-10,0 L-13,-5 M-10,0 L-13,5" fill="none" stroke="var(--cream)" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M-12,0 L10,0 M2,-1 L-4,-9 L-1,-9 L8,-1 M2,1 L-4,9 L-1,9 L8,1 M-10,0 L-13,-5 M-10,0 L-13,5" fill="none" stroke="var(--pk3)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></g></g>`; }, u => `
       <g data-b="rise@820/600"><g class="ld-steam"><path d="M170,80 c-7,-9 7,-14 0,-24"/><path d="M190,76 c-7,-9 7,-14 0,-24"/><path d="M210,80 c-7,-9 7,-14 0,-24"/></g></g>
       <path data-b="spread@0/380" d="M150,192 L226,192" stroke="var(--pk4)" stroke-width="5" stroke-linecap="round" opacity=".7"/>
       <path data-b="draw@480/350" d="M229,118 C248,116 250,146 229,148" fill="none" stroke="var(--pk3)" stroke-width="6" stroke-linecap="round"/>
@@ -644,13 +645,13 @@ const ARCH = 'M500,186 L500,130 C500,80 590,80 590,130 L590,186';
       <rect x="${i ? x - 14 : x + 6}" y="150" width="8" height="36" rx="4" fill="var(--blush)"/><circle cx="${x}" cy="168" r="3.2" fill="var(--pearl)" stroke="var(--gold)" stroke-width="1.2"/></g>`).join('')}
     <g data-b="bow@720/520"><g transform="translate(545,84)"><path d="M0,0 C-10,-10 -18,-2 -14,4 C-10,9 -3,4 0,0 Z M0,0 C10,-10 18,-2 14,4 C10,9 3,4 0,0 Z" fill="var(--pk3)" stroke="var(--ink)" stroke-width="1.4"/>
       <path d="M-2,2 L-7,13 M2,2 L7,13" stroke="var(--pk3)" stroke-width="3" stroke-linecap="round"/><circle r="3" fill="var(--pk5)" stroke="var(--ink)" stroke-width="1.2"/></g></g>`, u => `
-      <g data-b="fall@700/560"><g class="ld-bob"><path d="M630,46 C622,58 620,66 630,70 C640,66 638,58 630,46 Z" fill="var(--pk1)" stroke="var(--ink)" stroke-width="1.4"/><path d="M627,58 c-1,3 -1,6 1,8" fill="none" stroke="var(--blush)" stroke-width="1.6" stroke-linecap="round"/></g></g>
-      <path data-b="grow@420/360" d="M621,104 C620,92 624,82 630,76 C636,82 640,92 639,104 Z" fill="var(--pearl)" stroke="var(--ink)" stroke-width="1.6" stroke-linejoin="round"/>
-      <path data-b="grow@420/360" d="M624,90 C625,84 627,80 630,76 C633,80 635,84 636,90 Z" fill="var(--pk1)"/>
-      <rect data-b="pop@300/300" x="620" y="104" width="20" height="14" rx="2" fill="var(--gold)" stroke="var(--ink)" stroke-width="1.6"/><path data-b="pop@300/300" d="M620,109 h20" stroke="var(--gold2)" stroke-width="1.4"/>
-      <path data-b="grow@60/420" d="M622,118 L638,118 L636,184 Q636,190 630,190 Q624,190 624,184 Z" fill="var(--pk3)" stroke="var(--ink)" stroke-width="1.6" stroke-linejoin="round"/>
-      <path data-b="fade@380/300" d="M627,124 L626,178" stroke="var(--blush)" stroke-width="2.4" stroke-linecap="round" opacity=".8"/>
-      <path data-b="spread@0/360" d="M606,190 C616,184 644,184 656,190" fill="none" stroke="var(--pk2)" stroke-width="5" stroke-linecap="round" opacity=".8"/>`];
+      <g data-b="flick@1250/520"><g class="ld-bob"><path d="M630,46 C622,58 620,66 630,70 C640,66 638,58 630,46 Z" fill="var(--pk1)" stroke="var(--ink)" stroke-width="1.4"/><path d="M627,58 c-1,3 -1,6 1,8" fill="none" stroke="var(--blush)" stroke-width="1.6" stroke-linecap="round"/></g></g>
+      <path data-b="draw@200/650" d="M606,190 C616,184 644,184 656,190" fill="none" stroke="var(--pk2)" stroke-width="5" stroke-linecap="round" opacity=".8"/>
+      <g data-b="paint@0/1300"><path d="M621,104 C620,92 624,82 630,76 C636,82 640,92 639,104 Z" fill="var(--pearl)" stroke="var(--ink)" stroke-width="1.6" stroke-linejoin="round"/>
+      <path d="M624,90 C625,84 627,80 630,76 C633,80 635,84 636,90 Z" fill="var(--pk1)"/>
+      <rect x="620" y="104" width="20" height="14" rx="2" fill="var(--gold)" stroke="var(--ink)" stroke-width="1.6"/><path d="M620,109 h20" stroke="var(--gold2)" stroke-width="1.4"/>
+      <path d="M622,118 L638,118 L636,184 Q636,190 630,190 Q624,190 624,184 Z" fill="var(--pk3)" stroke="var(--ink)" stroke-width="1.6" stroke-linejoin="round"/>
+      <path d="M627,124 L626,178" stroke="var(--blush)" stroke-width="2.4" stroke-linecap="round" opacity=".8"/></g>`];
   return () => LETTERS.map((f, i) => `<g data-k="${i}" tabindex="0">${f('ld' + i)}</g>`).join('');
 })();
 
@@ -674,21 +675,63 @@ const LD_FX = {
   rise: [{ transform: 'translateY(12px)', opacity: 0 }, { transform: 'none', opacity: 1 }],
   fly: [{ transform: 'translate(-34px,30px) scale(.5)', opacity: 0 }, { transform: 'none', opacity: 1 }],
   swing: [{ transform: 'rotate(40deg)', opacity: 0 }, { transform: 'rotate(-14deg)', opacity: 1, offset: .5 }, { transform: 'rotate(6deg)', offset: .78 }, { transform: 'none', opacity: 1 }],
+  // the brush, upside down, sweeps its paint along the ground, then lifts and turns upright into the i
+  paint: [{ transform: 'translate(-26px,2px) rotate(160deg)', opacity: 0 }, { transform: 'translate(-24px,2px) rotate(162deg)', opacity: 1, offset: .12 },
+    { transform: 'translate(26px,2px) rotate(196deg)', offset: .62 }, { transform: 'translate(6px,-16px) rotate(300deg)', offset: .85 }, { transform: 'translate(0,0) rotate(360deg)', opacity: 1 }],
+  flick: [{ transform: 'translateY(34px) scale(.2)', opacity: 0 }, { transform: 'translateY(-12px) scale(.9,1.15)', opacity: 1, offset: .55 }, { transform: 'translateY(2px) scale(1.15,.85)', offset: .8 }, { transform: 'none', opacity: 1 }],
   bow: [{ transform: 'scale(0) rotate(-90deg)', opacity: 0 }, { transform: 'scale(1.2) rotate(8deg)', opacity: 1, offset: .7 }, { transform: 'none', opacity: 1 }]
 };
 const LD_ORIGIN = { grow: '50% 100%', flap: '50% 0', drop: '50% 100%', swing: '50% 0', fall: '50% 100%' };
+// The S paves from the bottom up with the plane rolling along the fresh runway, switching the lights on as it
+// passes; at the top of the curve it lifts off and climbs to where it flies in the finished doodle.
+function ldTakeoff(g, t0) {
+  const after = k => g.querySelector(`[data-after="${k}"]`), show = el => el.animate(LD_FX.fade, { duration: 500, fill: 'backwards' }) && (el.style.visibility = '');
+  const runs = [...g.querySelectorAll('[data-run]')], lights = [...g.querySelectorAll('[data-t]')], plane = g.querySelector('[data-plane]');
+  const path = runs[0], L = path.getTotalLength(), lift = +plane.dataset.plane * L, ROLL = 1300, FLY = 750;
+  const END = { x: 134, y: 28, a: -38 }, at = s => path.getPointAtLength(Math.max(0, Math.min(L, s)));
+  runs.forEach(r => { r.setAttribute('pathLength', '1'); r.style.strokeDasharray = '1 1'; r.style.strokeDashoffset = '-1'; });
+  after('roll').style.visibility = after('lift').style.visibility = 'hidden';
+  lights.forEach(c => { c.style.visibility = 'hidden'; c.style.transformBox = 'fill-box'; c.style.transformOrigin = '50% 50%'; }); plane.style.visibility = 'hidden';
+  const put = (x, y, a, sc) => plane.setAttribute('transform', `translate(${x.toFixed(1)},${y.toFixed(1)}) rotate(${a.toFixed(1)}) scale(${sc.toFixed(2)})`);
+  let start = null, off = null, from = null;
+  const frame = now => {
+    if (!document.body.contains(g)) return;
+    const p = Math.min(1, Math.max(0, now - start) / ROLL), e = p * p * (1.6 - .6 * p), front = L * (1 - e);
+    runs.forEach(r => r.style.strokeDashoffset = String(-(1 - e)));
+    lights.forEach(c => { if (c.style.visibility === 'hidden' && front <= +c.dataset.t * L) { c.style.visibility = ''; c.animate(LD_FX.pop, { duration: 260, easing: 'ease-out' }); } });
+    if (off === null) {
+      plane.style.visibility = '';
+      const s = Math.max(front, lift), a = at(s), b = at(s - 2);
+      put(a.x, a.y, Math.atan2(b.y - a.y, b.x - a.x) * 180 / Math.PI, 1.1);
+      if (front <= lift) { off = now; show(after('lift')); const b2 = at(lift - 2); from = { x: a.x, y: a.y, dx: b2.x - a.x, dy: b2.y - a.y }; }
+    } else {
+      // climb out along a curve: leave along the runway's heading, arrive on the doodle's final heading
+      const q = Math.min(1, (now - off) / FLY), u = 1 - (1 - q) ** 3, n = Math.hypot(from.dx, from.dy), r = END.a * Math.PI / 180;
+      const P1 = { x: from.x + from.dx / n * 22, y: from.y + from.dy / n * 22 }, P2 = { x: END.x - Math.cos(r) * 18, y: END.y - Math.sin(r) * 18 };
+      const B = (t, k) => (1 - t) ** 3 * from[k] + 3 * (1 - t) ** 2 * t * P1[k] + 3 * (1 - t) * t * t * P2[k] + t ** 3 * END[k];
+      const x = B(u, 'x'), y = B(u, 'y'), x2 = B(Math.min(1, u + .01), 'x'), y2 = B(Math.min(1, u + .01), 'y');
+      if (p === 1 && after('roll').style.visibility) show(after('roll'));
+      if (q < 1) put(x, y, Math.atan2(y2 - y, x2 - x) * 180 / Math.PI, 1.1 - .1 * u + .35 * Math.sin(u * Math.PI));
+      else plane.setAttribute('transform', 'translate(134,28) rotate(-38)');
+      if (q === 1 && p === 1) { runs.forEach(r => { r.removeAttribute('pathLength'); r.style.strokeDasharray = r.style.strokeDashoffset = ''; }); return; }
+    }
+    requestAnimationFrame(frame);
+  };
+  setTimeout(() => { start = performance.now(); requestAnimationFrame(frame); }, t0);
+}
 let ldBuilt = false;
 function ldBuild() {
   if (ldBuilt || reduce) return; ldBuilt = true;
   $('page').querySelectorAll('.ld g[data-k]').forEach((g, k) => {
-    const t0 = 150 + k * 700;
+    const t0 = k ? 1500 + (k - 1) * 650 : 150;
     // anything without its own entrance just fades in with its letter
-    [...g.children].filter(el => !el.dataset.b).forEach(el => el.animate(LD_FX.fade, { duration: 300, delay: t0, fill: 'backwards' }));
+    if (k === 0) ldTakeoff(g, t0);
+    [...g.children].filter(el => !el.dataset.b && !el.dataset.t && !el.dataset.after && el.dataset.run === undefined).forEach(el => el.animate(LD_FX.fade, { duration: 300, delay: t0, fill: 'backwards' }));
     g.querySelectorAll('[data-b]').forEach(el => {
       const [, fx, d, dur] = el.dataset.b.match(/(\w+)@(\d+)\/(\d+)/), delay = t0 + +d, o = { duration: +dur, delay, fill: 'backwards', easing: 'cubic-bezier(.3,.7,.3,1)' };
       if (fx === 'draw') {
         el.setAttribute('pathLength', '1');
-        el.animate([{ strokeDasharray: '1 1', strokeDashoffset: 1 }, { strokeDasharray: '1 1', strokeDashoffset: 0 }], { ...o, easing: 'ease-in-out' }).finished.then(() => el.removeAttribute('pathLength'), () => {});
+        el.animate([{ strokeDasharray: '1 1', strokeDashoffset: 1, opacity: 0 }, { opacity: 1, offset: .04 }, { strokeDasharray: '1 1', strokeDashoffset: 0, opacity: 1 }], { ...o, easing: 'ease-in-out' }).finished.then(() => el.removeAttribute('pathLength'), () => {});
         return;
       }
       el.style.transformBox = 'fill-box'; el.style.transformOrigin = LD_ORIGIN[fx] || '50% 50%';
