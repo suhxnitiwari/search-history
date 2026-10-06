@@ -642,12 +642,14 @@ const ARCH = 'M500,186 L500,130 C500,80 590,80 590,130 L590,186';
     ${[502, 588].map((x, i) => `<rect x="${x - 14}" y="146" width="28" height="44" rx="12" fill="var(--pk2)" stroke="var(--ink)" stroke-width="2"/>
       <rect x="${i ? x - 14 : x + 6}" y="150" width="8" height="36" rx="4" fill="var(--blush)"/><circle cx="${x}" cy="168" r="3.2" fill="var(--pearl)" stroke="var(--gold)" stroke-width="1.2"/>`).join('')}
     <g transform="translate(545,84)"><path d="M0,0 C-10,-10 -18,-2 -14,4 C-10,9 -3,4 0,0 Z M0,0 C10,-10 18,-2 14,4 C10,9 3,4 0,0 Z" fill="var(--pk3)" stroke="var(--ink)" stroke-width="1.4"/>
-      <path d="M-2,2 L-7,13 M2,2 L7,13" stroke="var(--pk3)" stroke-width="3" stroke-linecap="round"/><circle r="3" fill="var(--pk5)" stroke="var(--ink)" stroke-width="1.2"/></g>`, u => {
-    const w = []; for (let y = 120; y < 184; y += 9) for (const x of [622, 630, 638]) w.push(`<rect x="${x - 1.6}" y="${y}" width="3.2" height="4.5" fill="var(--cream)" class="ld-tw"/>`);
-    return `<g class="ld-bob"><circle cx="634" cy="58" r="13" fill="var(--cream)"/><circle cx="640" cy="54" r="11" fill="var(--surface)"/></g>
-      <path d="M629,92 L631,76 L633,92 Z" fill="var(--pk3)"/><rect x="626" y="92" width="10" height="10" fill="var(--pk3)" stroke="var(--ink)" stroke-width="1.4"/>
-      <rect x="620" y="102" width="22" height="12" fill="var(--pk5)" stroke="var(--ink)" stroke-width="1.4"/><rect x="614" y="114" width="34" height="74" fill="var(--pk5)" stroke="var(--ink)" stroke-width="1.6"/>
-      <rect x="608" y="160" width="46" height="28" fill="var(--pk3)" stroke="var(--ink)" stroke-width="1.6"/>${w.join('')}<line x1="602" y1="188" x2="660" y2="188" class="ld-ln"/>`; }];
+      <path d="M-2,2 L-7,13 M2,2 L7,13" stroke="var(--pk3)" stroke-width="3" stroke-linecap="round"/><circle r="3" fill="var(--pk5)" stroke="var(--ink)" stroke-width="1.2"/></g>`, u => `
+      <g class="ld-bob"><path d="M630,46 C622,58 620,66 630,70 C640,66 638,58 630,46 Z" fill="var(--pk1)" stroke="var(--ink)" stroke-width="1.4"/><path d="M627,58 c-1,3 -1,6 1,8" fill="none" stroke="var(--blush)" stroke-width="1.6" stroke-linecap="round"/></g>
+      <path d="M621,104 C620,92 624,82 630,76 C636,82 640,92 639,104 Z" fill="var(--pearl)" stroke="var(--ink)" stroke-width="1.6" stroke-linejoin="round"/>
+      <path d="M624,90 C625,84 627,80 630,76 C633,80 635,84 636,90 Z" fill="var(--pk1)"/>
+      <rect x="620" y="104" width="20" height="14" rx="2" fill="var(--gold)" stroke="var(--ink)" stroke-width="1.6"/><path d="M620,109 h20" stroke="var(--gold2)" stroke-width="1.4"/>
+      <path d="M622,118 L638,118 L636,184 Q636,190 630,190 Q624,190 624,184 Z" fill="var(--pk3)" stroke="var(--ink)" stroke-width="1.6" stroke-linejoin="round"/>
+      <path d="M627,124 L626,178" stroke="var(--blush)" stroke-width="2.4" stroke-linecap="round" opacity=".8"/>
+      <path d="M606,190 C616,184 644,184 656,190" fill="none" stroke="var(--pk2)" stroke-width="5" stroke-linecap="round" opacity=".8"/>`];
   return () => LETTERS.map((f, i) => `<g data-k="${i}" tabindex="0">${f('ld' + i)}</g>`).join('');
 })();
 
@@ -657,7 +659,7 @@ const LD = [['S', 'a runway', '107 places in her searches; the plane takes off f
   ['h', 'school textbooks', 'learning: textbooks from her courses, 17 of them in her browser, from databases to marketing'],
   ['a', 'a handbag', 'shopping: fashion in all 53 weeks of her year, Aritzia in every month, dresses her #1 search, and 99 searches for a sale'],
   ['n', 'cute headphones', 'music: 578 music videos on YouTube, her biggest category'],
-  ['i', 'the Empire State Building', 'New York: 188 searches, the city she searches most after Austin']];
+  ['i', 'a paintbrush', 'art and design: 72 searches on 23 days, from studio art classes to a whole day collecting illustrations for her own designs']];
 function letterDoodle() {
   const cap = $('ldcap'); if (!cap) return; const rest = cap.textContent;
   $('page').querySelectorAll('.ld g[data-k]').forEach(g => { const [l, n, t] = LD[+g.dataset.k];
@@ -670,7 +672,7 @@ VIEWS.home = () => {
   const plus = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
   const spark = `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="11" r="5.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M14.2 15.2 19 20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M18.5 2.5l.9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.9z" fill="currentColor"/></svg>`;
   $('page').innerHTML = `<div class="home">
-    <h1 class="ldwrap" aria-label="Suhani"><svg class="ld" viewBox="0 0 680 222" role="img" aria-label="Suhani, drawn from her searches: a runway, a coffee cup, school textbooks, a handbag, pink headphones and the Empire State Building">${ldSVG()}</svg></h1><div class="ldcap" id="ldcap" aria-live="polite">Hover a letter to see where it came from.</div>
+    <h1 class="ldwrap" aria-label="Suhani"><svg class="ld" viewBox="0 0 680 222" role="img" aria-label="Suhani, drawn from her searches: a runway, a coffee cup, school textbooks, a handbag, pink headphones and a paintbrush">${ldSVG()}</svg></h1><div class="ldcap" id="ldcap" aria-live="polite">Hover a letter to see where it came from.</div>
     <p class="hint">A year of my Google searches, run through a data pipeline I built. Ask it anything about me.</p>
     <div class="sbox gbar"><button type="button" class="gplus" id="gplus" aria-label="See every question you can ask" data-tip="Every question you can ask">${plus}</button>
       <div class="field"><div class="ghost" id="gh"></div><input id="sq" autocomplete="off" spellcheck="false" aria-label="Ask a question about Suhani"></div>
