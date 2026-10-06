@@ -645,9 +645,9 @@ const ARCH = 'M500,186 L500,130 C500,80 590,80 590,130 L590,186';
       <rect x="${i ? x - 14 : x + 6}" y="150" width="8" height="36" rx="4" fill="var(--blush)"/><circle cx="${x}" cy="168" r="3.2" fill="var(--pearl)" stroke="var(--gold)" stroke-width="1.2"/></g>`).join('')}
     <g data-b="bow@720/520"><g transform="translate(545,84)"><path d="M0,0 C-10,-10 -18,-2 -14,4 C-10,9 -3,4 0,0 Z M0,0 C10,-10 18,-2 14,4 C10,9 3,4 0,0 Z" fill="var(--pk3)" stroke="var(--ink)" stroke-width="1.4"/>
       <path d="M-2,2 L-7,13 M2,2 L7,13" stroke="var(--pk3)" stroke-width="3" stroke-linecap="round"/><circle r="3" fill="var(--pk5)" stroke="var(--ink)" stroke-width="1.2"/></g></g>`, u => `
-      <g data-b="flick@1250/520"><g class="ld-bob"><path d="M630,46 C622,58 620,66 630,70 C640,66 638,58 630,46 Z" fill="var(--pk1)" stroke="var(--ink)" stroke-width="1.4"/><path d="M627,58 c-1,3 -1,6 1,8" fill="none" stroke="var(--blush)" stroke-width="1.6" stroke-linecap="round"/></g></g>
-      <path data-b="draw@200/650" d="M606,190 C616,184 644,184 656,190" fill="none" stroke="var(--pk2)" stroke-width="5" stroke-linecap="round" opacity=".8"/>
-      <g data-b="paint@0/1300"><path d="M621,104 C620,92 624,82 630,76 C636,82 640,92 639,104 Z" fill="var(--pearl)" stroke="var(--ink)" stroke-width="1.6" stroke-linejoin="round"/>
+      <g class="ld-bob">${[0, 1, 2, 3, 4].map(k => `<g data-b="pop@${510 + k * 220}/300"><ellipse cx="630" cy="41.5" rx="4.2" ry="6.6" fill="var(${k % 2 ? '--pk2' : '--pk4'})" stroke="var(--ink)" stroke-width="1.2" transform="rotate(${k * 72} 630 48)"/></g>`).join('')}<circle data-b="pop@1600/300" cx="630" cy="48" r="3.4" fill="var(--gold2)" stroke="var(--ink)" stroke-width="1.1"/></g>
+      <path data-b="spread@0/360" d="M606,190 C616,184 644,184 656,190" fill="none" stroke="var(--pk2)" stroke-width="5" stroke-linecap="round" opacity=".8"/>
+      <g data-b="brush@0/2000"><path d="M621,104 C620,92 624,82 630,76 C636,82 640,92 639,104 Z" fill="var(--pearl)" stroke="var(--ink)" stroke-width="1.6" stroke-linejoin="round"/>
       <path d="M624,90 C625,84 627,80 630,76 C633,80 635,84 636,90 Z" fill="var(--pk1)"/>
       <rect x="620" y="104" width="20" height="14" rx="2" fill="var(--gold)" stroke="var(--ink)" stroke-width="1.6"/><path d="M620,109 h20" stroke="var(--gold2)" stroke-width="1.4"/>
       <path d="M622,118 L638,118 L636,184 Q636,190 630,190 Q624,190 624,184 Z" fill="var(--pk3)" stroke="var(--ink)" stroke-width="1.6" stroke-linejoin="round"/>
@@ -675,13 +675,16 @@ const LD_FX = {
   rise: [{ transform: 'translateY(12px)', opacity: 0 }, { transform: 'none', opacity: 1 }],
   fly: [{ transform: 'translate(-34px,30px) scale(.5)', opacity: 0 }, { transform: 'none', opacity: 1 }],
   swing: [{ transform: 'rotate(40deg)', opacity: 0 }, { transform: 'rotate(-14deg)', opacity: 1, offset: .5 }, { transform: 'rotate(6deg)', offset: .78 }, { transform: 'none', opacity: 1 }],
-  // the brush, upside down, sweeps its paint along the ground, then lifts and turns upright into the i
-  paint: [{ transform: 'translate(-26px,2px) rotate(160deg)', opacity: 0 }, { transform: 'translate(-24px,2px) rotate(162deg)', opacity: 1, offset: .12 },
-    { transform: 'translate(26px,2px) rotate(196deg)', offset: .62 }, { transform: 'translate(6px,-16px) rotate(300deg)', offset: .85 }, { transform: 'translate(0,0) rotate(360deg)', opacity: 1 }],
-  flick: [{ transform: 'translateY(34px) scale(.2)', opacity: 0 }, { transform: 'translateY(-12px) scale(.9,1.15)', opacity: 1, offset: .55 }, { transform: 'translateY(2px) scale(1.15,.85)', offset: .8 }, { transform: 'none', opacity: 1 }],
+  // the brush rises in, reaches up and paints the flower petal by petal (its tip is the transform origin, so
+  // each step puts the tip on a petal), dabs the gold center, then settles back down into the i
+  brush: (() => { const at = (dx, dy, r, offset, o = {}) => ({ transform: `translate(${dx}px,${dy}px) rotate(${r}deg)`, offset, ...o });
+    const f = [at(0, 30, 0, 0, { opacity: 0 }), at(0, 0, 0, .12, { opacity: 1 }), at(0, -28, 0, .2)];
+    for (let k = 0; k < 5; k++) { const a = (k * 72 - 90) * Math.PI / 180, t = .2 + k * .11;
+      f.push(at(Math.cos(a) * 11, -28 + Math.sin(a) * 11, Math.cos(a) * 14, t + .055), at(Math.cos(a) * 3, -28 + Math.sin(a) * 3, 0, t + .11)); }
+    return [...f, at(0, -26, 0, .8), at(0, -30, 0, .84), at(0, 0, 0, 1, { opacity: 1 })]; })(),
   bow: [{ transform: 'scale(0) rotate(-90deg)', opacity: 0 }, { transform: 'scale(1.2) rotate(8deg)', opacity: 1, offset: .7 }, { transform: 'none', opacity: 1 }]
 };
-const LD_ORIGIN = { grow: '50% 100%', flap: '50% 0', drop: '50% 100%', swing: '50% 0', fall: '50% 100%' };
+const LD_ORIGIN = { brush: '630px 76px', grow: '50% 100%', flap: '50% 0', drop: '50% 100%', swing: '50% 0', fall: '50% 100%' };
 // The S paves from the bottom up with the plane rolling along the fresh runway, switching the lights on as it
 // passes; at the top of the curve it lifts off and climbs to where it flies in the finished doodle.
 function ldTakeoff(g, t0) {
@@ -734,7 +737,7 @@ function ldBuild() {
         el.animate([{ strokeDasharray: '1 1', strokeDashoffset: 1, opacity: 0 }, { opacity: 1, offset: .04 }, { strokeDasharray: '1 1', strokeDashoffset: 0, opacity: 1 }], { ...o, easing: 'ease-in-out' }).finished.then(() => el.removeAttribute('pathLength'), () => {});
         return;
       }
-      el.style.transformBox = 'fill-box'; el.style.transformOrigin = LD_ORIGIN[fx] || '50% 50%';
+      el.style.transformBox = fx === 'brush' ? 'view-box' : 'fill-box'; el.style.transformOrigin = LD_ORIGIN[fx] || '50% 50%';
       el.animate(LD_FX[fx], o);
     });
   });
@@ -1006,13 +1009,13 @@ VIEWS.sites = (p = {}) => {
 VIEWS.watch = (p = {}) => {
   const c = CH.find(x => x.id === 'watch'), W = D.watchlist, K = [['show', 'Shows', 'var(--rose)'], ['movie', 'Movies', 'var(--t-food)'], ['book', 'Books', 'var(--t-places)']];
   const kc = k => K.find(x => x[0] === k)[2], mx = Math.max(...W.map(w => w.days));
-  $('page').innerHTML = `<div class="wrap">${head(c, `${W.length} shows, movies and books I looked up this year, from my searches and streaming history. Netflix never names what you watch, so it can only show up here when I searched for it.`)}
-    <div class="pills" style="margin-bottom:12px"><span class="lbl">show</span><button class="pill" data-k="all" aria-pressed="true">all ${W.length}</button>${K.map(([k, n, col]) => `<button class="pill" data-k="${k}" aria-pressed="false" style="--c:${col}"><i></i>${n} ${W.filter(w => w.kind === k).length}</button>`).join('')}</div>
+  $('page').innerHTML = `<div class="wrap">${head(c, `The ten shows, movies and books I looked up most this year, from my searches and streaming history. Netflix never names what you watch, so it can only show up here when I searched for it.`)}
+    <div class="pills" style="margin-bottom:12px"><span class="lbl">show</span><button class="pill" data-k="all" aria-pressed="true">all</button>${K.map(([k, n, col]) => `<button class="pill" data-k="${k}" aria-pressed="false" style="--c:${col}"><i></i>${n}</button>`).join('')}</div>
     <div class="two"><div class="panel" id="wl"></div><div class="panel" id="wp"></div></div></div>`;
   let k = 'all', sel = p.title || W.slice().sort((a, b) => b.days - a.days)[0].title;
   const mon = d => new Date(d + 'T12:00').toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
   const draw = () => {
-    $('wl').innerHTML = W.filter(w => k === 'all' || w.kind === k).sort((a, b) => b.days - a.days).map(w => `<div class="row" style="cursor:pointer${w.title === sel ? ';font-weight:600' : ''}" data-w="${esc(w.title)}"><i style="width:10px;height:10px;border-radius:50%;background:${kc(w.kind)}"></i><div>${w.title.replace(/ \(book\)$/, '')}<div class="track"><b style="width:${w.days / mx * 100}%;background:${kc(w.kind)}"></b></div></div><span class="v">${w.days} ${w.days === 1 ? 'day' : 'days'}</span></div>`).join('');
+    $('wl').innerHTML = W.filter(w => k === 'all' || w.kind === k).sort((a, b) => b.days - a.days).slice(0, 10).map(w => `<div class="row" style="cursor:pointer${w.title === sel ? ';font-weight:600' : ''}" data-w="${esc(w.title)}"><i style="width:10px;height:10px;border-radius:50%;background:${kc(w.kind)}"></i><div>${w.title.replace(/ \(book\)$/, '')}<div class="track"><b style="width:${w.days / mx * 100}%;background:${kc(w.kind)}"></b></div></div><span class="v">${w.days} ${w.days === 1 ? 'day' : 'days'}</span></div>`).join('');
     const w = W.find(x => x.title === sel);
     $('wp').innerHTML = `<div class="kicker"><i style="width:10px;height:10px;border-radius:50%;background:${kc(w.kind)};display:inline-block"></i> ${w.kind}</div>
       <div class="big" style="margin-top:8px;font-family:var(--serif);font-weight:400">${w.title.replace(/ \(book\)$/, '')}</div><div class="sub">looked up on ${w.days} ${w.days === 1 ? 'day' : 'days'}</div>
