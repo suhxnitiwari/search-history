@@ -30,7 +30,7 @@ The pipeline lives on my laptop with the raw data; only its small output, `data.
 - **Transform:** Austin time, de-duplication, sessions (a new one after 30 quiet minutes), questions (back-to-back searches that share a word), and repeat detection: 7,138 of 19,598 search page loads were Chrome re-logging a results page, not new searches.
 - **Model:** a SQLite star schema (`fact_event` with date, query, session and question dimensions) with integrity checks.
 - **Analyze:** an Obsession Index (geometric mean of log-scaled frequency, repeat days, session depth, variety and estimated time), question-chain metrics, rabbit-hole ranking, a search vocabulary, month-to-month change by Jensen–Shannon divergence, and anomaly detection that found my build sprint and my New York trip from activity counts alone.
-- **Export:** `data.json` (25 KB) with counts, charts and only hand-approved searches, plus a guardrail that fails the export if any quoted search isn't word for word in my data.
+- **Export:** `data.json` (about 450 KB) with counts, charts and only hand-approved searches, plus a guardrail that fails the export if any quoted search isn't word for word in my data.
 
 ## How it's built
 
