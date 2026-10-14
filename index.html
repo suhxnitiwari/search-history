@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Search History · Suhani Tiwari</title>
-<meta name="description" content="A year of my Google searches, inside my own browser. Ask it anything about me.">
+<meta name="description" content="A year of my Google searches, shown as a browser. Ask a question and the data answers.">
 <meta property="og:title" content="Search History · Suhani Tiwari">
-<meta property="og:description" content="A year of my Google searches, inside my own browser. Ask it anything about me.">
+<meta property="og:description" content="A year of my Google searches, shown as a browser. Ask a question and the data answers.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://suhxnitiwari.github.io/search-history/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22sgA%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23E28DA6%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23C8577A%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22sgB%22%20x1%3D%221%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23E9CF8C%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23C9A050%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22sgC%22%20x1%3D%220%22%20y1%3D%221%22%20x2%3D%221%22%20y2%3D%220%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23B4486B%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%239E3556%22%2F%3E%3C%2FlinearGradient%3E%3CradialGradient%20id%3D%22sgD%22%20cx%3D%22.38%22%20cy%3D%22.35%22%20r%3D%22.75%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23E28DA6%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23B4486B%22%2F%3E%3C%2FradialGradient%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M59.5%2033.5L23.2%2012.6A46%2046%200%200%201%2095.8%2045.5L59.5%2066.5A19%2019%200%200%200%2059.5%2033.5Z%22%20fill%3D%22url%28%23sgA%29%22%2F%3E%3Cpath%20d%3D%22M59.5%2066.5L95.8%2045.5A46%2046%200%200%201%2031.0%2091.9L31.0%2050.0A19%2019%200%200%200%2059.5%2066.5Z%22%20fill%3D%22url%28%23sgB%29%22%2F%3E%3Cpath%20d%3D%22M31.0%2050.0L31.0%2091.9A46%2046%200%200%201%2023.2%2012.6L59.5%2033.5A19%2019%200%200%200%2031.0%2050.0Z%22%20fill%3D%22url%28%23sgC%29%22%2F%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2221%22%20fill%3D%22%23fff%22%2F%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2216%22%20fill%3D%22url%28%23sgD%29%22%2F%3E%3Cellipse%20cx%3D%2245%22%20cy%3D%2244%22%20rx%3D%226%22%20ry%3D%224%22%20fill%3D%22%23fff%22%20opacity%3D%22.4%22%2F%3E%3C%2Fsvg%3E">
@@ -104,6 +104,8 @@ h1.q em { font-style: italic; color: var(--rose); }
 .row img { width: 20px; height: 20px; }
 
 /* home */
+.regular { font-size: 14px; color: var(--muted); margin: 0; text-align: center; }
+.regular a { color: inherit; text-decoration: underline; }
 .home { min-height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 30px; padding: 40px 16px 56px; box-sizing: border-box; }
 .mark { font-family: var(--serif); font-weight: 400; font-size: clamp(76px, 13vw, 168px); letter-spacing: -.04em; line-height: .9; margin: 0; }
 .mark em { color: var(--rose); }
@@ -761,6 +763,7 @@ VIEWS.home = () => {
       <button type="button" class="gask" id="gask">${spark}Ask</button><div class="ac" id="ac" hidden></div></div>
     <div class="gcards">${CARDS.map(c => `<button class="gcard" data-ask="${esc(c[0])}">${fav(c[2])}<span><b>${c[0]}</b><small>${c[1]}</small></span></button>`).join('')}</div>
     <button class="src" data-go-built style="font-family:var(--mono)">How I built it: ${fmt(D.meta.search_page_loads)} raw search logs → ${fmt(D.meta.searches)} searches → this page →</button>
+    <p class="regular">Prefer the regular version? <a href="https://suhanitiwari.com">See my website</a>.</p>
     <div class="tiles-h">Most visited for work and school · by days opened, Oct 2025 – Oct 2026</div>
     <div class="tiles">${D.sites.filter(x => !['Instagram', 'YouTube', 'Netflix', 'TikTok', 'Pinterest', 'Reddit', 'Disney+'].includes(x.name)).slice(0, 4).map(s => `<button class="tile" data-site="${s.name}"><span class="c">${fav(s.name)}</span>${s.name}<small>${s.days} days</small></button>`).join('')}</div>
   </div>`;

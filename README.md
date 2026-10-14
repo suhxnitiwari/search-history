@@ -41,7 +41,7 @@ The pipeline lives on my laptop with the raw data; only its small output, `data.
 - **The clock.** 12,460 searches drawn on a canvas as a spiral (midnight at the top, the year growing outward), topic bars around it in SVG, and the favicon most typical of each hour on the rim (its share of that hour divided by its share of the year).
 - **Data-driven page.** Everything renders from `data.json`, so rerunning the pipeline updates the whole site. Favicons are embedded in it, so the page makes no third-party requests for them.
 - **Browser-like navigation.** Back, forward and reload work inside the page, chapters you've opened turn grey, keys 1–9 jump between chapters and `/` focuses the address bar.
-- **No framework.** HTML, CSS and plain JavaScript in `index.html`, with charts in Canvas, SVG and CSS.
+- **No framework.** HTML, CSS and plain JavaScript in `index.html`, with charts in Canvas, SVG and CSS, plus d3-geo for the world map.
 
 ## Data and privacy
 
@@ -55,7 +55,7 @@ Nothing is shown unless it was approved by hand: no names of real people, nothin
 
 ## Tech stack
 
-Python and SQLite (pipeline, on my laptop) · HTML · CSS · vanilla JavaScript · SVG · GitHub Pages. Not affiliated with Google.
+Python and SQLite (pipeline, on my laptop) · HTML · CSS · vanilla JavaScript · SVG · d3-geo · GitHub Pages. Not affiliated with Google.
 
 ## Ownership
 
